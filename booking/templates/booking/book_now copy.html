@@ -1,0 +1,151 @@
+{% extends 'booking/master.html' %}
+
+{% load static %}
+
+{% block title %}Book Transportation{% endblock %}
+
+{% block content %}
+
+<div class="col-12 px-4 ">
+    <div class="row">
+        <!-- page title -->
+        <h5 class="my-4 page-title">Book a Seat</h5>
+    </div>
+    <div class="row mt-3">
+
+
+
+        <!-- start here -->
+        <div class="card border-0">
+            <div class="card-body">
+                <form action="#" method="post">
+                    {% csrf_token %}
+
+                    <div class="row align-items-end justify-contents-center">
+                        <div class="col-md-3 mb-2">
+                            <label for="current-state" class="mb-1">Travelling from <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-select" id="current-state" aria-label="" name="start_state">
+                                <option selected></option>
+                                {%  for state in states %}
+                                    <option value="{{state.name}}">{{ state.name }}</option>
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label for="current-state" class="mb-1">Travelling to</label>
+                            <select class="form-select" id="current-state" aria-label="" name="destination_state">
+                                <option selected></option>
+                                {%  for state in states %}
+                                    <option value="{{state.name}}">{{ state.name }}</option>
+                                {% endfor %}
+
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <label for="price">minimum price</label>
+                            <input type="text" name="min_price" id="price" class="form-control" placeholder="optional">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label for="price">maximum price</label>
+                            <input type="text" name="max_price" id="price" class="form-control" placeholder="optional">
+                        </div>
+                        
+                       
+                        <div class="row">
+                            <div class="col-md-6 offset-md-3 mb-2">
+                                <label for="current-state" class="mb-1">Company</label>
+                                <select class="form-select" id="current-state" aria-label="" name="destination_state">
+                                    <option selected></option>
+                                    {%  for company in transport_companies %}
+                                        <option value="{{company.id}}">{{ company.name }}</option>
+                                    {% endfor %}
+    
+    
+                                </select>
+    
+                            </div>
+                        </div>
+
+                         <!--  Vehicle Available option -->
+                        <div class="mt-3">
+                            <p align="center">By Vehicle Availabilty</p>
+                            <div class="row">
+                                
+                                <div class="offset-md-3 col-md-3 mb-2">
+                                    <input type="radio" name="availability" id="available"
+                                        value="true" class="form-check-input">
+                                    <label for="available" checked>Available</label>
+                                    
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    
+                                    <input type="radio" name="availability" id="not-avaialable"
+                                    value="false" class="form-check-input">
+                                    <label for="not-avaiable">Unavailable</label>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-3 mb-2">
+                            <button type="submit" class=" col-12 btn btn-primary px-5"><span class="me-1"><i
+                                        class="bi bi-funnel"></i></span>Filter</button>
+                        </div>
+                    </div>
+
+
+
+
+
+                </form>
+            </div>
+        </div>
+
+        <!-- travellers list container -->
+        <div class="row traveller-list mt-2 row-gap-3 pt-3 justify-content-center align-items-top">
+            {% for vehicle in vehicles %}
+                <div class="col-lg-3 col-sm-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row">
+                                
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <img src="{% static 'travellers logo/GIGM.png' %}" class="rounded-pill" width="25px" alt="">
+                                        </div>
+                                        <div class="col-8">
+                                            <h5 class="traveller-name" >{{ vehicle.company.name }}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 offset-3"> 
+                                    <p class="traveller-price">{{ vehicle.capacity }} people capacity</p>  
+                                    <p class="traveller-price">NGN{{ vehicle.vehicleroute_set.first.price }}</p>
+                                    
+                                    
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn btn-sm btn-success book-btn" style="width:100%">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+           
+        </div>
+
+        <!-- contents ends here -->
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Vehicles</title>
+</head>
+<body>
+    <h1>Search for Vehicles</h1>
+    <form action="{% url 'search_vehicles' %}" method="get">
+        <label for="start_state">Start State:</label>
+        <select id="start_state" name="start_state" required>
+            <option value="">Select Start State</option>
+            {% for state in states %}
+                <option value="{{ state.name }}">{{ state.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <label for="destination_state">Destination State:</label>
+        <select id="destination_state" name="destination_state" required>
+            <option value="">Select Destination State</option>
+            {% for state in states %}
+                <option value="{{ state.name }}">{{ state.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit">Search</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,74 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGNUP</title>
+    <link rel="stylesheet"  href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+</head>
+
+<body>
+    <div class="container col-lg-4 mt-5 border py-3 px-5">
+        <h3 class="text-center mb-5">Signup</h3>
+        <form method="POST" action="/signup/" id="signup-form">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <label for="email" class="mb-1">Email address:</label>
+                <input type="email" class="form-control" id="email" placeholder="E-mail" name="email" required>
+            </div>
+
+            <div class="row mb-3">
+                <label for="password" class="mb-1">Password:</label>
+                <input type="password" class="form-control" id="password" placeholder="password" name="password1" required>
+            </div>
+            <div class="row mb-3">
+                <label for="password" class="mb-1">Confirm Password:</label>
+                <input type="password" class="form-control" id="password" placeholder="password" name="password2" required>
+            </div>
+
+            <div class="row mb-3" style="display: block;">
+                <label for="username" class="mb-1">Email address:</label>
+                <input type="text" class="form-control" id="username" placeholder="E-mail" name="username" required>
+            </div>
+            
+            <div class="row mb-3">
+                <input type="submit" class="btn btn-primary" id="action-btn" value="Signup">
+            </div>
+            
+            <div class="row mb-3"><span>Already have an account?</span>
+                <a href="{% url 'login' %}" class="text-end"> Login</a>
+            </div>
+           
+
+        </form>
+        <div class="error-div">
+            {% if form.errors %}
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script>
+        const form = document.querySelector("#signup-form");
+        form['email'].addEventListener("input",event=>{
+            form['username'].value = event.target.value;
+        })
+    </script>
+</body>
+
+</html>

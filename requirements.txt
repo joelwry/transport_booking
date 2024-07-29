@@ -1,0 +1,5 @@
+Django==5.0.7
+djangorestframework==3.15.2
+pillow==10.4.0
+python-flutterwave==1.2.2
+rave-python==1.4.0

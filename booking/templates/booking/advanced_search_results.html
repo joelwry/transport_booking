@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Search Results</title>
+</head>
+<body>
+    <h1>Advanced Search Results</h1>
+    <form action="{% url 'advanced_search_vehicles' %}" method="get">
+        {{ form.as_p }}
+        <button type="submit">Search</button>
+    </form>
+    
+    <h2>Vehicles</h2>
+    <ul>
+        {% for vehicle in vehicles %}
+            <li>
+                {{ vehicle.plate_number }} - {{ vehicle.company.name }} - NGN{{ vehicle.vehicleroute_set.first.price }} - 
+                {% if vehicle.available %}
+                    Available
+                {% else %}
+                    Not Available
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

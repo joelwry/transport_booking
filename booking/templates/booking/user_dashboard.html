@@ -1,0 +1,123 @@
+{% extends 'booking/master.html' %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<div class="col-12 px-4">
+    <div class="row mt-3">
+        <!-- pending ticket container -->
+        <div class="col-md-4 mb-2">
+            <div class="card border-dark">
+                <div class="card-body">
+                    <div class="row">
+                        <p>Pending Tickets</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <h3>3</h3>
+                        </div>
+                        <div class="col-6 text-end">
+                            <button type="button" class="btn btn-primary px-3 action-button"><span class="me-2"><i class="bi bi-eye"></i></span>View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- open tickets container -->
+        <div class="col-md-4 mb-2">
+            <div class="card border-dark">
+                <div class="card-body">
+                    <div class="row">
+                        <p>Open Tickets</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <h3>4</h3>
+                        </div>
+                        <div class="col-6 text-end">
+                            <button type="button" class="btn btn-primary px-3 action-button"><span class="me-2"><i class="bi bi-eye"></i></span>View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- completed ticket container -->
+        <div class="col-md-4 mb-2">
+            <div class="card border-dark">
+                <div class="card-body">
+                    <div class="row">
+                        <p>Completed Tickets</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <h3>10</h3>
+                        </div>
+                        <div class="col-6 text-end">
+                            <button type="button" class="btn btn-primary px-3 action-button"><span class="me-2"><i class="bi bi-eye"></i></span>View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- table ticket container -->
+    <div class="row my-5">
+        <div class="col">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="text-dark fw-bold">Tickets</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Ticket ID</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in tickets %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ ticket.id }}</td>
+                                    <td>{{ ticket.start_state }}</td>
+                                    <td>{{ ticket.destination_state }}</td>
+                                    <td>{{ ticket.travel_date }}</td>
+                                    <td><span class="text-{{ ticket.status_color }}">{{ ticket.status }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination float-end">
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

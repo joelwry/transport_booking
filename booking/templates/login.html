@@ -1,0 +1,59 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN</title>
+    <link rel="stylesheet"  href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+</head>
+
+<body>
+    <div class="container col-lg-4 mt-5 border py-3 px-5">
+        <h3 class="text-center mb-5">Login Here</h3>
+        <form method="POST" action="/login/">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <label for="email" class="mb-1">Email address:</label>
+                <input type="email" class="form-control" id="email" placeholder="E-mail" name="username" required>
+            </div>
+
+            <div class="row mb-3">
+                <label for="password" class="mb-1">Password:</label>
+                <input type="password" class="form-control" id="password" placeholder="password" name="password">
+            </div>
+
+            
+            <div class="row mb-3">
+                <input type="submit" class="btn btn-primary" id="action-btn" value="Login">
+            </div>
+            
+            <div class="row mb-3"><span>Don't have an account?</span>
+                <a href="{% url 'signup' %}" class="text-end"> Sign up</a>
+            </div>
+        </form>
+        <div class="error-div">
+            {% if form.errors %}
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+</body>
+
+</html>

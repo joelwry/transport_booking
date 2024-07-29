@@ -1,0 +1,63 @@
+body{
+    font-family: "Poppins", sans-serif;
+    font-size:small;
+}
+.board{
+    overflow-y: scroll;
+}
+
+.page-title{
+    font-size: 14px;
+    color: rgba(176, 168, 168, 0.941);
+}
+.mainboard{
+    background-color: rgba(235, 235, 235, 0.304);
+}
+.submenu{
+    color: rgba(255, 255, 255, 0.598);
+}
+.action-button,
+.logoutmenu,
+.settingmenu{
+    font-size: 14px;
+}
+table{
+    font-size: 14px;
+}
+.history-row{
+    overflow-x: scroll;
+}
+.menu-down{
+    position: fixed;
+    bottom: 20px;
+}
+
+.user-form{
+    font-size: small;
+}
+.user-state-form, .resident-textarea, .user-form input{
+    font-size: small;
+}
+
+/* traveller card on booking page */
+.book-btn{
+    font-size:13.5px
+}
+.traveller-name{
+    font-size: 14px;
+}
+
+.lg-menu-side{
+    position:fixed;
+}
+.mainboard{
+    position: absolute;
+    right: 0%;
+}
+
+
+@media (width < 990px) {
+    .lg-menu-side{
+        display: none;
+    }
+}
