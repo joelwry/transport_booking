@@ -21,7 +21,7 @@ class TravellerForm(forms.ModelForm):
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = ['route', 'number_of_seats', 'travel_date']
+        fields = [ 'number_of_seats', 'travel_date']
 
 class SignUpForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput, label="Password")

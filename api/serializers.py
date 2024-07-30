@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from booking.models import Booking, Traveller, TransportationCompany, Vehicle, VehicleRoute, State, Payment
+from booking.models import Booking, Traveller, TransportationCompany, Vehicle,  State, Payment, Message,Terminals
 
 class TransportationCompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,7 +18,7 @@ class StateSerializer(serializers.ModelSerializer):
 
 class VehicleRouteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = VehicleRoute
+        model = Vehicle
         fields = '__all__'
 
 class TravellerSerializer(serializers.ModelSerializer):
@@ -30,6 +30,16 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = '__all__'
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta :
+        model = Message
+        fields = '__all__'
+
+class TerminalsSerializer:
+    class Meta:
+        model = Terminals
+        fields = "__all__"
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:

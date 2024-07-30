@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
-    TransportationCompany, Vehicle, State, VehicleRoute,
-    Traveller, Message, Booking, Payment, Staff, LoginAttempt
+    TransportationCompany, Vehicle, State,
+    Traveller, Message, Booking, Payment, Staff
 )
 from django import forms
 from django.core.exceptions import ValidationError
@@ -26,12 +26,6 @@ class StateAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     ordering = ('name',)
 
-@admin.register(VehicleRoute)
-class VehicleRouteAdmin(admin.ModelAdmin):
-    list_display = ('vehicle', 'price')
-    search_fields = ('vehicle__plate_number','price','state1','state2')
-    ordering = ('price',)
-    #filter_horizontal = ('price',)The value of 'filter_horizontal[0]' must be a many-to-many field.
 
 @admin.register(Traveller)
 class TravellerAdmin(admin.ModelAdmin):
@@ -74,26 +68,3 @@ class StaffAdmin(admin.ModelAdmin):
     list_filter = ('is_super_admin',)
     ordering = ('user',)
 
-@admin.register(LoginAttempt)
-class LoginAttemptAdmin(admin.ModelAdmin):
-    list_display = ('user', 'attempts', 'locked_until')
-    search_fields = ('user__username',)
-    ordering = ('user',)
-
-# creating our vehicle route form to ensure only two state can be added
-# class VehicleRouteAdminForm(forms.ModelForm):
-#     class Meta:
-#         model = VehicleRoute
-#         fields = '__all__'
-
-#     def clean_state(self):
-#         states = self.cleaned_data['state']
-#         if states.count() != 2:
-#             raise ValidationError('Exactly two states must be selected.')
-#         return states
-
-# class VehicleRouteAdmin(admin.ModelAdmin):
-#     form = VehicleRouteAdminForm
-
-
-#admin.site.register(VehicleRoute, VehicleRouteAdmin)

@@ -14,7 +14,6 @@ MESSAGE_TYPE = [
 def default_travel_date():
         return timezone.now() + timedelta(days=7)
 
-
 class TransportationCompany(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=500) #headquarter
@@ -31,6 +30,7 @@ class TransportationCompany(models.Model):
             )
         ]
     )
+    image = models.ImageField(upload_to="static/image/company", null=True, default='None')
 
     def __str__(self):
         return self.name
@@ -40,27 +40,22 @@ class State(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+class Terminals(models.Model):
+    state = models.ForeignKey(to=State, on_delete=models.CASCADE)
+    area = models.CharField(max_length = 50)
+    address = models.CharField(max_length=255)
+
 class Vehicle(models.Model):
     plate_number = models.CharField(max_length=200)
     capacity = models.PositiveIntegerField(default=1)
-    terminal1 = models.CharField(max_length=255, default=None, blank=True) # Their address in state 1
-    terminal2= models.CharField(max_length=255, default=None, blank=True) # Their address in state 2
+    terminal1 = models.ForeignKey(Terminals, default=None, blank=True, related_name='address1',on_delete=models.SET_NULL, null=True) # Their address in state 1
+    terminal2= models.ForeignKey(to= Terminals, default=None, blank=True, related_name='address2',on_delete=models.SET_NULL, null=True) # Their address in state 2
     available = models.BooleanField(default=True)
     company= models.ForeignKey(to=TransportationCompany,on_delete=models.CASCADE)
-
+    price = models.DecimalField(decimal_places=3, max_digits=10, default=15000.000)
     def __str__(self):
         return f' vehicle {self.plate_number} => {self.company.name}'
-
-
-class VehicleRoute(models.Model):
-    vehicle = models.OneToOneField(Vehicle, on_delete=models.CASCADE)
-    state1 = models.ForeignKey(to=State, on_delete=models.CASCADE, related_name='state1_travelled_to')
-    state2 = models.ForeignKey(to=State, on_delete=models.CASCADE, related_name='state2_travelled_to')
-    price = models.DecimalField(decimal_places=3, max_digits=10, default=100.000)
-
-    def __str__(self):
-        return f'Route for {self.vehicle} with price {self.price}'
 
 class Traveller(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -85,10 +80,12 @@ class Booking(models.Model):
         ('CANCELLED', 'Cancelled'),
     ]
     customer = models.ForeignKey(Traveller, on_delete=models.CASCADE)
-    route = models.ForeignKey(VehicleRoute, on_delete=models.CASCADE)
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     booking_code = models.CharField(max_length=25, unique=True, default=generateBookingId)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
     number_of_seats = models.PositiveIntegerField(default=1)
+    number_of_children_below_10 = models.PositiveIntegerField(default=0)
+    number_of_children_above_10 = models.PositiveIntegerField(default=0)
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
     travel_date = models.DateTimeField(default = default_travel_date)
     booking_date = models.DateTimeField(auto_now_add=True)
@@ -118,8 +115,3 @@ class Staff(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_super_admin = models.BooleanField(default=False)
 
-# we will be using this model to track user attempt to login 
-class LoginAttempt(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    attempts = models.IntegerField(default=0)
-    locked_until = models.DateTimeField(null=True, blank=True)

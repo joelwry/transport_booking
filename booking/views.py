@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import LoginAttempt, Traveller, Booking, Vehicle, State, TransportationCompany, VehicleRoute
+from .models import Traveller, Booking, Vehicle, State, TransportationCompany
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
-from .utils.booking_utils import get_vehicles_by_route
+#from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
 from django.utils import timezone
 from datetime import timedelta
@@ -176,7 +176,8 @@ def booking_success(request, booking_id):
 def search_vehicles(request):
     start_state = request.GET.get('start_state')
     destination_state = request.GET.get('destination_state')
-    vehicles = get_vehicles_by_route(start_state, destination_state)
+    #vehicles = get_vehicles_by_route(start_state, destination_state)
+    vehicles = []
     return render(request, 'booking/search_results.html', {'vehicles': vehicles})
 
 # this view will allow travellers to be able to search for vehicles that he/she can book for travelling 
