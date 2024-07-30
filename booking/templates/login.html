@@ -1,59 +1,66 @@
-
-{% load static %}
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGIN</title>
-    <link rel="stylesheet"  href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-</head>
-
-<body>
-    <div class="container col-lg-4 mt-5 border py-3 px-5">
-        <h3 class="text-center mb-5">Login Here</h3>
-        <form method="POST" action="/login/">
+{% extends "base_templates/base.html" %}
+{% block page-contents %}
+<div class="container col-lg-5 mt-5 ">
+    <img src="./logo.png" width="56px" alt="">
+    <div class="col-12 border rounded-2 shadow py-3 px-5">
+        <h3 class=" fw-bold fs-2 text-gray">Welcome Back</h3>
+        <p class="mb-4 ">Enter your details to login</p>
+        <form action="/login/" method="post">
             {% csrf_token %}
-            <div class="row mb-3">
-                <label for="email" class="mb-1">Email address:</label>
-                <input type="email" class="form-control" id="email" placeholder="E-mail" name="username" required>
+            <div class="row mb-4">
+               <div class="form-group">
+                <label for="email" class="mb-1">Email</label>
+                <input type="text" class="form-control" id="email" name="username" placeholder="example@gmail.com">
+               </div>
+            </div>
+
+            <div class="row mb-4">
+                <label for="password" class="mb-1">Password</label>
+                <div class="form-group password-container">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="********">
+                <i class="bi bi-eye-slash fw-bold fs-5 primary-color" id="togglePassword"></i>
+                </div>
             </div>
 
             <div class="row mb-3">
-                <label for="password" class="mb-1">Password:</label>
-                <input type="password" class="form-control" id="password" placeholder="password" name="password">
+                <div class="col-6">
+                    <input type="checkbox" name="remember" id="remember-me" class="form-check-input"> Remember Me?
+                </div>
+                <div class="col-6 text-end">
+                    <a href="forget_password.html" target="_blank" rel="noopener noreferrer" class="text-end link primary-color">forget password?</a>
+                </div>
             </div>
 
-            
             <div class="row mb-3">
-                <input type="submit" class="btn btn-primary" id="action-btn" value="Login">
+                <div class="form-group">
+                    <input type="submit" id="action-btn" class="btn col-12 btn-sm colorbtn text-white" value="Login">
+                </div>
             </div>
-            
-            <div class="row mb-3"><span>Don't have an account?</span>
-                <a href="{% url 'signup' %}" class="text-end"> Sign up</a>
+
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>
+                        Do not have an account?
+                        <a href="{% url "signup" %}" class="primary-color link fw-bold">SignUp Here</a>
+                    </p>
+                </div>
             </div>
+
         </form>
-        <div class="error-div">
-            {% if form.errors %}
-                <ul>
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
     </div>
-
-
-    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-
-</body>
-
-</html>
+</div>
+{% endblock page-contents %}
+<div class="error-div">
+    {% if form.errors %}
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

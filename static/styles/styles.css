@@ -1,17 +1,98 @@
 body{
     font-family: "Poppins", sans-serif;
     font-size:small;
+    background-color: #fdbe9726;
 }
+
+.form-control{
+    font-size: small;
+}
+
+.form-control:focus, select:focus{
+    border:1px solid #fe7c2b;
+    box-shadow: none;
+}
+
+/* .form-check-input:focus{
+    outline:2px solid #fd8135 !important;
+    background-color: #fd8135;
+    box-shadow: none;
+} */
+
+/* input check and radio color control */
+.form-check-input:focus{
+    outline: #db5d0f;
+    border: none;
+    background-color: #db5d0f;
+}
+
+.form-check-input:checked{
+    background-color: #fd8135;
+    border-color:#fd8135 ;
+}
+
+
+/* colors control */
+
+.primary-color{
+    color: #fe8032;
+}
+
+.bgcolor{
+   background-color: #fe7c2b;
+}
+
+.colorbtn{
+    background-color: #fe7c2b;
+}
+
+.colorbtn:hover{
+    background-color: #f86e18;
+}
+
+/* shadow- control */
+input:focus{
+    box-shadow: #fd8135 !important;
+}
+
+/* border color control */
+.border-custom-color {
+    border-color: #fe7c2b;
+}
+
+/* links color on hover control */
+.nav-link:hover{
+    color: #db5d0f;
+}
+
+.link{
+    text-decoration: none;
+}
+
+/* text size control */
+.samll{
+    font-size: small;
+}
+
+.medium{
+    font-size:14px;
+}
+
 .board{
     overflow-y: scroll;
 }
 
+.title-color{
+    color: rgb(77, 76, 76);
+
+}
 .page-title{
     font-size: 14px;
     color: rgba(176, 168, 168, 0.941);
 }
 .mainboard{
-    background-color: rgba(235, 235, 235, 0.304);
+    /* background-color:#3c2e261a; */
+    height:inherit;
 }
 .submenu{
     color: rgba(255, 255, 255, 0.598);
@@ -41,23 +122,176 @@ table{
 
 /* traveller card on booking page */
 .book-btn{
-    font-size:13.5px
+    font-size:13.5px;
+    border: 1.3px solid #fe7c2b;
+    color: #fe7c2b;
 }
+
+.book-btn:hover{
+    background-color: #fe7c2b;
+    color: white;
+}
+
 .traveller-name{
     font-size: 14px;
 }
 
 .lg-menu-side{
     position:fixed;
+    background-color: #fe7c2b;
 }
+
 .mainboard{
     position: absolute;
     right: 0%;
 }
 
 
+@media (width < 500px){
+    #mobilemenu{
+        width: 70%;
+    }
+}
+
 @media (width < 990px) {
     .lg-menu-side{
         display: none;
     }
+}
+
+.sep-bg{
+    background-color: whitesmoke;
+}
+
+
+.swiper-slide{
+    box-sizing: border-box;
+    margin: 0.3em;
+}
+
+.menu-header{
+    background-color: hsl(0, 0%, 100%);
+    position: sticky;
+    
+}
+
+
+.banner-1{
+    background-image: url("../banners/bus.jpg");
+}
+
+.banner-2{
+    background-image: url("../banners/male-bus-driver-portrait.jpg");
+
+}
+.banner-3{
+    background-image: url("../banners/BRT-LAGOS-1140x570.jpg");
+}
+
+.banner-3, .banner-2,.banner-1{
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.721);
+    background-blend-mode: soft-light;
+}
+
+
+.home-title{
+    font-size: 40px;
+    font-weight: bolder;
+}
+
+.home-action-button{
+    background-color: #FF914D;
+    border: none;
+    font-size: medium;
+}
+
+.home-sub-title{
+    font-weight: 100;
+    font-size:16px;
+    color: rgba(225, 225, 225, 0.667);
+}
+
+
+/* Carousel base class */
+.carousel {
+    margin-bottom: 3rem;
+    
+  }
+  /* Since positioning the image, we need to help out the caption */
+  .carousel-caption {
+    bottom: 1rem;
+    
+    z-index: 10;
+  }
+  
+  /* Declare heights because of positioning of img element */
+  .carousel-item {
+    height: 28rem;
+  }
+
+
+  /* .steps-div{
+    background-color: #c1bebe1c;
+  } */
+
+  .step-number{
+    background-color: #FF914D;
+    border-radius: 0em 0em 0em 3em;
+  }
+
+  .how-title{
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .subtitle-how{
+    font-size: 12px;
+  }
+
+
+  /* trending section */
+
+  .trend-container{
+    background-color: rgba(0, 0, 0, 0.563);
+  }
+
+  .hold{
+    position: absolute;
+    font-size: medium;
+    bottom: 2rem;
+    color: white;
+  }
+
+  .trend-title{
+    font-size: 16px;
+  }
+
+  .trend-book-btn{
+    font-size:12px;
+    border-color: #FF914D;
+    border-width: 1.3px;
+    color: #FF914D;
+}
+
+.trend-book-btn:hover{
+    background-color: #FF914D;
+}
+
+/* partners section */
+.partners-logo{
+    width: 3em;
+}
+
+
+
+
+
+/* adminstrators dashbord design */
+
+.num-bg-color{
+    background-color: #fe7c2b79;
 }
