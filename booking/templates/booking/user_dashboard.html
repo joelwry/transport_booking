@@ -13,7 +13,7 @@
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <h3>3</h3>
+                            <h3>{{ ticket_analysis.pending }}</h3>
                         </div>
                         <div class="col-6 text-end">
                             <button type="button"
@@ -50,6 +50,7 @@
         </div>
     </div>
 </div>
+
 <div class="col-12 px-4 board">
     <div class="row mt-3">
         <div class="row mt-3">
@@ -57,239 +58,50 @@
         </div>
         <div class="card border-0 shadow-sm">
             <div class="card-body">
+                {% if tickets %}
+                    <div class="row history-row">
+                        <table class="table table-striped table-hover table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Booking ID</th>
+                                    <th>PickUp State</th>
+                                    <th>Destination State</th>
+                                    <th>Timestamp</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in tickets %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ ticket.id }}</td>
+                                        <td>
+                                            {{ ticket.vehicle.terminal1.state.name }}
+                                        </td>
 
-                <div class="row history-row">
-                    <table class="table table-striped table-hover table-responsive">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Booking ID</th>
-                                <th>PickUp State</th>
-                                <th>Destination State</th>
-                                <th>Timestamp</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>112111</td>
-                                <td>Ekiti</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-warning text-dark">Pendind</span></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>1123221</td>
-                                <td>Lagos</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-primary text-dark">confirmed</span></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>112111</td>
-                                <td>Akwa-Ibom</td>
-                                <td>Kaduna</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>123111</td>
-                                <td>Oyo</td>
-                                <td>Rivers</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-danger text-white">cancelled</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>143111</td>
-                                <td>Delta</td>
-                                <td>Ondo</td>
-                                <td>01/08/2024</td>
-                                <td><span class="badge bg-success text-white">completed</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                        <td>{{ ticket.vehicle.terminal2.state.name}}</td>
+                                        <td>{{ ticket.travel_date }}</td>
+            
+                                        {% if ticket.status_color == "pending" %}
+                                            <td>
+                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            </td>
+                                        {% elif ticket.status_color == "confirmed" %}
+                                        <td><span class="badge bg-success text-white">confirmed</span></td>
+                                        
+                                        {% else %}
+                                        <td><span class="badge bg-danger text-white">cancelled</span></td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}            
+                                                        
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p align="center">You are yet to process a booking.</p>
+                {% endif %}
             </div>
         </div>
     </div>

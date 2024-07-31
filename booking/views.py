@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import LoginAttempt, Traveller, Booking, Vehicle, State, TransportationCompany, VehicleRoute
+from .models import Traveller, Booking, Vehicle, State, TransportationCompany
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
-from .utils.booking_utils import get_vehicles_by_route
+#from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
 from django.utils import timezone
 from datetime import timedelta
@@ -22,18 +22,25 @@ def index(request):
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
 def dashboard_view(request):
-    #if not request.user.is_authenticated:
-    #    return redirect('login')
-    tickets = Booking.objects.all()  # Adjust query as needed
+    traveller = Traveller.objects.filter(user = request.user).first()
+    tickets = Booking.objects.filter(customer=traveller).all()
+    ticket_type_count = {"pending":0,"confirmed":0,"cancelled":0}
     for ticket in tickets:
-        if ticket.status == "Pending":
-            ticket.status_color = "danger"
-        elif ticket.status == "Completed":
-            ticket.status_color = "success"
+        if ticket.status == "PENDING":
+            ticket.status_color = "pending"
+            ticket_type_count['pending'] += 1
+            print('pending +1')
+        elif ticket.status == "CONFIRMED":
+            ticket.status_color = "confirmed"
+            ticket_type_count['confirmed'] += 1
         else:
-            ticket.status_color = "warning"
+            ticket.status_color = "cancelled"
+            ticket_type_count['cancelled'] += 1
 
-    return render(request, 'booking/user_dashboard.html', {'tickets': tickets})
+    print(tickets)
+    print(traveller)
+    print(ticket_type_count)
+    return render(request, 'booking/user_dashboard.html', {'tickets': tickets, "ticket_analysis":ticket_type_count})
 
 def signup(request):
     if request.method == 'POST':
@@ -176,7 +183,8 @@ def booking_success(request, booking_id):
 def search_vehicles(request):
     start_state = request.GET.get('start_state')
     destination_state = request.GET.get('destination_state')
-    vehicles = get_vehicles_by_route(start_state, destination_state)
+    #vehicles = get_vehicles_by_route(start_state, destination_state)
+    vehicles = []
     return render(request, 'booking/search_results.html', {'vehicles': vehicles})
 
 # this view will allow travellers to be able to search for vehicles that he/she can book for travelling 
