@@ -46,6 +46,9 @@ class Terminals(models.Model):
     area = models.CharField(max_length = 50)
     address = models.CharField(max_length=255)
 
+    def __str__(self):
+        return f'{self.area} <=> {self.state}'
+
 class Vehicle(models.Model):
     plate_number = models.CharField(max_length=200)
     capacity = models.PositiveIntegerField(default=1)
@@ -63,6 +66,8 @@ class Traveller(models.Model):
     state = models.CharField(max_length=30, default='None')
     gender = models.CharField(max_length=1, choices=(("M","MALE"),("F","FEMALE"),("U","UNSPECIFIED")),default="U")
 
+    def __str__(self):
+        return self.user.email if self.user.email else self.user.username 
 
 class Message(models.Model):
     type = models.CharField(max_length=20, choices=MESSAGE_TYPE)
@@ -83,6 +88,8 @@ class Booking(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     booking_code = models.CharField(max_length=25, unique=True, default=generateBookingId)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    pickup_state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, related_name='pickup_state',blank=True)
+    destination_state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, related_name='destination_state',)
     number_of_seats = models.PositiveIntegerField(default=1)
     number_of_children_below_10 = models.PositiveIntegerField(default=0)
     number_of_children_above_10 = models.PositiveIntegerField(default=0)
@@ -94,7 +101,7 @@ class Booking(models.Model):
     ticket_sent = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Booking {self.booking_code} by {self.user.username}"
+        return f"Booking {self.booking_code} by {self.customer.user.username}"
 
 class Payment(models.Model):
     PAYMENT_STATUS_CHOICES = [

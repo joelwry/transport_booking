@@ -22,18 +22,25 @@ def index(request):
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
 def dashboard_view(request):
-    #if not request.user.is_authenticated:
-    #    return redirect('login')
-    tickets = Booking.objects.all()  # Adjust query as needed
+    traveller = Traveller.objects.filter(user = request.user).first()
+    tickets = Booking.objects.filter(customer=traveller).all()
+    ticket_type_count = {"pending":0,"confirmed":0,"cancelled":0}
     for ticket in tickets:
-        if ticket.status == "Pending":
-            ticket.status_color = "danger"
-        elif ticket.status == "Completed":
-            ticket.status_color = "success"
+        if ticket.status == "PENDING":
+            ticket.status_color = "pending"
+            ticket_type_count['pending'] += 1
+            print('pending +1')
+        elif ticket.status == "CONFIRMED":
+            ticket.status_color = "confirmed"
+            ticket_type_count['confirmed'] += 1
         else:
-            ticket.status_color = "warning"
+            ticket.status_color = "cancelled"
+            ticket_type_count['cancelled'] += 1
 
-    return render(request, 'booking/user_dashboard.html', {'tickets': tickets})
+    print(tickets)
+    print(traveller)
+    print(ticket_type_count)
+    return render(request, 'booking/user_dashboard.html', {'tickets': tickets, "ticket_analysis":ticket_type_count})
 
 def signup(request):
     if request.method == 'POST':

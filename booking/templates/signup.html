@@ -13,7 +13,7 @@
                     <div class="row">
                         <div class="form-group">
                            <label for="fname" class="mb-1">First Name</label>
-                           <input type="text" class="form-control" id="fname" name="fname" placeholder="" required>
+                           <input type="text" class="form-control" id="fname" name="first_name" placeholder="" required>
                         </div>
                        </div>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="row ">
                         <div class="form-group">
                            <label for="Lname" class="mb-1">Last Name</label>
-                           <input type="text" class="form-control" id="Lname" name="lname" placeholder="" required>
+                           <input type="text" class="form-control" id="Lname" name="last_name" placeholder="" required>
                         </div>
                        </div>
                 </div>
@@ -76,7 +76,7 @@
         </form>
     </div>
 </div>
-<div class="error-div">
+<div class="container error-div col-md-8 offset-md-2">
     {% if form.errors %}
         <ul>
             {% for field in form %}
@@ -93,7 +93,7 @@
 
 <script>
     const form = document.querySelector("#signup-form");
-    form['email'].addEventListener("input",event=>{
+    form["email"].addEventListener("input",event=>{
         form['username'].value = event.target.value;
     })
 

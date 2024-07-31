@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     TransportationCompany, Vehicle, State,
-    Traveller, Message, Booking, Payment, Staff
+    Traveller, Message, Booking, Payment, Staff,Terminals
 )
 from django import forms
 from django.core.exceptions import ValidationError
@@ -19,6 +19,12 @@ class VehicleAdmin(admin.ModelAdmin):
     search_fields = ('plate_number', 'company__name')
     list_filter = ('available', 'company')
     ordering = ('company', 'plate_number')
+
+@admin.register(Terminals)
+class TerminalAdmin(admin.ModelAdmin):
+    list_display = ('state','area', 'address',)
+    search_fields = ('state','area',)
+    list_filter = ('state',)
 
 @admin.register(State)
 class StateAdmin(admin.ModelAdmin):
@@ -50,7 +56,7 @@ class MessageAdmin(admin.ModelAdmin):
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     list_display = ('booking_code', 'customer', 'status', 'booking_date', 'total_cost', 'confirmed', 'ticket_sent')
-    search_fields = ('booking_code', 'user__username', 'start_state__name', 'destination_state__name')
+    search_fields = ('booking_code', 'start_state__name', 'destination_state__name')
     list_filter = ('status', 'confirmed', 'ticket_sent')
     ordering = ('-booking_date',)
 
