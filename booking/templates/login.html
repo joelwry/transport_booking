@@ -27,7 +27,7 @@
                     <input type="checkbox" name="remember" id="remember-me" class="form-check-input"> Remember Me?
                 </div>
                 <div class="col-6 text-end">
-                    <a href="forget_password.html" target="_blank" rel="noopener noreferrer" class="text-end link primary-color">forget password?</a>
+                    <a href="{% url "forgot-password" %}" target="_blank" rel="noopener noreferrer" class="text-end link primary-color">forget password?</a>
                 </div>
             </div>
 
@@ -49,7 +49,7 @@
         </form>
     </div>
 </div>
-{% endblock page-contents %}
+
 <div class="error-div">
     {% if form.errors %}
         <ul>
@@ -64,3 +64,4 @@
         </ul>
     {% endif %}
 </div>
+{% endblock page-contents %}

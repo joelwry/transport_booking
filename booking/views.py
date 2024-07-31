@@ -149,7 +149,7 @@ def book(request):
             return redirect('payment', booking_id=booking.id)
     else:
         form = BookingForm()
-    return render(request, 'booking/booking.html', {'form': form})
+    return render(request, 'booking/book.html', {'form': form})
 
 @login_required
 def payment(request, booking_id):

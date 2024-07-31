@@ -1,147 +1,133 @@
-{% extends 'booking/master.html' %}
+{% extends "base_templates/user_dashboard_base.html" %}
+{% block page-title %}My Profile{% endblock page-title %}
+{% block page-contents %}
 
-{% load static %}
+<div class="row">
+    <!-- page title -->
+    <h5 class="my-4 page-title">Edit Profile</h5>
+</div>
+<div class="col-md-12 m-auto">
 
-{% block title %}Profile{% endblock %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
 
-{% block content %}
+            <div class="row justify-content-center align-items-center mb-2">
+                <div class="col">
+                    <img src="./travellers logo/avatar.jpg" class="rounded-pill" width="80px"
+                        alt="avatar">
+                </div>
 
-<div class="col-12 px-4 ">
-    <div class="row">
-        <!-- page title -->
-        <h5 class="my-4 page-title">Edit Profile</h5>
-    </div>
-    <div class="row mt-3">
+            </div>
 
-        <!-- contents starts here -->
+            <!-- form for user details -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 bg-white">
+                        <div class="card-body">
+                            <!-- form starts here -->
+                            <form action="#" method="post" class="user-form">
+                                <div class="row row-gap-2">
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="fname">First Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="fname" id="fname"
+                                            class="form-control py-3 border-custom-color"
+                                            placeholder="Franklin">
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="lname">Last Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="lname" id="lname"
+                                            class="form-control py-3" placeholder="Okolo">
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="email">Email <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="email" id="email"
+                                            class="form-control py-3"
+                                            placeholder="franklinokolo123@gmail.com">
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="phone">Mobile Number <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="phone" id="phone"
+                                            class="form-control py-3" placeholder="09072900602">
+                                    </div>
 
-        <div class="col-md-12 m-auto">
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="gender">Gender <span
+                                                class="text-danger">*</span></label>
 
-            <div class="card border-1">
-                <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <!-- male radio option -->
+                                                            <div class="col">
+                                                                <input type="radio"
+                                                                    name="gender" id="gender"
+                                                                    value="male"
+                                                                    class="form-check-input">
+                                                                <label for="male">Male</label>
+                                                            </div>
 
-                    <div class="row justify-content-center align-items-center mb-2">
-                        <div class="col">
-                            <img src="{% static 'travellers logo/avatar.jpg' %}" class="rounded-pill" width="80px" alt="avatar">
-                        </div>
-
-                    </div>
-
-                    <!-- form for user details -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card border-0 bg-white">
-                                <div class="card-body">
-                                    <!-- form starts here -->
-                                    <form action="#" method="post" class="user-form">
-                                        {% csrf_token %}
-                                        <div class="row row-gap-2">
-                                            <div class="col-sm-4 mb-3">
-                                                <label for="fname">First Name <span class="text-danger">*</span></label>
-                                                <input type="text" name="first_name" id="fname"
-                                                    class="form-control py-3 border-primary" value="{{ request.user.first_name}}">
-                                            </div>
-                                            <div class="col-sm-4 mb-3">
-                                                <label for="lname">Last Name <span class="text-danger">*</span></label>
-                                                <input type="text" name="last_name" id="lname" class="form-control py-3"
-                                                    placeholder="" value="{{request.user.last_name }}">
-                                            </div>
-                                            <div class="col-sm-4 mb-3">
-                                                <label for="email">Email <span class="text-danger">*</span></label>
-                                                <input type="email" name="username" id="email" class="form-control py-3"
-                                                    placeholder="" readonly value="{{ request.user.username}}">
-                                            </div>
-                                            <div class="col-sm-4 mb-3">
-                                                <label for="phone">Mobile Number <span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" name="phone" id="phone" class="form-control py-3"
-                                                    value="{{ traveller.phone }}">
-                                            </div>
-
-                                            <div class="col-sm-4 mb-3">
-                                                <label for="gender">Gender <span class="text-danger">*</span></label>
-
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <div class="card">
-                                                            <div class="card-body">
-                                                                <div class="row">
-                                                                    <!-- male radio option -->
-                                                                    <div class="col">
-                                                                        {% if traveller.gender == "M" %}
-                                                                        <input type="radio" name="gender" id="gender"
-                                                                            value="M" class="form-check-input" checked>
-                                                                        <label for="male" >Male</label>
-                                                                        {% else %}
-                                                                        <input type="radio" name="gender" id="gender"
-                                                                            value="M" class="form-check-input">
-                                                                        <label for="male" >Male</label>
-                                                                        {% endif %}
-                                                                    </div>
-
-                                                                    <!-- female radio option -->
-                                                                    <div class="col">
-                                                                        {% if traveller.gender == "F" %}
-                                                                        <input type="radio" name="gender" id="gender"
-                                                                            value="F" class="form-check-input" checked>
-                                                                        <label for="fmale">Female</label>
-                                                                        {% else %}
-                                                                        <input type="radio" name="gender" id="gender"
-                                                                        value="F" class="form-check-input">
-                                                                        <label for="fmale">Female</label>
-                                                                        {% endif %}
-                                                                    </div>
-                                                                </div>
-
+                                                            <!-- female radio option -->
+                                                            <div class="col">
+                                                                <input type="radio"
+                                                                    name="gender" id="gender"
+                                                                    value="female"
+                                                                    class="form-check-input">
+                                                                <label
+                                                                    for="fmale">Female</label>
                                                             </div>
                                                         </div>
-                                                    </div>
 
+
+
+
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-sm-4 mb-3">
-                                                <label for="State">State</label>
-
-                                                <select class="form-select user-state-form py-3" id="" aria-label="" name="state">
-                                                    {% for state in states %}
-                                                        {% if state.name == traveller.state %}
-                                                            <option value="{{ state.name }}" selected>{{ state.name }}</option>
-                                                        {% else %}
-                                                            <option value="{{ state.name }}">{{ state.name }}</option>
-                                                        {% endif %}
-
-                                                    {% endfor %}
-                                                </select>
-
-                                            </div>
-
-                                            <div class="col-sm-12 mb-3">
-                                                <label for="address">Residential Address</label>
-                                                <textarea class="form-control resident-textarea" id="address" rows="3"
-                                                    placeholder="" aria-label="" name="address"></textarea>
-                                            </div>
-
-                                            <div class="col-sm-6 mb-1">
-                                                <input type="submit" value="Save Changes"
-                                                    class="btn btn-primary btn-sm p-3">
-
-                                            </div>
-
-
                                         </div>
-                                    </form>
+                                    </div>
+
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="State">State</label>
+
+                                        <select class="form-select user-state-form py-3" id=""
+                                            aria-label="">
+                                            <option selected></option>
+                                            {%  for state in states %}
+                            <option value="{{state.id}}">{{ state.name }}</option>
+                        {% endfor %}
+                                        </select>
+
+                                    </div>
+
+                                    <div class="col-sm-12 mb-3">
+                                        <label for="address">Residential Address</label>
+                                        <textarea class="form-control resident-textarea"
+                                            id="address" rows="3" placeholder=""
+                                            aria-label=""></textarea>
+                                    </div>
+
+                                    <div class="col-sm-6 mb-1">
+                                        <input type="submit" value="Save Changes" class="btn colorbtn text-white btn-sm p-3">
+
+                                    </div>
+
+
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- contents ends here -->
-
     </div>
 </div>
 
-{% endblock %}
+
+{% endblock page-contents %}

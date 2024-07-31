@@ -40,7 +40,7 @@
                             </a>
                             <ul class="collapse nav ms-4" aria-labelledby="" id="collapse-account">
                                 <li class="nav-item">
-                                    <a class="nav-link submenu " href="profile.html">profile</a>
+                                    <a class="nav-link submenu " href="{% url "profile" %}">profile</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link submenu" href="account_setting.html">Settings</a>
@@ -55,7 +55,7 @@
                             </a>
                             <ul class="collapse nav ms-4" aria-labelledby="" id="collapse-booking">
                                 <li class="nav-item">
-                                    <a class="nav-link submenu " href="book_now.html">Book now</a>
+                                    <a class="nav-link submenu " href="{% url "advanced_search_vehicles" %}">Book now</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link submenu" href="bookings.html">Bookings</a>
@@ -88,7 +88,11 @@
                     <div class="col p-0">
                         <nav class="navbar  navbar-expand-lg navbar-light bg-white shadow-sm ">
                             <div class="container-fluid">
-                                <a class="navbar-brand fw-bold" href="#">Welcome</a>
+                                <a class="navbar-brand fw-bold" href="#">Welcome 
+                                    {% if request.user.is_authenticated %}
+                                        {{ request.user.first_name }}
+                                    {% endif %}
+                                </a>
 
                                 <div class="d-flex align-items-center order-lg-2">
                                     <a class="nav-link position-relative me-5" href="#">
