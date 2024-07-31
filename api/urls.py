@@ -17,9 +17,9 @@ router.register(r'bookings', BookingViewSet)
 router.register(r'payments', PaymentViewSet)
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/transportation-companies/',transportation_company_list),
-    path('api/transportation-companies/<int:pk>/', transportation_company_detail),
-    path('api/states/', state_list),
-    path('api/states/<int:pk>/',state_detail),
+    path('', include(router.urls)),
+    path('transportation-companies/',transportation_company_list),
+    path('transportation-companies/<int:pk>/', transportation_company_detail),
+    path('states/', state_list),
+    path('states/<int:pk>/',state_detail),
 ]
