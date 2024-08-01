@@ -77,8 +77,8 @@
                                 
                                 <div class="offset-md-3 col-md-3 mb-2">
                                     <input type="radio" name="available" id="available"
-                                        value="true" class="form-check-input">
-                                    <label for="available" checked>Available</label>
+                                        value="true" class="form-check-input" checked>
+                                    <label for="available">Available</label>
                                     
                                 </div>
                                 <div class="col-md-3 mb-2">
@@ -86,6 +86,13 @@
                                     <input type="radio" name="available" id="not-avaialable"
                                     value="false" class="form-check-input">
                                     <label for="not-avaiable">Unavailable</label>
+                                </div>
+
+                                <div class="col-md-3 mb-2">
+                                    
+                                    <input type="radio" name="availability" id="all-vehicles"
+                                    value="all" class="form-check-input">
+                                    <label for="not-avaiable">All</label>
                                 </div>
                             </div>
 
@@ -126,14 +133,14 @@
                                     </div>
                                     <div class="col-8 offset-2"> 
                                         <p class="traveller-price">{{ vehicle.capacity }} people capacity</p>
-                                        <p class="traveller-price">NGN{{ vehicle.vehicleroute.price }}</p>
+                                        <p class="traveller-price">NGN{{ vehicle.price }}</p>
                                         <p class="traveller-states">
                                             
                                                 <span style="font-size: smaller;">
-                                                    {{ vehicle.vehicleroute.state1.name }}
+                                                    {{ vehicle.terminal1.state.name }}
                                                 </span> <span><==></span> 
                                                 <span style="font-size: smaller;">
-                                                    {{ vehicle.vehicleroute.state2.name }}
+                                                    {{ vehicle.terminal2.state.name }}
                                                 </span>
                                             
                                         </p>

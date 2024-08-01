@@ -17,7 +17,7 @@ LOCKOUT_TIME = 5  # in minutes
 
 # this should be for landing page
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'booking/index.html')
 
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
@@ -194,17 +194,14 @@ def search_form(request):
     return render(request, 'booking/search_form.html', {'states': states})
 
 # this is for advanced search functionality
-#@login_required
+@login_required
 def advanced_search_vehicles(request):
     form = AdvancedSearchForm(request.GET or None)
     vehicles = Vehicle.objects.all()
     states = State.objects.all()
     transport_companies = TransportationCompany.objects.all()
-    
-    print(vehicles)
 
     if form.is_valid():
-        print('form sent in ....'.upper())
         start_state = form.cleaned_data.get('start_state')
         destination_state = form.cleaned_data.get('destination_state')
         min_price = form.cleaned_data.get('min_price')
@@ -217,31 +214,34 @@ def advanced_search_vehicles(request):
         if start_state and destination_state:
             start_state = State.objects.get(id=int(start_state))
             destination_state = State.objects.get(id=int(destination_state))
-            vehicle_routes = VehicleRoute.objects.filter(
-                (Q(state1=start_state) & Q(state2=destination_state)) | 
-                (Q(state1=destination_state) & Q(state2=start_state))
+            vehicles = vehicles.filter(
+                (Q(terminal1__state=start_state) & Q(terminal2__state=destination_state)) | 
+                (Q(terminal1__state=destination_state) & Q(terminal2__state=start_state))
             )
         elif start_state:
             start_state = State.objects.get(id=int(start_state))
-            vehicle_routes = VehicleRoute.objects.filter(
-                Q(state1=start_state) | Q(state2=start_state)
+            vehicles = vehicles.filter(
+                Q(terminal1__state=start_state) | Q(terminal2__state=start_state)
             )
         elif destination_state:
             destination_state = State.objects.get(id=int(destination_state))
-            vehicle_routes = VehicleRoute.objects.filter(
-                Q(state1=destination_state) | Q(state2=destination_state)
+            vehicles = vehicles.filter(
+                Q(terminal1__state=destination_state) | Q(terminal2__state=destination_state)
             )
-        else:
-            vehicle_routes = VehicleRoute.objects.all()
-
-        vehicles = vehicles.filter(id__in=[route.vehicle.id for route in vehicle_routes])
 
         if min_price is not None:
-            vehicles = vehicles.filter(vehicleroute__price__gte=min_price)
+            vehicles = vehicles.filter(price__gte=min_price)
         if max_price is not None:
-            vehicles = vehicles.filter(vehicleroute__price__lte=max_price)
-        if available:
-            vehicles = vehicles.filter(available=True)
+            vehicles = vehicles.filter(price__lte=max_price)
+        try:
+            if available and request.GET.get('availability') == "all":
+                pass
+            elif available :
+                vehicles = vehicles.filter(available=True)
+            else :
+                vehicles = vehicles.filter(available=False)
+        except :
+            pass
         if company:
             transport = TransportationCompany.objects.get(id=int(company))
             if transport:

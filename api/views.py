@@ -8,8 +8,12 @@ from .serializers import (
     TravellerSerializer, MessageSerializer, BookingSerializer, PaymentSerializer
 )
 
+# TransportationCompany CRUD FOR ADMIN
 @api_view(['GET', 'POST'])
+@permission_classes([IsAdminUser])
 def transportation_company_list(request):
+    print('REQUEST COMIN IN')
+    print(request.user)
     if request.method == 'GET':
         companies = TransportationCompany.objects.all()
         serializer = TransportationCompanySerializer(companies, many=True)
@@ -22,15 +26,16 @@ def transportation_company_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAdminUser])
 def transportation_company_detail(request, pk):
     try:
         company = TransportationCompany.objects.get(pk=pk)
     except TransportationCompany.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND, data={"data":None,"message":'Not found'})
 
     if request.method == 'GET':
         serializer = TransportationCompanySerializer(company)
-        return Response(serializer.data)
+        return Response(data = {"data":serializer.data})
     elif request.method == 'PUT':
         serializer = TransportationCompanySerializer(company, data=request.data)
         if serializer.is_valid():

@@ -58,8 +58,6 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 class AdvancedSearchForm(forms.Form):
-    # start_state = forms.ModelChoiceField(queryset=State.objects.all(), required=False, label="Start State")
-    # destination_state = forms.ModelChoiceField(queryset=State.objects.all(), required=False, label="Destination State")
     start_state = forms.CharField(required=False,label='Start state')
     destination_state = forms.CharField(required=False,label='Destination state')
     min_price = forms.DecimalField(required=False, label="Min Price", decimal_places=3, max_digits=10)
