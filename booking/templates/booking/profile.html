@@ -26,6 +26,7 @@
                         <div class="card-body">
                             <!-- form starts here -->
                             <form action="#" method="post" class="user-form">
+                                {% csrf_token %}
                                 <div class="row row-gap-2">
                                     <div class="col-sm-4 mb-3">
                                         <label for="fname">First Name <span

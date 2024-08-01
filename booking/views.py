@@ -42,6 +42,8 @@ def dashboard_view(request):
     print(ticket_type_count)
     return render(request, 'booking/user_dashboard.html', {'tickets': tickets, "ticket_analysis":ticket_type_count})
 
+
+
 def signup(request):
     if request.method == 'POST':
         print(request.POST)

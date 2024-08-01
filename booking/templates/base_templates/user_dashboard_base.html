@@ -13,6 +13,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static "styles/styles.css" %}">
 </head>
+<style>
+    .form-container {
+        display: none;
+        /* Hide all forms by default */
+    }
+
+    .form-container.active {
+        display: block;
+        /* Show the active form */
+    }
+
+</style>
 
 <body style="padding: 0px;">
     <div class="container-fluid fixed">

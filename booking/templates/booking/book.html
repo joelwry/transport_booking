@@ -1,5 +1,281 @@
 {% extends "base_templates/user_dashboard_base.html" %}
 {% block page-title %}book a ticket{% endblock page-title %}
-{% block page-contennts %}
+{% block page-contents %}
 
-{% endblock page-contennts %}
+<div class="col-md-12 m-auto">
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+
+            <div class="row justify-content-center align-items-center mb-2">
+                <div class="col">
+                    <img src="./travellers logo/cbmlogo.webp" class="rounded-pill" width="80px"
+                        alt="avatar">
+                </div>
+
+            </div>
+
+            <!-- form for user details -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 bg-white">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4 mb-4 align-items-center">
+        
+
+                                    <input type="radio" name="trip-type" checked onclick="showForm('form1')"  id="" class="form-check-input p-2 "><label for="one-way " class="me-4 px-2"> One Way</label>
+                                    <input type="radio" name="trip-type" onclick="showForm('form2')" id="" class="form-check-input p-2"> <label for="Round Trip" class="px-2">Round Trip</label>
+                                </div>
+                            </div>
+
+                            <!-- One way Trip -->
+                            <div id="form1" class="form-container active ">
+                                <form action="#" method="post" class="user-form">
+                                    <div class="row row-gap-2">
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="State">Traveling from</label>
+
+                                            <select class="form-select user-state-form py-3"
+                                                id="" aria-label="">
+                                                <option value="ondo">Ondo</option>
+                                                <option value="lagos">Lagos</option>
+                                                <option value="delta">Delta</option>
+                                            </select>
+
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="State">Traveling to</label>
+
+                                            <select class="form-select user-state-form py-3"
+                                                id="" aria-label="">
+                                                <option value="ondo">Ondo</option>
+                                                <option value="lagos">Lagos</option>
+                                                <option value="delta">Delta</option>
+                                            </select>
+
+
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Traveling date <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="date" id="date" name="lname"
+                                                id="travel-date" class="form-control py-3">
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Adults<span
+                                                    class="text-danger">*</span></label>
+                                            <select name="adults" id="adults"
+                                                class="form-select py-3">
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Children (2-10) </label>
+                                            <select name="children" id="children"
+                                                class="form-select py-3">
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <p class="fw-bold py-2">Next of Kin Details</p>
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Full Name </label>
+                                           <input type="text" name="nok-name" id="nok-name" class="py-3 form-control">
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Phone Number </label>
+                                           <input type="text" name="nok-phone" id="nok-phone" class="py-3 form-control">
+                                        </div>
+                                        
+                                        
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Address </label>
+                                           <input type="text" name="nok-address" id="nok-address" class="py-3 form-control">
+                                        </div>
+
+                                        
+
+
+                                    </div>
+                                    <div class="col-sm-6 mb-1">
+                                        <input type="submit" value="Proceed"
+                                            class="btn colorbtn text-white btn-sm p-3">
+
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Round trip form -->
+                            <div id="form2" class="form-container">
+                                <form action="#" method="post" class="user-form">
+                                    <div class="row row-gap-2">
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="State">Traveling from</label>
+
+                                            <select class="form-select user-state-form py-3"
+                                                id="" aria-label="">
+                                                <option value="ondo">Ondo</option>
+                                                <option value="lagos">Lagos</option>
+                                                <option value="delta">Delta</option>
+                                            </select>
+
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="State">Traveling to</label>
+
+                                            <select class="form-select user-state-form py-3"
+                                                id="" aria-label="">
+                                                <option value="ondo">Ondo</option>
+                                                <option value="lagos">Lagos</option>
+                                                <option value="delta">Delta</option>
+                                            </select>
+
+
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Traveling date <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="date" id="date" name="lname"
+                                                id="travel-date" class="form-control py-3">
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Returning date <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="date" id="date" name="lname"
+                                                id="travel-date" class="form-control py-3">
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Adults<span
+                                                    class="text-danger">*</span></label>
+                                            <select name="adults" id="adults"
+                                                class="form-select py-3">
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="travel-date">Children (2-10) </label>
+                                            <select name="children" id="children"
+                                                class="form-select py-3">
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                            </select>
+                                        </div>
+
+                                        
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <p class="fw-bold py-2">Next of Kin Details</p>
+                                            </div>
+
+                                            <div class="col-sm-4 mb-3">
+                                                <label for="travel-date">Full Name </label>
+                                               <input type="text" name="nok-name" id="nok-name" class="py-3 form-control">
+                                            </div>
+
+                                            <div class="col-sm-4 mb-3">
+                                                <label for="travel-date">Phone Number </label>
+                                               <input type="text" name="nok-phone" id="nok-phone" class="py-3 form-control">
+                                            </div>
+                                            
+                                            
+                                            <div class="col-sm-4 mb-3">
+                                                <label for="travel-date">Address </label>
+                                               <input type="text" name="nok-address" id="nok-address" class="py-3 form-control">
+                                            </div>
+
+                                            
+
+
+                                        </div>
+                                        <div class="col-sm-6 mb-1">
+                                            <input type="submit" value="Proceed"
+                                                class="btn colorbtn text-white btn-sm p-3">
+
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Get the current date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+        // Set the min attribute of the date input to today
+        document.getElementById('date').setAttribute('min', today);
+    });
+</script>
+
+
+
+<script>
+    function showForm(formId) {
+        // Hide all forms
+        var forms = document.getElementsByClassName('form-container');
+        for (var i = 0; i < forms.length; i++) {
+            forms[i].classList.remove('active');
+        }
+        // Show the selected form
+        document.getElementById(formId).classList.add('active');
+    }
+</script>
+
+{% endblock page-contents %}
