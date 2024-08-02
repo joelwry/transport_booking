@@ -5,28 +5,27 @@
 <!-- start here -->
 <div class="card border-0 shadow-sm">
     <div class="card-body">
-        <form action="#" method="post">
-
+        <form action="{% url "search_vehicles" %}" method="post">
+            {% csrf_token %}
             <div class="row align-items-end justify-contents-center">
                 <div class="col-md-3 mb-2">
                     <label for="current-state" class="mb-1">Travelling from <span class="text-danger">*</span></label>
-                    <select class="form-select" id="current-state" aria-label="">
-                        <option selected></option>
-                        {%  for state in states %}
-                            <option value="{{state.id}}">{{ state.name }}</option>
+                    <select class="form-select" id="current-state" aria-label="" name='start_state' required>
+                        <option ></option>
+                        {%  for terminal in terminals %}
+                            <option value="{{terminal.id}}">{{ terminal.state }} == {{terminal.area}}</option>
                         {% endfor %}
 
                     </select>
 
                 </div>
                 <div class="col-md-3 mb-2">
-                    <label for="current-state" class="mb-1">Travelling to</label>
-                    <select class="form-select" id="current-state" aria-label="">
-                        <option selected></option>
-                        {%  for state in states %}
-                            <option value="{{state.id}}">{{ state.name }}</option>
+                    <label for="current-state" class="mb-1">Travelling to <span class="text-danger">*</span></label>
+                    <select class="form-select" id="current-state" aria-label="" name='destination_state' required>
+                        <option selected value='0'></option>
+                        {%  for terminal in terminals %}
+                            <option value="{{terminal.id}}">{{ terminal.state }} == {{terminal.area}}</option>
                         {% endfor %}
-
                     </select>
 
                 </div>
@@ -52,16 +51,20 @@
 
 <!-- travellers list container -->
 <div class="row traveller-list mt-2 row-gap-3 pt-3 justify-content-center align-items-top">
+{% load static %}
+{% for vehicle in vehicles %}
+
 <div class="col-lg-3 col-sm-4">
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <div class="row">
-                <div class="col-4">
-                    <img src="./travellers logo/GIGM.png" class="rounded-pill" width="50px" alt="">
+                <div class="col-4 mb-3">
+                    <img src="{{vehicle.company.image.url}}" class="rounded-pill" width="48px" alt="{{vehicle.company}}">
                 </div>
-                <div class="col-8">
-                    <h5 class="traveller-name">God is Good</h5>
-                    <p class="traveller-price">$24000</p>
+                <div class="col-12">
+                    <h5 class="traveller-name">{{vehicle.company}}</h5>
+                    <p class="traveller-price">{{vehicle.terminal1}}  <br> {{vehicle.terminal2}}</p>
+                    <p class="traveller-price">₦ {{vehicle.price}}</p>
                     <button class="btn btn-sm  book-btn">Book Now</button>
                 </div>
             </div>
@@ -69,57 +72,22 @@
     </div>
 </div>
 
-<!-- traveller 2 -->
-<div class="col-lg-3 col-sm-4">
+{% empty %}
+
+<div class="col-lg-12 col-sm-4">
     <div class="card border-0 shadow-sm">
         <div class="card-body">
-            <div class="row">
-                <div class="col-4">
-                    <img src="./travellers logo/cbmlogo.webp" class="rounded-pill" width="50px" alt="">
-                </div>
-                <div class="col-8">
-                    <h5 class="traveller-name">Chukwubikem</h5>
-                    <p class="traveller-price">$24000</p>
-                    <button class="btn btn-sm  book-btn">Book Now</button>
-                </div>
-            </div>
+            <p class='text-center'>No Vehicle Avalable for the Route entered</p>
         </div>
     </div>
 </div>
 
-<!-- traveller 3 -->
-<div class="col-lg-3 col-sm-4">
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-4">
-                    <img src="./travellers logo/pmt.webp" class="rounded-pill" width="50px" alt="">
-                </div>
-                <div class="col-8">
-                    <h5 class="traveller-name">Peace Mass</h5>
-                    <p class="traveller-price">$24000</p>
-                    <button class="btn btn-sm  book-btn">Book Now</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> <!-- traveller 4-->
-<div class="col-lg-3 col-sm-4">
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-4">
-                    <img src="./travellers logo/APS Logo.png" class="rounded-pill" width="50px" alt="">
-                </div>
-                <div class="col-8">
-                    <h5 class="traveller-name">Agofure</h5>
-                    <p class="traveller-price">$24000</p>
-                    <button class="btn btn-sm  book-btn">Book Now</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% endfor %}
+
+
+
+
+
 </div>
 
 
@@ -149,15 +117,15 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <form action="{% url "advanced_search_vehicles" %}" method="post">
+        <form action="{% url "advanced_search_vehicles" %}" method="POST">
             {% csrf_token %}
             <div class="row">
                 <div class="form-group mb-3">
                     <label for="trave-from">Traveling from</label>
                     <select class="form-select" id="current-state" aria-label="" name="start_state">
                         <option selected></option>
-                        {%  for state in states %}
-                            <option value="{{state.id}}">{{ state.name }}</option>
+                        {%  for terminal in terminals %}
+                            <option value="{{terminal.id}}">{{ terminal }}</option>
                         {% endfor %}
 
                     </select>
@@ -167,9 +135,9 @@
                     <label for="trave-from">Traveling to</label>
                     <select class="form-select" id="current-state" aria-label="" name="destination_state">
                         <option selected></option>
-                        {%  for state in states %}
-                            <option value="{{state.id}}">{{ state.name }}</option>
-                        {% endfor %}
+                        {%  for terminal in terminals %}
+                        <option value="{{terminal.id}}">{{ terminal }}</option>
+                    {% endfor %}
                     </select>
                 </div>
 

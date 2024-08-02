@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Traveller, Booking, Vehicle, State, TransportationCompany
+from .models import Traveller, Booking, Vehicle, State, TransportationCompany, Terminals
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
@@ -183,77 +183,87 @@ def booking_success(request, booking_id):
 # this section shows search result for a traveller trying to find a vehicle that meets his/her requirement
 #@login_required
 def search_vehicles(request):
-    start_state = request.GET.get('start_state')
-    destination_state = request.GET.get('destination_state')
-    #vehicles = get_vehicles_by_route(start_state, destination_state)
-    vehicles = []
-    return render(request, 'booking/search_results.html', {'vehicles': vehicles})
+    terminals = Terminals.objects.all()
+    if request.method == 'POST':
+        start_state = request.POST.get('start_state')
+        destination_state = request.POST.get('destination_state')
+        #vehicles = get_vehicles_by_route(start_state, destination_state)
+        vehicles =  Vehicle.objects.filter(terminal1 = start_state, terminal2 = destination_state, available=True)
+        return render(request, 'booking/book_now.html', {'vehicles': vehicles, 'terminals': terminals})
+        
+    return render(request, 'booking/book_now.html', {'terminals': terminals})
 
 # this view will allow travellers to be able to search for vehicles that he/she can book for travelling 
 #@login_required
 def search_form(request):
     states = State.objects.all()
-    return render(request, 'booking/search_form.html', {'states': states})
+    return render(request, 'booking/book_now.html', {'states': states})
 
 # this is for advanced search functionality
 #@login_required
+from django.shortcuts import render
+from django.db.models import Q
+from .models import Vehicle, Terminals, TransportationCompany, State
+from .forms import AdvancedSearchForm
+
 def advanced_search_vehicles(request):
-    form = AdvancedSearchForm(request.GET or None)
-    vehicles = Vehicle.objects.all()
-    states = State.objects.all()
-    transport_companies = TransportationCompany.objects.all()
+    if request.method == 'POST':
+        form = AdvancedSearchForm(request.POST)
+        vehicles = Vehicle.objects.all()
+        terminals = Terminals.objects.all()
+        transport_companies = TransportationCompany.objects.all()
+
+        if form.is_valid():
+            start_state = form.cleaned_data.get('start_state')
+            destination_state = form.cleaned_data.get('destination_state')
+            min_price = form.cleaned_data.get('min_price')
+            max_price = form.cleaned_data.get('max_price')
+            available = form.cleaned_data.get('available')
+            company = form.cleaned_data.get('company')
+
+            if start_state and destination_state:
+                vehicles = vehicles.filter(
+                    (Q(terminal1=start_state) & Q(terminal2__state=destination_state)) |
+                    (Q(terminal1=destination_state) & Q(terminal2=start_state))
+                )
+            elif start_state:
+                vehicles = vehicles.filter(
+                    Q(terminal1=start_state) | Q(terminal2=start_state)
+                )
+            elif destination_state:
+                vehicles = vehicles.filter(
+                    Q(terminal1__state=destination_state) | Q(terminal2__state=destination_state)
+                )
+
+            if min_price is not None:
+                vehicles = vehicles.filter(price__gte=min_price)
+            if max_price is not None:
+                vehicles = vehicles.filter(price__lte=max_price)
+            if company:
+                vehicles = vehicles.filter(company = company)
+
+            return render(request, 'booking/book_now.html', {'vehicles': vehicles, 'terminals':terminals,'transport_companies': transport_companies,})
+
+        return render(request, 'booking/book_now.html', {
+            'vehicles': vehicles,
+            'terminals': terminals,
+            'transport_companies': transport_companies,
+            'form': form,
+        })
+
+    else:
+        form = AdvancedSearchForm()
+        vehicles = Vehicle.objects.all()
+        terminals = Terminals.objects.all()
+        transport_companies = TransportationCompany.objects.all()
+
+        return render(request, 'booking/book_now.html', {
+            'vehicles': vehicles,
+            'terminals': terminals,
+            'transport_companies': transport_companies,
+            'form': form,
+        })
     
-    print(vehicles)
-
-    if form.is_valid():
-        print('form sent in ....'.upper())
-        start_state = form.cleaned_data.get('start_state')
-        destination_state = form.cleaned_data.get('destination_state')
-        min_price = form.cleaned_data.get('min_price')
-        max_price = form.cleaned_data.get('max_price')
-        available = form.cleaned_data.get('available')
-        company = form.cleaned_data.get('company')
-
-        print(f'START : {start_state},\nDest : {destination_state},\n Min price : {min_price}\nMax Price :{max_price}\nAvailable: {available},\nCompany : {company}')
-
-        if start_state and destination_state:
-            start_state = State.objects.get(id=int(start_state))
-            destination_state = State.objects.get(id=int(destination_state))
-            vehicle_routes = VehicleRoute.objects.filter(
-                (Q(state1=start_state) & Q(state2=destination_state)) | 
-                (Q(state1=destination_state) & Q(state2=start_state))
-            )
-        elif start_state:
-            start_state = State.objects.get(id=int(start_state))
-            vehicle_routes = VehicleRoute.objects.filter(
-                Q(state1=start_state) | Q(state2=start_state)
-            )
-        elif destination_state:
-            destination_state = State.objects.get(id=int(destination_state))
-            vehicle_routes = VehicleRoute.objects.filter(
-                Q(state1=destination_state) | Q(state2=destination_state)
-            )
-        else:
-            vehicle_routes = VehicleRoute.objects.all()
-
-        vehicles = vehicles.filter(id__in=[route.vehicle.id for route in vehicle_routes])
-
-        if min_price is not None:
-            vehicles = vehicles.filter(vehicleroute__price__gte=min_price)
-        if max_price is not None:
-            vehicles = vehicles.filter(vehicleroute__price__lte=max_price)
-        if available:
-            vehicles = vehicles.filter(available=True)
-        if company:
-            transport = TransportationCompany.objects.get(id=int(company))
-            if transport:
-                vehicles = vehicles.filter(company=transport)
-
-    return render(request, 'booking/book_now.html', { 
-        'vehicles': vehicles, 
-        'states': states, 
-        'transport_companies': transport_companies 
-    })
 
 @login_required(login_url='/login/')
 def updateProfile(request):
