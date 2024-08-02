@@ -64,4 +64,3 @@ class AdvancedSearchForm(forms.Form):
     max_price = forms.DecimalField(required=False, label="Max Price", decimal_places=3, max_digits=10)
     available = forms.BooleanField(required=False, label="Only Show Available")
     company = forms.CharField(required=False,label='Company')
-    #company = forms.ModelChoiceField(queryset=TransportationCompany.objects.all(), required=False, label="Company")

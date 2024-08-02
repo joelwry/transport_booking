@@ -11,14 +11,17 @@ from datetime import timedelta
 from django.http import HttpRequest, HttpResponseRedirect
 from django.db.models import Q
 
+
 # will be used to track user login attempt
 MAX_ATTEMPTS = 5
 LOCKOUT_TIME = 5  # in minutes
 
+# SHOW THE UPDATE LANDING PAGE FROM FRANK
 # this should be for landing page
 def index(request):
     return render(request, 'booking/index.html')
 
+# GOOD TO GO
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
 def dashboard_view(request):
@@ -42,6 +45,7 @@ def dashboard_view(request):
     print(ticket_type_count)
     return render(request, 'booking/user_dashboard.html', {'tickets': tickets, "ticket_analysis":ticket_type_count})
 
+# GOOD TO GO
 def signup(request):
     if request.method == 'POST':
         print(request.POST)
@@ -78,7 +82,7 @@ def signupTraveller(request):
         traveller_form = TravellerForm()
     return render(request, 'signup.html', {'user_form': user_form, 'traveller_form': traveller_form})
 
-# ow to check /accounts/login/?next=/dashboard/ if request has next param
+# GOOD TO GO
 def login_view(request: HttpRequest):
     # direct user automatically to dashboard if user is already logged in
     if request.user.is_authenticated:
@@ -138,11 +142,12 @@ def login_view(request: HttpRequest):
     return render(request, 'login.html', {'form': form})
 
 
-# to logout a user, user must have already been logged in b4 he/she can logout
+# GOOD TO GO
 @login_required
 def logout_view(request):
     logout(request)
     return redirect('index')
+
 
 @login_required
 def book(request):
@@ -193,6 +198,7 @@ def search_form(request):
     states = State.objects.all()
     return render(request, 'booking/search_form.html', {'states': states})
 
+# GOOD TO GO
 # this is for advanced search functionality
 @login_required
 def advanced_search_vehicles(request):
@@ -257,7 +263,22 @@ def advanced_search_vehicles(request):
 def updateProfile(request):
     states = State.objects.all()
     traveller = Traveller.objects.filter(user = request.user).first()
-    print(traveller.gender, traveller.state, traveller.phone)
+    if request.method == 'POST':
+        traveller_form = TravellerForm(request.POST)
+        if traveller_form.is_valid() and traveller:
+            form = traveller_form.clean()
+            traveller.gender = form.get('gender')
+            traveller.state = form.get('state')
+            traveller.phone = form.get('phone')
+            if request.POST['address'] : 
+                traveller.address = request.POST['address']
+            if request.POST['first_name']:
+                traveller.user.first_name = request.POST['first_name']
+                traveller.user.save()
+            if request.POST['last_name']:
+                traveller.user.last_name = request.POST['last_name']
+                traveller.user.save()
+            traveller.save()
     return render(request, "booking/profile.html", {'states' : states,'traveller':traveller})
 
 def forgotPassword(request):

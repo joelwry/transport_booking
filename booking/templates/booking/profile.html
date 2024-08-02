@@ -1,10 +1,10 @@
-{% extends 'booking/master.html' %}
+{% extends 'base_templates/user_dashboard_base.html' %}
 
 {% load static %}
 
-{% block title %}Profile{% endblock %}
+{% block page-title %} Profile {% endblock %}
 
-{% block content %}
+{% block page-contents %}
 
 <div class="col-12 px-4 ">
     <div class="row">
@@ -119,7 +119,7 @@
                                             <div class="col-sm-12 mb-3">
                                                 <label for="address">Residential Address</label>
                                                 <textarea class="form-control resident-textarea" id="address" rows="3"
-                                                    placeholder="" aria-label="" name="address"></textarea>
+                                                    placeholder="" aria-label="" name="address"> {{ traveller.address }}</textarea>
                                             </div>
 
                                             <div class="col-sm-6 mb-1">
