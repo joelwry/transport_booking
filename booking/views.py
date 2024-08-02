@@ -223,24 +223,24 @@ def advanced_search_vehicles(request):
 
             if start_state and destination_state:
                 vehicles = vehicles.filter(
-                    (Q(terminal1=start_state) & Q(terminal2__state=destination_state)) |
-                    (Q(terminal1=destination_state) & Q(terminal2=start_state))
+                    (Q(terminal1=start_state) & Q(terminal2__state=destination_state) & Q(available = True)) |
+                    (Q(terminal1=destination_state) & Q(terminal2=start_state) & Q(available = True)) 
                 )
             elif start_state:
                 vehicles = vehicles.filter(
-                    Q(terminal1=start_state) | Q(terminal2=start_state)
+                    (Q(terminal1=start_state) | Q(terminal2=start_state)) & Q(available = True) 
                 )
             elif destination_state:
                 vehicles = vehicles.filter(
-                    Q(terminal1__state=destination_state) | Q(terminal2__state=destination_state)
+                   ( Q(terminal1__state=destination_state) | Q(terminal2__state=destination_state)) &  Q(available = True)
                 )
 
             if min_price is not None:
-                vehicles = vehicles.filter(price__gte=min_price)
+                vehicles = vehicles.filter(price__gte=min_price, available = True)
             if max_price is not None:
-                vehicles = vehicles.filter(price__lte=max_price)
+                vehicles = vehicles.filter(price__lte=max_price, available = True)
             if company:
-                vehicles = vehicles.filter(company = company)
+                vehicles = vehicles.filter(company = company, available=True)
 
             return render(request, 'booking/book_now.html', {'vehicles': vehicles, 'terminals':terminals,'transport_companies': transport_companies,})
 
