@@ -19,7 +19,7 @@ LOCKOUT_TIME = 5  # in minutes
 # SHOW THE UPDATE LANDING PAGE FROM FRANK
 # this should be for landing page
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'booking/index.html')
 
 # GOOD TO GO
 # user dashboard.. user must be authenticated to view this page
