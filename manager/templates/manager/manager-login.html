@@ -4,9 +4,9 @@
 <div class="container col-lg-5 mt-5 ">
     <img src="{% static "logo.png" %}" width="56px" alt="">
     <div class="col-12 border rounded-2 shadow py-3 px-5">
-        <h3 class=" fw-bold fs-2 text-gray">Welcome Back</h3>
-        <p class="mb-4 ">Enter your details to login</p>
-        <form id='loginUserForm'>
+        <h3 class=" fw-bold fs-2 text-gray">Welcome Back Admin</h3>
+        <p class="mb-4 text-center ">Enter your details to login</p>
+        <form id='loginForm'>
             {% csrf_token %}
             <div class="row mb-4">
                <div class="form-group">
@@ -38,37 +38,33 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p>
-                        Do not have an account?
-                        <a href="{% url "signup" %}" class="primary-color link fw-bold">SignUp Here</a>
-                    </p>
-                </div>
-            </div>
 
         </form>
     </div>
+
 </div>
 
 <div class="toast-container position-fixed top-0 end-0 p-3">
     <div id="loginToast" class="toast " role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex toaser">
             <div class="toast-body">
-             
+              Hello, world! This is a toast message.
             </div>
             <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
     </div>
 </div>
 
+ 
 
-<script>
+  
+
+  <script>
     $(document).ready(function() {
-        $('#loginUserForm').on('submit', function(event) {
+        $('#loginForm').on('submit', function(event) {
             event.preventDefault();
             $.ajax({
-                url: "{% url 'login' %}",
+                url: "{% url 'manager:managerlogin' %}",
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
@@ -84,7 +80,6 @@
 
                     } else {
                         toastEl.find('.toast-body').text(response.message);
-                        console.log(response.message)
                         toastEl.find('.toaser').addClass('bg-danger text-white');
                         toast.show();
                     }

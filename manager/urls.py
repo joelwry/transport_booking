@@ -5,6 +5,11 @@ from manager import views
 app_name = "manager"
 
 urlpatterns = [
+
+    # manager login page
+    path("",  views.managerLogin, name="managerlogin"),
+
+    # manager index page
     path("index/", views.manageIndexView, name='managerIndex'),
 
     # add new company

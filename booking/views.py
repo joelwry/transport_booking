@@ -8,7 +8,7 @@ from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignU
 from .utils.payment_utils import process_payment, send_booking_email
 from django.utils import timezone
 from datetime import timedelta
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
 
 # will be used to track user login attempt
@@ -81,25 +81,24 @@ def signupTraveller(request):
     return render(request, 'signup.html', {'user_form': user_form, 'traveller_form': traveller_form})
 
 # ow to check /accounts/login/?next=/dashboard/ if request has next param
-def login_view(request: HttpRequest):
-    # direct user automatically to dashboard if user is already logged in
-    if request.user.is_authenticated:
-        return redirect('user_dashboard')
+MAX_ATTEMPTS = 5
+LOCKOUT_TIME = 15  # in minutes
 
-    # Initialize session variables if not already set
+def login_view(request: HttpRequest):
+    if request.user.is_authenticated:
+        return JsonResponse({'success': True, 'redirect_url': 'user_dashboard'})
+
     if 'login_attempts' not in request.session:
         request.session['login_attempts'] = 0
     if 'locked_until' not in request.session:
         request.session['locked_until'] = None
 
-    # Check if the user is currently locked out
-    if request.session['locked_until']:
-        locked_until = timezone.datetime.fromisoformat(request.session['locked_until'])
-        if timezone.now() < locked_until:
-            form = LoginForm()
-            remaining_time = (locked_until - timezone.now()).seconds // 60
-            form.add_error(None,f"Too many failed attempts. Try again in {remaining_time} minutes.")
-            return render(request, 'login.html', {'form': form, 'error': f"Too many failed attempts. Try again in {remaining_time} minutes."})
+    locked_until = request.session.get('locked_until')
+    if locked_until:
+        locked_until_time = timezone.datetime.fromisoformat(locked_until)
+        if timezone.now() < locked_until_time:
+            remaining_time = (locked_until_time - timezone.now()).seconds // 60
+            return JsonResponse({'success': False, 'message': f"Too many failed attempts. Try again in {remaining_time} minutes."})
 
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -110,36 +109,29 @@ def login_view(request: HttpRequest):
 
             if user is not None:
                 login(request, user)
-                request.session['login_attempts'] = 0  # Reset attempts after successful login
-                request.session['locked_until'] = None  # Reset lockout time
-                try : 
-                    if request.GET['next'] :
-                        return HttpResponseRedirect(request.GET['next'])
-                        #return redirect(request.GET['next'])
-                        # work on redirect based off next
-                except : 
-                    print('Not a redirect')
-                    pass 
-                return redirect('user_dashboard')
+                request.session['login_attempts'] = 0
+                request.session['locked_until'] = None
+
+                next_url = request.GET.get('next')
+                if next_url:
+                    return JsonResponse({'success': True, 'redirect_url': next_url})
+                return JsonResponse({'success': True, 'redirect_url': '/user_dashboard/'})
             else:
                 request.session['login_attempts'] += 1
 
                 if request.session['login_attempts'] >= MAX_ATTEMPTS:
                     lockout_time = timezone.now() + timedelta(minutes=LOCKOUT_TIME)
                     request.session['locked_until'] = lockout_time.isoformat()
-                    remaining_time = LOCKOUT_TIME
-                    form.add_error(None,f"Too many failed attempts. Try again in {remaining_time} minutes.")
-                    return render(request, 'login.html', {'form': form,  })
+                    print( f"Too many failed attempts. Try again in {LOCKOUT_TIME} minutes.")
+                    return JsonResponse({'success': False, 'message': f"Too many failed attempts. Try again in {LOCKOUT_TIME} minutes."})
                 else:
                     attempts_left = MAX_ATTEMPTS - request.session['login_attempts']
-                    form.add_error(None, f"Invalid credentials. {attempts_left} attempts left.")
-
+                    print(f"Invalid credentials. {attempts_left} attempts left.")
+                    return JsonResponse({'success': False, 'message': f"Invalid credentials. {attempts_left} attempts left."})
     else:
         form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
-
-
 # to logout a user, user must have already been logged in b4 he/she can logout
 @login_required
 def logout_view(request):
@@ -181,7 +173,7 @@ def booking_success(request, booking_id):
     return render(request, 'booking/booking_success.html', {'booking': booking})
 
 # this section shows search result for a traveller trying to find a vehicle that meets his/her requirement
-#@login_required
+@login_required(login_url='/login/')
 def search_vehicles(request):
     terminals = Terminals.objects.all()
     if request.method == 'POST':
@@ -200,12 +192,12 @@ def search_form(request):
     return render(request, 'booking/book_now.html', {'states': states})
 
 # this is for advanced search functionality
-#@login_required
-from django.shortcuts import render
-from django.db.models import Q
-from .models import Vehicle, Terminals, TransportationCompany, State
-from .forms import AdvancedSearchForm
 
+# from django.shortcuts import render
+# from django.db.models import Q
+# from .models import Vehicle, Terminals, TransportationCompany, State
+# from .forms import AdvancedSearchForm
+@login_required
 def advanced_search_vehicles(request):
     if request.method == 'POST':
         form = AdvancedSearchForm(request.POST)
