@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     TransportationCompany, Vehicle, State,
-    Traveller, Message, Booking, Payment, Staff,Terminals
+    Traveller, Message, Booking, Payment, Staff,Terminals, VehicleSchedule
 )
 from django import forms
 from django.core.exceptions import ValidationError
@@ -19,6 +19,13 @@ class VehicleAdmin(admin.ModelAdmin):
     search_fields = ('plate_number', 'company__name')
     list_filter = ('available', 'company')
     ordering = ('company', 'plate_number')
+
+@admin.register(VehicleSchedule)
+class VehicleScheduleAdmin(admin.ModelAdmin):
+    list_display = ('vehicle','pickup_state','destination_state','travel_datetime')
+    search_fields = ('travel_datetime', 'vehicle','pickup_state')
+    list_filter = ('travel_datetime',)
+    ordering = ('number_of_bookings',)
 
 @admin.register(Terminals)
 class TerminalAdmin(admin.ModelAdmin):

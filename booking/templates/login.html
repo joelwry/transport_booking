@@ -1,7 +1,8 @@
 {% extends "base_templates/base.html" %}
 {% block page-contents %}
+{% load static %}
 <div class="container col-lg-5 mt-5 ">
-    <img src="./logo.png" width="56px" alt="">
+    <img src="{% static "logo.png" %}" width="56px" alt="">
     <div class="col-12 border rounded-2 shadow py-3 px-5">
         <h3 class=" fw-bold fs-2 text-gray">Welcome Back</h3>
         <p class="mb-4 ">Enter your details to login</p>
@@ -27,7 +28,7 @@
                     <input type="checkbox" name="remember" id="remember-me" class="form-check-input"> Remember Me?
                 </div>
                 <div class="col-6 text-end">
-                    <a href="forget_password.html" target="_blank" rel="noopener noreferrer" class="text-end link primary-color">forget password?</a>
+                    <a href="{% url "forgot-password" %}" target="_blank" rel="noopener noreferrer" class="text-end link primary-color">forget password?</a>
                 </div>
             </div>
 
@@ -49,7 +50,7 @@
         </form>
     </div>
 </div>
-{% endblock page-contents %}
+
 <div class="error-div">
     {% if form.errors %}
         <ul>
@@ -64,3 +65,4 @@
         </ul>
     {% endif %}
 </div>
+{% endblock page-contents %}

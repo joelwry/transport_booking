@@ -1,0 +1,112 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Manager | Add Vehicle{% endblock title %}
+{% block page-contents %}
+<div class="col-md-12 m-auto">
+
+    <div class="card border-0 shadow">
+        <div class="card-body">
+
+
+
+
+            <!-- form for user details -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0  bg-white">
+                        <div class="card-body">
+                            <!-- form starts here -->
+                            <form action="#" method="post" class="user-form"
+                                enctype="multipart/form-data">
+                               
+                                <div class="row row-gap-2">
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="fname">plate Number <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="plate-number" id="plate-number"
+                                            class="form-control py-3"
+                                            placeholder="AWX-423-213">
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="terminal-1">Terminal 1 <span
+                                                class="text-danger">*</span></label>
+                                       
+                                            <select name="terminal-1" id="terminal-1" class="form-select py-3">
+                                                <option value="lagos-ipaja">Lagos - ipaja</option>
+                                                <option value="lagos-ipaja">Eboyin - abakaliki</option>
+                                                <option value="lagos-ipaja">Delta - abaraka</option>
+                                                <option value="lagos-ipaja">Edo - ringrod</option>
+                                            </select>
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="termina-2">Terminal 2<span
+                                                class="text-danger">*</span></label>
+                                       
+                                                <select name="terminal-2" id="terminal-2" class="form-select py-3">
+                                                    <option value="lagos-ipaja">Lagos - ipaja</option>
+                                                    <option value="lagos-ipaja">Eboyin - abakaliki</option>
+                                                    <option value="lagos-ipaja">Delta - abaraka</option>
+                                                    <option value="lagos-ipaja">Edo - ringrod</option>
+                                                </select>
+                                                
+                                    </div> 
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="termina-2">Company <span
+                                                class="text-danger">*</span></label>
+                                       
+                                                <select name="comapny" id="company" class="form-select py-3">
+                                                    <option value="lagos-ipaja">Agofure</option>
+                                                    <option value="lagos-ipaja">Chukwubikem</option>
+                                                    <option value="lagos-ipaja">Peace Mass</option>
+                                                    <option value="lagos-ipaja">Liberal Motors</option>
+                                                </select>
+                                                
+                                    </div>
+
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="fname">Bus Capacity <span
+                                                class="text-danger">*</span></label>
+                                        <input type="number" name="bus-capacity" id="bus-capacity"
+                                            class="form-control py-3" min="7"
+                                            placeholder="">
+                                    </div>
+
+                                    <div class="col-12 mb-3">
+                                        <label for="fname">Price <span
+                                                class="text-danger">*</span></label>
+                                        <input type="number" name="price" id="price"
+                                            class="form-control py-3" 
+                                            placeholder="20000">
+                                    </div>
+                                    
+                                    <div class="col-sm-4 mb-3">
+                                       
+                                        <input type="checkbox" name="bus-avaliability" id="bus-avaliability"
+                                            class="form-check-input p-2" min="7"
+                                            placeholder="">
+
+                                            <label for="fname">Is Bus Avalable <span
+                                                class="text-danger">*</span></label>
+                                    </div>
+                                    
+                                   
+
+
+                                </div>
+                                
+                                <div class="col-sm-6 mb-1">
+                                    <input type="submit" value="Add Vehicle"
+                                        class="btn colorbtn text-white btn-sm p-3">
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock page-contents %}

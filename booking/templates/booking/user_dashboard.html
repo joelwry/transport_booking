@@ -13,7 +13,7 @@
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <h3>{{ ticket_analysis.pending }}</h3>
+                            <h3>{{ ticket_analysis.pending}}</h3>
                         </div>
                         <div class="col-6 text-end">
                             <button type="button"
@@ -33,9 +33,9 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <button type="button"
+                            <a  href="{% url "book" %}"
                                 class="btn btn-sm btn-dark text-white action-button me-1"><span
-                                    class="me-1"><i class="bi bi-truck-front"></i></span>Book Now</button>
+                                    class="me-1"><i class="bi bi-truck-front"></i></span>Book Now</a>
                             <button type="button"
                                 class="btn btn-sm btn-outline-dark action-button me-1"><span
                                     class="me-1"><i

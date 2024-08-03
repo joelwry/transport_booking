@@ -1,0 +1,90 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block page-contents %}
+
+
+<div class="col-md-12 m-auto">
+
+    <div class="card border-0 shadow">
+        <div class="card-body">
+
+
+
+
+            <!-- form for user details -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 bg-white">
+                        <div class="card-body">
+                            <!-- form starts here -->
+                            <form action="#" method="post" class="user-form"
+                                enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-sm-4 mb-4">
+                                        <label for="address">Company Logo</label>
+                                        <input type="file" name="company-logo" id="company-logo" class="form-control">
+                                    </div> 
+                                </div>
+                                <div class="row row-gap-2">
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="fname">Company Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="company-name" id="company-name"
+                                            class="form-control py-3"
+                                            placeholder="Agofure">
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="lname">Email <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="cemail" id="cemail"
+                                            class="form-control py-3" placeholder="Okolo">
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="phone">phone Number<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="phone" id="phone"
+                                            class="form-control py-3"
+                                            placeholder="franklinokolo123@gmail.com">
+                                    </div>
+
+
+
+
+
+
+                                    <div class="col-sm-12 mb-3">
+                                        <label for="address">Company Address</label>
+                                        <textarea class="form-control resident-textarea"
+                                            id="address" rows="3" placeholder=""
+                                            aria-label=""></textarea>
+                                    </div>
+                                    <div class="col-sm-12 mb-3">
+                                        <label for="address">About Company</label>
+                                        <textarea class="form-control resident-textarea"
+                                            id="address" rows="3" placeholder=""
+                                            aria-label=""></textarea>
+                                    </div>
+
+                                    
+
+
+
+
+                                </div>
+                                
+                                <div class="col-sm-6 mb-1">
+                                    <input type="submit" value="Save Company"
+                                        class="btn colorbtn text-white btn-sm p-3">
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock page-contents %}

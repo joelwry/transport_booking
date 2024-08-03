@@ -6,74 +6,73 @@
     <div class="col-12 border rounded-2 shadow py-3 px-5">
         <h3 class=" fw-bold fs-2 text-gray pt-1">Creat Account</h3>
         <p class="mb-4 ">Enter your details to open an account with us</p>
-        <form action="{% url "signup" %}" method="post" id="signup-form">
-            {% csrf_token %}
-            <div class="row mb-3">
-                <div class="col-6">
-                    <div class="row">
-                        <div class="form-group">
-                           <label for="fname" class="mb-1">First Name</label>
-                           <input type="text" class="form-control" id="fname" name="first_name" placeholder="" required>
-                        </div>
-                       </div>
-                </div>
-                <div class="col-6">
-                    <div class="row ">
-                        <div class="form-group">
-                           <label for="Lname" class="mb-1">Last Name</label>
-                           <input type="text" class="form-control" id="Lname" name="last_name" placeholder="" required>
-                        </div>
-                       </div>
-                </div>
-             </div>
 
-               <div class="row mb-3">
-                <div class="form-group">
-                   <label for="email" class="mb-1">Email</label>
-                   <input type="text" class="form-control" id="email" name="email" placeholder="example@gmail.com" required>
+    <form action="{% url 'signup' %}" method="post" id="signup-form">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-6">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="fname" class="mb-1">First Name</label>
+                        <input type="text" class="form-control" id="fname" name="first_name" placeholder="" required>
+                    </div>
                 </div>
-               </div>
+            </div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="Lname" class="mb-1">Last Name</label>
+                        <input type="text" class="form-control" id="Lname" name="last_name" placeholder="" required>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <div class="row mb-3">
-                <label for="password" class="mb-1">Password</label>
-                <div class="form-group password-container">
-                    <input type="password" class="form-control" id="password" name="password1" placeholder="********" required>
+        <div class="row mb-3">
+            <div class="form-group">
+                <label for="email" class="mb-1">Email</label>
+                <input type="text" class="form-control" id="email" name="email" placeholder="example@gmail.com" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="password" class="mb-1">Password</label>
+            <div class="form-group password-container">
+                <input type="password" class="form-control" id="password" name="password1" placeholder="********" required>
                 <i class="bi bi-eye-slash fw-bold fs-5 primary-color" id="togglePassword"></i>
-                </div>
             </div>
+        </div>
 
-            <div class="row mb-3">
-                <label for="password" class="mb-1">Password</label>
-                <div class="form-group password-container">
-                    <input type="password" class="form-control" id="cpassword" name="password2" placeholder="********" required>
+        <div class="row mb-3">
+            <label for="cpassword" class="mb-1">Confirm Password</label>
+            <div class="form-group password-container">
+                <input type="password" class="form-control" id="cpassword" name="password2" placeholder="********" required>
                 <i class="bi bi-eye-slash fw-bold fs-5 primary-color" id="togglecPassword"></i>
-                </div>
             </div>
+        </div>
 
-            <div class="row mb-3">
-                <div class="form-group">
-                   <input type="hidden" class="form-control" id="username" name="username" placeholder="example@gmail.com" required>
-                </div>
-               </div>
-
-            
-
-            <div class="row mb-3">
-                <div class="form-group">
-                    <input type="submit" id="action-btn" class="btn btn-sm col-12 colorbtn text-white" value="Creat Account">
-                </div>
+        <div class="row mb-3">
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="username" name="username" required>
             </div>
+        </div>
 
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p>
-                        Already have an account?
-                        <a href="{% url 'login' %}" class="primary-color link fw-bold">Login Here</a>
-                    </p>
-                </div>
+        <div class="row mb-3">
+            <div class="form-group">
+                <input type="submit" id="action-btn" class="btn btn-sm col-12 colorbtn text-white" value="Create Account">
             </div>
+        </div>
 
-        </form>
+        <div class="row">
+            <div class="col-12 text-center">
+                <p>
+                    Already have an account?
+                    <a href="{% url 'login' %}" class="primary-color link fw-bold">Login Here</a>
+                </p>
+            </div>
+        </div>
+    </form>
+
     </div>
 </div>
 <div class="container error-div col-md-8 offset-md-2">

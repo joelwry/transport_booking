@@ -19,7 +19,7 @@ LOCKOUT_TIME = 5  # in minutes
 # SHOW THE UPDATE LANDING PAGE FROM FRANK
 # this should be for landing page
 def index(request):
-    return render(request, 'booking/index.html')
+    return render(request, 'index.html')
 
 # GOOD TO GO
 # user dashboard.. user must be authenticated to view this page
@@ -39,10 +39,6 @@ def dashboard_view(request):
         else:
             ticket.status_color = "cancelled"
             ticket_type_count['cancelled'] += 1
-
-    print(tickets)
-    print(traveller)
-    print(ticket_type_count)
     return render(request, 'booking/user_dashboard.html', {'tickets': tickets, "ticket_analysis":ticket_type_count})
 
 # GOOD TO GO
@@ -150,7 +146,10 @@ def logout_view(request):
 
 
 @login_required
-def book(request):
+def book(request,vehicle_id):
+    vehicle = Vehicle.objects.filter(id=int(vehicle_id)).first()
+    if vehicle == None : #or vehicle.available == False:
+        return redirect("advanced_search_vehicles")
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
@@ -161,7 +160,7 @@ def book(request):
             return redirect('payment', booking_id=booking.id)
     else:
         form = BookingForm()
-    return render(request, 'booking/booking.html', {'form': form})
+    return render(request, 'booking/book.html', {'form': form, 'vehicle':vehicle})
 
 @login_required
 def payment(request, booking_id):
@@ -202,7 +201,7 @@ def search_form(request):
 # this is for advanced search functionality
 @login_required
 def advanced_search_vehicles(request):
-    form = AdvancedSearchForm(request.GET or None)
+    form = AdvancedSearchForm(request.POST or None)
     vehicles = Vehicle.objects.all()
     states = State.objects.all()
     transport_companies = TransportationCompany.objects.all()
@@ -214,8 +213,6 @@ def advanced_search_vehicles(request):
         max_price = form.cleaned_data.get('max_price')
         available = form.cleaned_data.get('available')
         company = form.cleaned_data.get('company')
-
-        print(f'START : {start_state},\nDest : {destination_state},\n Min price : {min_price}\nMax Price :{max_price}\nAvailable: {available},\nCompany : {company}')
 
         if start_state and destination_state:
             start_state = State.objects.get(id=int(start_state))
