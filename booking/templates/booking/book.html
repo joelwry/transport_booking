@@ -31,15 +31,17 @@
                             <!-- One way Trip -->
                             <div id="form1" class="form-container active ">
                                 <form action="#" method="post" class="user-form">
+                                    {%  csrf_token %}
                                     <div class="row row-gap-2">
 
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling from</label>
 
-                                            <select class="form-select user-state-form py-3" id="" aria-label="">
-                                                <option value="ondo">Ondo</option>
-                                                <option value="lagos">Lagos</option>
-                                                <option value="delta">Delta</option>
+                                            <select class="form-select user-state-form py-3"
+                                                id="" aria-label="" name="pickup_state">
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
+                                                
                                             </select>
 
                                         </div>
@@ -47,10 +49,11 @@
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling to</label>
 
-                                            <select class="form-select user-state-form py-3" id="" aria-label="">
-                                                <option value="ondo">Ondo</option>
-                                                <option value="lagos">Lagos</option>
-                                                <option value="delta">Delta</option>
+                                            <select class="form-select user-state-form py-3"
+                                                id="" aria-label="" name="destination_state">
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
+                                                
                                             </select>
 
 
@@ -59,21 +62,18 @@
                                         <div class="col-sm-4 mb-3">
                                             <label for="travel-date">Traveling date <span
                                                     class="text-danger">*</span></label>
-                                            <input type="date" id="date" name="lname" id="travel-date"
-                                                class="form-control py-3">
+                                            <input type="date" id="date" name="travel_date"
+                                                id="travel-date" class="form-control py-3">
                                         </div>
 
                                         <div class="col-sm-4 mb-3">
-                                            <label for="travel-date">Adults<span class="text-danger">*</span></label>
-                                            <select name="adults" id="adults" class="form-select py-3">
-                                                <option value="0">0</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                                <option value="6">6</option>
-                                                <option value="7">7</option>
+                                            <label for="travel-date">Adults<span
+                                                    class="text-danger">*</span></label>
+                                            <select name="adults" id="adults"
+                                                class="form-select py-3">
+                                                {% for index in "012345678"|make_list %}
+                                                    <option value="{{ index }}">{{ index }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
 
@@ -127,17 +127,19 @@
                             </div>
 
                             <!-- Round trip form -->
-                            <div id="form2" class="form-container">
+                            <div id="form2" class="form-container 2wayform">
                                 <form action="#" method="post" class="user-form">
+                                    {%  csrf_token %}
                                     <div class="row row-gap-2">
 
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling from</label>
 
-                                            <select class="form-select user-state-form py-3" id="" aria-label="">
-                                                <option value="ondo">Ondo</option>
-                                                <option value="lagos">Lagos</option>
-                                                <option value="delta">Delta</option>
+                                            <select class="form-select user-state-form py-3"
+                                                id="" aria-label="" name="pickup_state">
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
+                                                
                                             </select>
 
                                         </div>
@@ -145,10 +147,10 @@
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling to</label>
 
-                                            <select class="form-select user-state-form py-3" id="" aria-label="">
-                                                <option value="ondo">Ondo</option>
-                                                <option value="lagos">Lagos</option>
-                                                <option value="delta">Delta</option>
+                                            <select class="form-select user-state-form py-3"
+                                                id="" aria-label="" name="destination_state">
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
                                             </select>
 
 
@@ -270,5 +272,30 @@
         document.getElementById(formId).classList.add('active');
     }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const allPickupStateSelect = document.querySelectorAll('select[name="pickup_state"]');
+        const allDestinationStateSelect = document.querySelectorAll('select[name="destination_state"]');
+        
+        allPickupStateSelect.forEach((pickupStateSelect,index) =>{
+            pickupStateSelect.addEventListener('change', function () {
+                const selectedPickupState = this.value;
+        
+                // Clear current options
+                // destinationStateSelect.innerHTML = '';
+                const destinationStateSelect = allDestinationStateSelect[index];
+                // Add new options based on selected pickup state
+                if (selectedPickupState == '{{ vehicle.terminal1.state.id }}') {
+                    destinationStateSelect.innerHTML = `<option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>`;
+                } else if (selectedPickupState == '{{ vehicle.terminal2.state.id }}') {
+                    destinationStateSelect.innerHTML = `<option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>`;
+                }
+            });
+            // Initialize the states
+            pickupStateSelect.dispatchEvent(new Event('change'));
+        });
+    });
+</script>
+    
 
 {% endblock page-contents %}

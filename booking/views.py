@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Traveller, Booking, Vehicle, State, TransportationCompany, Terminals
+from .models import Traveller, Booking, Vehicle, State, TransportationCompany
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
@@ -11,14 +11,17 @@ from datetime import timedelta
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
 
+
 # will be used to track user login attempt
 MAX_ATTEMPTS = 5
 LOCKOUT_TIME = 5  # in minutes
 
+# SHOW THE UPDATE LANDING PAGE FROM FRANK
 # this should be for landing page
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'booking/index.html')
 
+# GOOD TO GO
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
 def dashboard_view(request):
@@ -36,14 +39,9 @@ def dashboard_view(request):
         else:
             ticket.status_color = "cancelled"
             ticket_type_count['cancelled'] += 1
-
-    print(tickets)
-    print(traveller)
-    print(ticket_type_count)
     return render(request, 'booking/user_dashboard.html', {'tickets': tickets, "ticket_analysis":ticket_type_count})
 
-
-
+# GOOD TO GO
 def signup(request):
     if request.method == 'POST':
         print(request.POST)
@@ -135,14 +133,19 @@ def login_view(request: HttpRequest):
 
 
 
-# to logout a user, user must have already been logged in b4 he/she can logout
+
+# GOOD TO GO
 @login_required
 def logout_view(request):
     logout(request)
     return redirect('index')
 
+
 @login_required
-def book(request):
+def book(request,vehicle_id):
+    vehicle = Vehicle.objects.filter(id=int(vehicle_id)).first()
+    if vehicle == None : #or vehicle.available == False:
+        return redirect("advanced_search_vehicles")
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
@@ -153,7 +156,7 @@ def book(request):
             return redirect('payment', booking_id=booking.id)
     else:
         form = BookingForm()
-    return render(request, 'booking/book.html', {'form': form})
+    return render(request, 'booking/book.html', {'form': form, 'vehicle':vehicle})
 
 @login_required
 def payment(request, booking_id):
@@ -178,22 +181,19 @@ def booking_success(request, booking_id):
 # this section shows search result for a traveller trying to find a vehicle that meets his/her requirement
 @login_required(login_url='/login/')
 def search_vehicles(request):
-    terminals = Terminals.objects.all()
-    if request.method == 'POST':
-        start_state = request.POST.get('start_state')
-        destination_state = request.POST.get('destination_state')
-        #vehicles = get_vehicles_by_route(start_state, destination_state)
-        vehicles =  Vehicle.objects.filter(terminal1 = start_state, terminal2 = destination_state, available=True)
-        return render(request, 'booking/book_now.html', {'vehicles': vehicles, 'terminals': terminals})
-        
-    return render(request, 'booking/book_now.html', {'terminals': terminals})
+    start_state = request.GET.get('start_state')
+    destination_state = request.GET.get('destination_state')
+    #vehicles = get_vehicles_by_route(start_state, destination_state)
+    vehicles = []
+    return render(request, 'booking/search_results.html', {'vehicles': vehicles})
 
 # this view will allow travellers to be able to search for vehicles that he/she can book for travelling 
 #@login_required
 def search_form(request):
     states = State.objects.all()
-    return render(request, 'booking/book_now.html', {'states': states})
+    return render(request, 'booking/search_form.html', {'states': states})
 
+# GOOD TO GO
 # this is for advanced search functionality
 
 # from django.shortcuts import render
@@ -202,69 +202,81 @@ def search_form(request):
 # from .forms import AdvancedSearchForm
 @login_required
 def advanced_search_vehicles(request):
-    if request.method == 'POST':
-        form = AdvancedSearchForm(request.POST)
-        vehicles = Vehicle.objects.all()
-        terminals = Terminals.objects.all()
-        transport_companies = TransportationCompany.objects.all()
+    form = AdvancedSearchForm(request.POST or None)
+    vehicles = Vehicle.objects.all()
+    states = State.objects.all()
+    transport_companies = TransportationCompany.objects.all()
 
-        if form.is_valid():
-            start_state = form.cleaned_data.get('start_state')
-            destination_state = form.cleaned_data.get('destination_state')
-            min_price = form.cleaned_data.get('min_price')
-            max_price = form.cleaned_data.get('max_price')
-            available = form.cleaned_data.get('available')
-            company = form.cleaned_data.get('company')
+    if form.is_valid():
+        start_state = form.cleaned_data.get('start_state')
+        destination_state = form.cleaned_data.get('destination_state')
+        min_price = form.cleaned_data.get('min_price')
+        max_price = form.cleaned_data.get('max_price')
+        available = form.cleaned_data.get('available')
+        company = form.cleaned_data.get('company')
 
-            if start_state and destination_state:
-                vehicles = vehicles.filter(
-                    (Q(terminal1=start_state) & Q(terminal2__state=destination_state) & Q(available = True)) |
-                    (Q(terminal1=destination_state) & Q(terminal2=start_state) & Q(available = True)) 
-                )
-            elif start_state:
-                vehicles = vehicles.filter(
-                    (Q(terminal1=start_state) | Q(terminal2=start_state)) & Q(available = True) 
-                )
-            elif destination_state:
-                vehicles = vehicles.filter(
-                   ( Q(terminal1__state=destination_state) | Q(terminal2__state=destination_state)) &  Q(available = True)
-                )
+        if start_state and destination_state:
+            start_state = State.objects.get(id=int(start_state))
+            destination_state = State.objects.get(id=int(destination_state))
+            vehicles = vehicles.filter(
+                (Q(terminal1__state=start_state) & Q(terminal2__state=destination_state)) | 
+                (Q(terminal1__state=destination_state) & Q(terminal2__state=start_state))
+            )
+        elif start_state:
+            start_state = State.objects.get(id=int(start_state))
+            vehicles = vehicles.filter(
+                Q(terminal1__state=start_state) | Q(terminal2__state=start_state)
+            )
+        elif destination_state:
+            destination_state = State.objects.get(id=int(destination_state))
+            vehicles = vehicles.filter(
+                Q(terminal1__state=destination_state) | Q(terminal2__state=destination_state)
+            )
 
-            if min_price is not None:
-                vehicles = vehicles.filter(price__gte=min_price, available = True)
-            if max_price is not None:
-                vehicles = vehicles.filter(price__lte=max_price, available = True)
-            if company:
-                vehicles = vehicles.filter(company = company, available=True)
+        if min_price is not None:
+            vehicles = vehicles.filter(price__gte=min_price)
+        if max_price is not None:
+            vehicles = vehicles.filter(price__lte=max_price)
+        try:
+            if available and request.GET.get('availability') == "all":
+                pass
+            elif available :
+                vehicles = vehicles.filter(available=True)
+            else :
+                vehicles = vehicles.filter(available=False)
+        except :
+            pass
+        if company:
+            transport = TransportationCompany.objects.get(id=int(company))
+            if transport:
+                vehicles = vehicles.filter(company=transport)
 
-            return render(request, 'booking/book_now.html', {'vehicles': vehicles, 'terminals':terminals,'transport_companies': transport_companies,})
-
-        return render(request, 'booking/book_now.html', {
-            'vehicles': vehicles,
-            'terminals': terminals,
-            'transport_companies': transport_companies,
-            'form': form,
-        })
-
-    else:
-        form = AdvancedSearchForm()
-        vehicles = Vehicle.objects.all()
-        terminals = Terminals.objects.all()
-        transport_companies = TransportationCompany.objects.all()
-
-        return render(request, 'booking/book_now.html', {
-            'vehicles': vehicles,
-            'terminals': terminals,
-            'transport_companies': transport_companies,
-            'form': form,
-        })
-    
+    return render(request, 'booking/book_now.html', { 
+        'vehicles': vehicles, 
+        'states': states, 
+        'transport_companies': transport_companies 
+    })
 
 @login_required(login_url='/login/')
 def updateProfile(request):
     states = State.objects.all()
     traveller = Traveller.objects.filter(user = request.user).first()
-    print(traveller.gender, traveller.state, traveller.phone)
+    if request.method == 'POST':
+        traveller_form = TravellerForm(request.POST)
+        if traveller_form.is_valid() and traveller:
+            form = traveller_form.clean()
+            traveller.gender = form.get('gender')
+            traveller.state = form.get('state')
+            traveller.phone = form.get('phone')
+            if request.POST['address'] : 
+                traveller.address = request.POST['address']
+            if request.POST['first_name']:
+                traveller.user.first_name = request.POST['first_name']
+                traveller.user.save()
+            if request.POST['last_name']:
+                traveller.user.last_name = request.POST['last_name']
+                traveller.user.save()
+            traveller.save()
     return render(request, "booking/profile.html", {'states' : states,'traveller':traveller})
 
 def forgotPassword(request):

@@ -6,6 +6,7 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from datetime import timedelta
 from django.utils import timezone
+from datetime import datetime 
 
 MESSAGE_TYPE = [
     ("Enquiry","ENQUIRE"),("Complain","COMPLAIN"),("Request","REQUEST")
@@ -69,6 +70,26 @@ class Traveller(models.Model):
     def __str__(self):
         return self.user.email if self.user.email else self.user.username 
 
+
+
+class VehicleSchedule(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    pickup_state = models.ForeignKey(State, on_delete=models.CASCADE, related_name='schedule_pickup_state')
+    destination_state = models.ForeignKey(State, on_delete=models.CASCADE, related_name='schedule_destination_state')
+    travel_datetime = models.DateTimeField()
+    number_of_bookings = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"Schedule for {self.vehicle} from {self.pickup_state} to {self.destination_state} on {self.travel_datetime}"
+
+    def is_past_due(self):
+        return datetime.now() > self.travel_datetime
+
+    def clean(self):
+        if self.travel_datetime <= timezone.now():
+            raise ValidationError('Travel date must be in the future.')
+
+
 class Message(models.Model):
     type = models.CharField(max_length=20, choices=MESSAGE_TYPE)
     sender = models.ForeignKey(Traveller,on_delete=models.CASCADE)
@@ -84,17 +105,23 @@ class Booking(models.Model):
         ('CONFIRMED', 'Confirmed'),
         ('CANCELLED', 'Cancelled'),
     ]
+    TRIP_TYPE = [
+        ("ONE WAY", "one way ticket"),
+        ("TWO WAY", "two way ticket")
+    ]
     customer = models.ForeignKey(Traveller, on_delete=models.CASCADE)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    trip_type = models.CharField(max_length=25,  choices=TRIP_TYPE, default=TRIP_TYPE[0][0])
     booking_code = models.CharField(max_length=25, unique=True, default=generateBookingId)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
     pickup_state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, related_name='pickup_state',blank=True)
     destination_state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, related_name='destination_state',)
     number_of_seats = models.PositiveIntegerField(default=1)
     number_of_children_below_10 = models.PositiveIntegerField(default=0)
-    number_of_children_above_10 = models.PositiveIntegerField(default=0)
+    number_of_adults = models.PositiveIntegerField(default=1)
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
     travel_date = models.DateTimeField(default = default_travel_date)
+    return_date = models.DateTimeField(null=True, blank=True)
     booking_date = models.DateTimeField(auto_now_add=True)
     confirmed = models.BooleanField(default=False)
     payment_id = models.CharField(max_length=100, null=True, blank=True)

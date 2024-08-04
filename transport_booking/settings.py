@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'booking',
     'rest_framework',
     'api',
-    "manager"
+    "manager",
 ]
 
 MIDDLEWARE = [
