@@ -17,6 +17,9 @@ urlpatterns = [
 
     # add new vehicle
     path("add-vehicle/", views.AddVehicle, name='newvehicle'),
+
+    # show analytics
+    path("analytics/", views.booking_stats, name="analytics")
 ]
 
 

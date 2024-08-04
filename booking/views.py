@@ -82,11 +82,11 @@ def signupTraveller(request):
 
 # ow to check /accounts/login/?next=/dashboard/ if request has next param
 MAX_ATTEMPTS = 5
-LOCKOUT_TIME = 15  # in minutes
+LOCKOUT_TIME = 5  # in minutes
 
 def login_view(request: HttpRequest):
     if request.user.is_authenticated:
-        return JsonResponse({'success': True, 'redirect_url': 'user_dashboard'})
+        return redirect('user_dashboard')
 
     if 'login_attempts' not in request.session:
         request.session['login_attempts'] = 0
@@ -115,7 +115,7 @@ def login_view(request: HttpRequest):
                 next_url = request.GET.get('next')
                 if next_url:
                     return JsonResponse({'success': True, 'redirect_url': next_url})
-                return JsonResponse({'success': True, 'redirect_url': '/user_dashboard/'})
+                return JsonResponse({'success': True, 'redirect_url': '/dashboard/'})
             else:
                 request.session['login_attempts'] += 1
 
@@ -132,6 +132,9 @@ def login_view(request: HttpRequest):
         form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
+
+
+
 # to logout a user, user must have already been logged in b4 he/she can logout
 @login_required
 def logout_view(request):

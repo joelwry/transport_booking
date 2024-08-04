@@ -34,7 +34,10 @@
 
             <div class="row mb-3">
                 <div class="form-group">
-                    <input type="submit" id="action-btn" class="btn col-12 btn-sm colorbtn text-white" value="Login">
+                    <button type="submit" id="action-btn" class="btn col-12 btn-sm colorbtn text-white" >
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        <span role="status" id='action-btn-status'>Login</span>
+                    </button>
                 </div>
             </div>
 
@@ -67,10 +70,15 @@
     $(document).ready(function() {
         $('#loginUserForm').on('submit', function(event) {
             event.preventDefault();
+           
             $.ajax({
                 url: "{% url 'login' %}",
                 type: 'POST',
                 data: $(this).serialize(),
+                beforeSend:function(){
+                    console.log('am sending ')
+
+                },
                 success: function(response) {
                     var toastEl = $('#loginToast');
                     var toast = new bootstrap.Toast(toastEl);
@@ -81,7 +89,6 @@
                         setTimeout(function() {
                             window.location.href = response.redirect_url;
                         }, 1500);
-
                     } else {
                         toastEl.find('.toast-body').text(response.message);
                         console.log(response.message)
