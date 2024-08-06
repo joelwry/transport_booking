@@ -45,9 +45,13 @@
 
                         </div>
 
-                        <div class="offset-md-3 col-md-6 mb-4 mt-2">
-                            <button type="submit" class=" col-12 btn btn-primary px-5"><span class="me-1"><i
-                                        class="bi bi-funnel"></i></span>Filter</button>
+                        <div class="col-md-3 mb-2">
+                            <button type="submit" class=" col-12 btn colorbtn text-white px-5"><span class="me-1"><i class="bi bi-search"></i></span>Search</button>
+                        </div>
+
+
+                        <div class="col-md-3 mb-2">
+                            <button type="button" class=" col-12 btn colorbtn text-white px-5" data-bs-toggle="offcanvas" data-bs-target="#advanceSearch"><span class="me-1"><i class="bi bi-funnel"></i></span>Filter</button>
                         </div>
 
                     </div>
@@ -59,14 +63,14 @@
         <div class="row traveller-list mt-2 row-gap-3 pt-3 justify-content-center align-items-top">
             {% for vehicle in vehicles %}
 
-            <div class="col-lg-3 col-sm-4">
+            <div class="col-lg-4 col-sm-4">
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12">
                                 <div class="row">
-                                    <div class="col-4">
-                                        <img src="{% static 'travellers logo/GIGM.png' %}" class="rounded-pill"
+                                    <div class="col-12">
+                                        <img src="{{vehicle.company.image.url}}" class="rounded-pill"
                                             width="25px" alt="">
                                     </div>
                                     <div class="col-8">
@@ -74,25 +78,26 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-8 offset-2">
+                            <div class="col-12">
                                 <p class="traveller-price">{{ vehicle.capacity }} people capacity</p>
                                 <p class="traveller-price">NGN{{ vehicle.price }}</p>
                                 <p class="traveller-states">
-
+                                    
                                     <span style="font-size: smaller;">
-                                        {{ vehicle.terminal1.state.name }}
-                                    </span> <span>
-                                        <==>
+                                        {{ vehicle.terminal1.state.name }}({{vehicle.terminal1.area}})
+                                    </span> 
+                                    <span>
+                                        <i class="bi bi-arrow-left-right"></i>
                                     </span>
                                     <span style="font-size: smaller;">
-                                        {{ vehicle.terminal2.state.name }}
+                                        {{ vehicle.terminal2.state.name }} ({{vehicle.terminal2.area}})
                                     </span>
 
                                 </p>
                             </div>
                             <div class="col-12">
                                 <a href="{% url 'book' vehicle.id %}">
-                                    <button class="btn btn-sm btn-success book-btn" style="width:100%">Book {{ vehicle.id }}</button>
+                                    <button class="btn btn-sm btn-success book-btn" style="width:100%">Book Now</button>
                                 </a>
                             </div>
                         </div>

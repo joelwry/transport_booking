@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from booking.models import Vehicle, TransportationCompany, Booking, Terminals, Traveller
 from django.contrib.auth import login, authenticate
 from django.contrib.admin.views.decorators import staff_member_required
+from django.views.generic import ListView
 from django.views.decorators.csrf import csrf_protect
 from django.http import JsonResponse,HttpRequest
 
@@ -100,10 +101,19 @@ def AddVehicle(request):
     return render(request, "manager/add_vehicle.html")
 
 
+# company list
+@staff_member_required
+def companyList(request):
+    companies = TransportationCompany.objects.all()
+    return render(request,'manager/company_list.html', {'companies':companies})
 
 
+@staff_member_required
+def companyDetail(request, company):
+    company = get_object_or_404( TransportationCompany ,id = company)
+    return render(request, 'manager/companydetail.html', {'company': company})
 
-def booking_stats(request):
+def company_analytics(request):
     # Get today's date
     today = timezone.now().date()
     
@@ -129,3 +139,50 @@ def booking_stats(request):
     }
     
     return JsonResponse(monthly_bookings, safe=False)
+
+
+
+# @staff_member_required
+class BookingListView(ListView):
+    model = Booking
+    template_name = "manager/bookings.html"
+    context_object_name = 'bookins'
+
+
+
+
+
+
+
+
+
+
+
+
+from django.utils.timezone import now
+from django.db.models.functions import ExtractMonth
+import calendar
+
+def company_analytics(request):
+    current_year = now().year
+    
+    # Aggregate bookings by company for the current year
+    bookings = Booking.objects.filter(
+        booking_date__year=current_year
+    ).values('vehicle__company__name', 'vehicle__company__id').annotate(count=Count('id')).order_by('-count')
+    
+    # Convert QuerySet to a list of dictionaries
+    bookings_list = list(bookings)
+    
+    # Determine the company with the highest bookings
+    top_company = bookings_list[0] if bookings_list else None
+    
+    # Prepare data for the polar chart
+    company_names = [booking['vehicle__company__name'] for booking in bookings_list]
+    booking_counts = [booking['count'] for booking in bookings_list]
+    
+    return render(request, 'manager/company-analytic.html', {
+        'company_names': company_names,
+        'booking_counts': booking_counts,
+        'top_company': top_company
+    })

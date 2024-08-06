@@ -39,8 +39,8 @@
 
                                             <select class="form-select user-state-form py-3"
                                                 id="" aria-label="" name="pickup_state">
-                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
-                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1 }}</option>
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2 }}</option>
                                                 
                                             </select>
 
@@ -51,8 +51,8 @@
 
                                             <select class="form-select user-state-form py-3"
                                                 id="" aria-label="" name="destination_state">
-                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
-                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2 }}</option>
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1 }}</option>
                                                 
                                             </select>
 
@@ -137,8 +137,9 @@
 
                                             <select class="form-select user-state-form py-3"
                                                 id="" aria-label="" name="pickup_state">
-                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
-                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1}}</option>
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2}}</option>
+                                                
                                                 
                                             </select>
 
@@ -147,10 +148,11 @@
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling to</label>
 
-                                            <select class="form-select user-state-form py-3"
-                                                id="" aria-label="" name="destination_state">
-                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
-                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
+                                            <select class="form-select user-state-form py-3" name='destination_state'>
+                                            <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1}}</option>
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2}}</option>
+                                                
+                                                
                                             </select>
 
 
@@ -286,9 +288,9 @@
                 const destinationStateSelect = allDestinationStateSelect[index];
                 // Add new options based on selected pickup state
                 if (selectedPickupState == '{{ vehicle.terminal1.state.id }}') {
-                    destinationStateSelect.innerHTML = `<option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>`;
+                    destinationStateSelect.innerHTML = `<option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2 }}</option>`;
                 } else if (selectedPickupState == '{{ vehicle.terminal2.state.id }}') {
-                    destinationStateSelect.innerHTML = `<option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>`;
+                    destinationStateSelect.innerHTML = `<option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1 }}</option>`;
                 }
             });
             // Initialize the states
