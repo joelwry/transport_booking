@@ -27,9 +27,24 @@ class TravellerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class BookingSerializer(serializers.ModelSerializer):
+    pickup_state_name = serializers.SerializerMethodField()
+    destination_state_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Booking
-        fields = '__all__'
+        #fields = '__all__'
+        fields = [
+            'id', 'customer', 'vehicle', 'trip_type', 'booking_code', 'status',
+            'pickup_state', 'destination_state', 'number_of_seats', 'number_of_children_below_10',
+            'number_of_adults', 'total_cost', 'travel_date', 'return_date', 'booking_date', 
+            'confirmed', 'payment_id', 'ticket_sent', 'schedule', 'booked_seats','pickup_state_name',"destination_state_name"
+        ]
+    
+    def get_pickup_state_name(self, obj):
+        return obj.pickup_state.name
+
+    def get_destination_state_name(self, obj):
+        return obj.destination_state.name 
 
 class MessageSerializer(serializers.ModelSerializer):
     class Meta :

@@ -11,6 +11,8 @@ from .serializers import (
 from rest_framework.decorators import action
 from django.utils import timezone
 from datetime import timedelta
+from .utils.payment_gateway import process_payment, verify_payment
+from .utils.seats_handler import calculateNumbersOfPassegers as passengerCount
 
 # TransportationCompany CRUD FOR ADMIN
 @api_view(['GET', 'POST'])
@@ -119,30 +121,42 @@ class MessageViewSet(viewsets.ModelViewSet):
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+    permission_classes = [IsAuthenticated]
+
     @action(detail=True, methods=['post'])
     def book_seat(self, request, pk=None):
         schedule = get_object_or_404(VehicleSchedule, pk=pk)
         seats = request.data.get('seats', [])
         user = request.user
         traveller = get_object_or_404(Traveller, user=user)
+        adult_count = request.data.get('number_of_adults', 1)
+        children_count = request.data.get('number_of_children_below_10', 0)
+        passenger_count = passengerCount(adult_count,children_count)
 
+        if passenger_count > len(seats) :
+            return Response(
+                {'error': 'Passenger boarding this vehicle is more than the seats booked'},
+                status=status.HTTP_406_NOT_ACCEPTABLE
+            )
         # Check seat availability
         available_seats = schedule.available_seats()
         if not all(seat in available_seats for seat in seats):
-            return Response({'error': 'One or more seats are already booked'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'One or more seats are already booked'}, status=status.HTTP_410_GONE)
 
+        trip_type = request.data.get('trip_type', 'ONE WAY')
+        amount_to_pay = schedule.vehicle.price * len(seats) if trip_type == "ONE WAY" else  2 * schedule.vehicle.price * len(seats) 
         # Create Booking
         booking = Booking.objects.create(
             customer=traveller,
             vehicle=schedule.vehicle,
-            trip_type=request.data.get('trip_type', 'ONE WAY'),
+            trip_type=trip_type,
             status='PENDING',
             pickup_state=schedule.pickup_state,
             destination_state=schedule.destination_state,
             number_of_seats=len(seats),
-            number_of_adults=request.data.get('number_of_adults', 1),
-            number_of_children_below_10=request.data.get('number_of_children_below_10', 0),
-            total_cost=schedule.vehicle.price * len(seats),
+            number_of_adults=adult_count,
+            number_of_children_below_10=children_count,
+            total_cost= amount_to_pay,
             travel_date=schedule.travel_datetime,
             schedule=schedule,
             booked_seats=seats
@@ -153,11 +167,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         return Response({
             'booking': BookingSerializer(booking).data,
             'payment_url': payment_url
-        })
-
-class PaymentViewSet(viewsets.ModelViewSet):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
+        }, status = status.HTTP_201_CREATED)
 
 class VehicleScheduleViewSet(viewsets.ModelViewSet):
     queryset = VehicleSchedule.objects.all()
@@ -169,7 +179,7 @@ class VehicleScheduleViewSet(viewsets.ModelViewSet):
         if vehicle_id:
             vehicle = Vehicle.objects.filter(id=vehicle_id).first()
             if vehicle:
-                three_months_from_now = timezone.now() + timedelta(days=90)
+                three_months_from_now = timezone.now() + timedelta(days=150)
                 return VehicleSchedule.objects.filter(vehicle=vehicle, travel_datetime__lte=three_months_from_now)
         return VehicleSchedule.objects.none()
 
@@ -177,3 +187,26 @@ class VehicleScheduleViewSet(viewsets.ModelViewSet):
     def available_seats(self, request, pk=None):
         schedule = self.get_object()
         return Response({'available_seats': schedule.available_seats()})
+
+class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+
+    @action(detail=True, methods=['post'])
+    def complete_payment(self, request, pk=None):
+        payment = get_object_or_404(Payment, pk=pk)
+        payment_status = verify_payment(payment)
+        
+        if payment_status == 'COMPLETED':
+            payment.status = 'COMPLETED'
+            booking = payment.booking
+            booking.status = 'CONFIRMED'
+            booking.confirmed = True
+            booking.schedule.booked_seats.extend(booking.booked_seats)
+            booking.schedule.save()
+            booking.save()
+        else:
+            payment.status = 'FAILED'
+
+        payment.save()
+        return Response(PaymentSerializer(payment).data)

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let schedules = [] // for storing vehicle schedules
     // this will be used to recieve the user booked seats 
     let SELECTED_SEATS = [] // USER BOOKED SEATS
-    alert('welcome')
+
     async function fetchSchedules() {
         try {
             const response = await fetch(`/api/vehicle-schedules/?vehicle_id=${vehicleId}`);
@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function filterSchedules() {
         const tripType = document.querySelector('input[name="trip-type"]:checked').value;
-        alert(`trip type : ${tripType}`)
         let pickupState;
         let destinationState;
         if(tripType == 'one-way'){
@@ -184,23 +183,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function bookSeat(event) {
         event.preventDefault();
-
         const tripType = document.querySelector('input[name="trip-type"]:checked').value;
-        const scheduleId = document.querySelector('input[name="schedule"]:checked').value;
-        const selectedSeats = document.getElementById(`${tripType}-selected_seats`).value;
-        const adults = document.querySelector('input[name="adults"]').value;
-        const children = document.querySelector('input[name="children"]').value;
+        console.log(event.target);
 
+        let scheduleId;
+        try{
+            scheduleId = document.querySelector('.custom-radio-wrapper input[name="schedule"]:checked').value;
+        }catch(error){
+            return alert("You have to select a vehicle schedule to book ");
+        }
+
+        if(SELECTED_SEATS.length < 1){
+            return alert('You haven"t booked a seat');
+        }
+        const adults = parseInt(document.querySelector('input[name="adults"]').value);
+        const children = parseInt(document.querySelector('input[name="children"]').value);
+        let actual_children_count = children;
+        if(children == 2){
+            actual_children_count = 1;
+        }else if(children == 1){
+            actual_children_count = 0;
+        }
+
+        if ( adults + actual_children_count > SELECTED_SEATS.length){
+            return alert("Passenger boarding this vehicle is more than the seats booked\nNote 1 Child below 10 years of age can be lapped by guardina, while 2 children below 10 years of age equals 1 seat .. any other above 2 will have to book complete seat");
+        }
+        let trip;
+        if( tripType == "one-way" ){
+            trip = "ONE WAY";
+        }else{
+            trip = "ROUND TRIP";
+        }
         const data = {
-            schedule_id: scheduleId,
-            selected_seats: selectedSeats.split(',').map(seat => parseInt(seat)),
-            adults: parseInt(adults),
-            children: parseInt(children),
-            trip_type: tripType
+            seats: SELECTED_SEATS,
+            "number_of_adults": adults,
+            "number_of_children_below_10": children,
+            trip_type: trip
         };
-
+        
         try {
-            const response = await fetch('/api/book-seat/', {
+            const response = await fetch(`/api/bookings/${scheduleId}/book_seat/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -211,16 +233,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (response.ok) {
                 showToast('Booking successful!');
+                alert('booking successfull')
+                const data = await response.json()
+                console.log(data);
             } else {
                 showToast('Booking failed!');
+                alert('failed booking your ')
+                const data = await response.json()
+                console.log(data);
             }
         } catch (error) {
             console.error('Error booking seat:', error);
             showToast('Error booking seat!');
+            alert('error occurred')
         }
     }
+
+    document.querySelector("#form1").addEventListener("submit",bookSeat);
+    document.querySelector("#form2").addEventListener("submit",bookSeat);
 
     fetchSchedules();
     seatSelectionAndUnselection();
     limitSeatSelection();
+
 });
