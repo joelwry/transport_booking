@@ -180,7 +180,7 @@ def payment(request, booking_id):
 @login_required
 def booking_success(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
-    return render(request, 'booking/booking_success.html', {'booking': booking})
+    return render(request, 'booking/booking_success.html', {'booking': booking, "booking_code":booking.booking_code})
 
 # this section shows search result for a traveller trying to find a vehicle that meets his/her requirement
 @login_required(login_url='/login/')
