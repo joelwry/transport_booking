@@ -1,0 +1,102 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{company.name}}{% endblock title %}
+{% block page-contents %}
+
+
+<div class="col-md-12 m-auto">
+
+    <div class="card border-0 shadow">
+        <div class="card-body">
+
+
+
+            <div class="row justify-content-center align-items-end mb-2">
+                <div class="col-12">
+                    <img src="{{company.image.url}}" class="rounded-pill" width="32px"
+                        alt="avatar">
+                </div>
+
+
+                <div class="col-8">
+
+                    <span class="h5">
+                        {{company.name}} </span>
+                    <br>
+                    <small class="fw-4">{{company.email}}</small><br>
+                    <span class="fw-bold">{{company.phone_number}}</span><br>
+                    <span class="fw-bold">Total Vehicles: {{company.vehicle_set.all.count}}</span>
+                </div>
+                <div class="col-4 text-end ">
+                    <a href="#" target="_blank" rel="noopener noreferrer" class=" btn btn-dark btn-sm rounded-pill mb-1 mx-1" data-bs-toggle="tooltip" data-bs-title="edit"><span
+                           ><i class="bi bi-pen"></i></span> </a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" class="btn-sm btn btn-outline-dark rounded-pill shadow-sm mb-1" data-bs-toggle="tooltip" data-bs-title="delete"><span
+                            class=""><i class="bi bi-trash"></i> </span></a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- list of vehicles under company -->
+    <div class="col-md-12 m-auto  mt-3">
+        <div class="card border-0  px-3 shadow">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-10"><h4 class="page-title py-4">Vehicles Registered Under {{company.name}} </h4></div>
+                    <div class="col-2 text-end"><a href="{% url 'manager:newvehicle' %}" class="btn btn-sm colorbtn text-white rounded-pill shadow-sm "data-bs-toggle="tooltip" data-bs-title="Add new vehicle"><span class="h4"><i class="bi bi-plus"></i></span></a></div>
+
+                </div>
+                <div class="row row-gap-2 history-row">
+                    <table class="table text-gray table-hover table-responsive">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                               
+                                <th>Plate Number</th>
+                                <th>Terminal 1</th>
+                                <th>Terminal 2</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                           
+
+                           {% for vehicle in company.vehicle_set.all %}
+                           
+                           <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{vehicle.plate_number}}</td>
+                            <td>{{vehicle.terminal1}}</td>
+                            <td>{{vehicle.terminal2}}</td>
+                            <td>
+                                {% if vehicle.available == True %}
+                                available
+                            {% else %}
+                                not available
+                            {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn btn-sm rounded-pill btn-outline-primary"><i class="bi bi-pen"></i></a>
+                                <a class="btn btn-sm rounded-pill btn-outline-danger"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr> 
+
+                           {% empty %}{% endfor %}
+
+                            
+                            
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock page-contents %}

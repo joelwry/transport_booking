@@ -176,17 +176,17 @@ table{
 }
 
 
-.banner-1{
-    background-image: url("../banners/bus.jpg");
+/* .banner-1{
+    background-image: url('../bus_image.jpg');
 }
 
 .banner-2{
-    background-image: url("../banners/male-bus-driver-portrait.jpg");
+    background-image: url("{% static '../bus_image.jpg' %}");
 
 }
 .banner-3{
     background-image: url("../banners/BRT-LAGOS-1140x570.jpg");
-}
+} */
 
 .banner-3, .banner-2,.banner-1{
     background-position: top;

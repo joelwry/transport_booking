@@ -1,0 +1,80 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block page-contents %}
+
+{% for company in companies %}
+
+
+ <!--  company item -->
+ <div class="col-md-4 ">
+
+    <div class="card border-0 shadow">
+        <div class="card-body">
+
+
+
+            <div class="row justify-content-center align-items-end mb-2">
+                <div class="col-12">
+                    <img src="{{company.image.url}}" class="rounded-pill" width="32px"
+                        alt="avatar">
+                </div>
+
+
+                <div class="col-9">
+
+                    <span class="h6">
+                        {{company.name | upper}} </span>
+                    <br>
+                    <small class="fw-4">{{ company.email }}</small><br>
+                    <span class="fw-bold">{{company.phone_number}}</span>
+                </div>
+                <div class="col-3 text-end column-gap-2 gap-y-2 gap-2">
+                    <a href="{% url "manager:company-detail" company.id %}" target="_blank" rel="noopener noreferrer"
+                        class=" btn btn-primary btn-sm rounded-pill mb-1"><span><i
+                                class="bi bi-eye"></i></span> </a>
+                    <a href="#" target="_blank" rel="noopener noreferrer"
+                        class="btn-sm btn btn-danger rounded-pill shadow-sm mb-1"><span
+                            class=""><i class="bi bi-trash"></i> </span></a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+{% empty %}
+
+ <div class="col-md-12 ">
+
+    <div class="card border-0 shadow">
+        <div class="card-body">
+
+
+
+            <div class="row justify-content-center align-items-end mb-2">
+               <div class="col-10 m-auto">
+                
+                    <p class="text-center">No Registered company yet to display</p>
+                </div>
+              
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+
+
+{% endblock page-contents %}
