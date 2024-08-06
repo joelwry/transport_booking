@@ -15,17 +15,16 @@ class TransportationCompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('plate_number', 'capacity', 'terminal1', 'terminal2', 'available', 'company')
+    list_display = ('id','plate_number', 'capacity', 'terminal1', 'terminal2', 'available', 'company')
     search_fields = ('plate_number', 'company__name')
     list_filter = ('available', 'company')
     ordering = ('company', 'plate_number')
 
 @admin.register(VehicleSchedule)
 class VehicleScheduleAdmin(admin.ModelAdmin):
-    list_display = ('vehicle','pickup_state','destination_state','travel_datetime')
-    search_fields = ('travel_datetime', 'vehicle','pickup_state')
-    list_filter = ('travel_datetime',)
-    ordering = ('number_of_bookings',)
+    list_display = ('vehicle','pickup_state','destination_state','travel_datetime',)
+    search_fields = ('pickup_state__id','destination_state__id',)
+    list_filter = ('travel_datetime','vehicle__id','pickup_state')
 
 @admin.register(Terminals)
 class TerminalAdmin(admin.ModelAdmin):

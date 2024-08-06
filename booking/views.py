@@ -19,7 +19,7 @@ LOCKOUT_TIME = 5  # in minutes
 # SHOW THE UPDATE LANDING PAGE FROM FRANK
 # this should be for landing page
 def index(request):
-    return render(request, 'booking/index.html')
+    return render(request, 'index.html')
 
 # GOOD TO GO
 # user dashboard.. user must be authenticated to view this page
@@ -148,19 +148,23 @@ def logout_view(request):
 @login_required
 def book(request,vehicle_id):
     vehicle = Vehicle.objects.filter(id=int(vehicle_id)).first()
-    if vehicle == None : #or vehicle.available == False:
+    if vehicle == None :
         return redirect("advanced_search_vehicles")
+    traveller = Traveller.objects.get(user=request.user)
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
-            booking.customer = Traveller.objects.get(user=request.user)
+            booking.customer = traveller
             booking.total_cost = calculate_total_cost(booking)
             booking.save()
             return redirect('payment', booking_id=booking.id)
     else:
-        form = BookingForm()
-    return render(request, 'booking/book.html', {'form': form, 'vehicle':vehicle})
+        next_of_kin_detail = {
+            "name": traveller.nok_fullname if traveller.nok_fullname != 'None' or len(traveller.nok_fullname) < 2 else None,
+            "phone" : traveller.nok_phone if traveller.nok_phone != 'None' else None
+        }  
+    return render(request, 'booking/book.html', {'vehicle':vehicle, 'next_of_kin_detail' : next_of_kin_detail, "vehicleId":vehicle_id})
 
 @login_required
 def payment(request, booking_id):
@@ -237,9 +241,10 @@ def advanced_search_vehicles(request):
         if max_price is not None:
             vehicles = vehicles.filter(price__lte=max_price)
         try:
+            print(f'AVAILABILITY : {request.GET.get('availability') }')
             if available and request.GET.get('availability') == "all":
                 pass
-            elif available :
+            elif available or request.GET.get('availability') == None :
                 vehicles = vehicles.filter(available=True)
             else :
                 vehicles = vehicles.filter(available=False)
