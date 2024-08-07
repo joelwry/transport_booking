@@ -3,7 +3,9 @@ body{
     font-size:small;
     background-color: #fdbe9726;
 }
-
+.fbg-color{
+    background-color: #fdbe9726;
+}
 .form-control{
     font-size: small;
 }

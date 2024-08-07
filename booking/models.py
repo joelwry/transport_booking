@@ -7,6 +7,9 @@ from django.core.exceptions import ValidationError
 from datetime import timedelta
 from django.utils import timezone
 from datetime import datetime 
+from django.utils.text import slugify
+from .utils.unique_slug import generate_unique_slug
+
 
 MESSAGE_TYPE = [
     ("Enquiry","ENQUIRE"),("Complain","COMPLAIN"),("Request","REQUEST")
@@ -32,9 +35,19 @@ class TransportationCompany(models.Model):
         ]
     )
     image = models.ImageField(upload_to="static/image/company", null=True, default='None')
+    # added slug field and will be aadded to other model as well to make urls user and SEO friendly 
+    slug = models.SlugField(unique=True, )
 
     def __str__(self):
         return self.name
+    # Altered the save function to add slug to model object for a nice url
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(self, slugify(self.name))
+        super(TransportationCompany, self).save(*args, **kwargs)
+
+
+
 
 class State(models.Model):
     name = models.CharField(max_length=100)

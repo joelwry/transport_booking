@@ -26,14 +26,16 @@
                         {{company.name | upper}} </span>
                     <br>
                     <small class="fw-4">{{ company.email }}</small><br>
-                    <span class="fw-bold">{{company.phone_number}}</span>
+                    <span class="text-gray">{{company.phone_number}}</span><br>
+                    <span class="fw-bold">Vehicles : {{company.vehicle_set.all.count}}</span>
                 </div>
                 <div class="col-3 text-end column-gap-2 gap-y-2 gap-2">
-                    <a href="{% url "manager:company-detail" company.id %}" target="_blank" rel="noopener noreferrer"
+                    <a href="{% url "manager:company-detail" company.id company.slug %}" target="_blank" rel="noopener noreferrer"
                         class=" btn btn-primary btn-sm rounded-pill mb-1"><span><i
                                 class="bi bi-eye"></i></span> </a>
                     <a href="#" target="_blank" rel="noopener noreferrer"
-                        class="btn-sm btn btn-danger rounded-pill shadow-sm mb-1"><span
+                        class="btn-sm btn btn-danger rounded-pill shadow-sm mb-1" data-bs-toggle="modal"
+                        data-bs-target="#AlertModel"><span
                             class=""><i class="bi bi-trash"></i> </span></a>
                 </div>
 

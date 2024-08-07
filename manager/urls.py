@@ -17,7 +17,10 @@ urlpatterns = [
     path("add-company/", views.AddCompany, name='newcompany'),
 
     # company details view
-    path("company-detail/<int:company>/", views.companyDetail, name="company-detail"),
+    path("company-detail/<int:company_id>/<slug:slug>", views.companyDetail, name="company-detail"),
+    
+    # company delete view
+    path("deletecompany/<int:company_id>/", views.deleteCompany, name="detelecompany"),
 
     # add new vehicle
     path("add-vehicle/", views.AddVehicle, name='newvehicle'),
