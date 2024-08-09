@@ -9,7 +9,7 @@ from django.http import JsonResponse,HttpRequest
 from django.utils import timezone
 from django.db.models import Count
 
-from .forms import addNewVehicle
+from .forms import addNewVehicle, addNewCompanyForm
 
 
 # Create your views here.
@@ -48,7 +48,7 @@ def manageIndexView(request):
     traveller = Traveller.objects.all().count()
     companies = TransportationCompany.objects.all().count()
     bookings_pending = Booking.objects.filter( status="PENDING").count()
-    print(bookings_pending)
+    
 
 # Get today's date
     today = timezone.now().date()
@@ -82,19 +82,18 @@ def manageIndexView(request):
 
 # add new company
 @staff_member_required(login_url='manager:managerlogin')
-def AddCompany(request):
+def addNewCompany(request):
     if request.method == 'POST':
-        company_name = request.POST.get('company_name')
-        company_email = request.POST.get('company_email')
-        company_phone = request.POST.get('company_phone')
-        company_address = request.POST.get('company_address')
-        company_info = request.POST.get('company_info')
-        company_logo = request.POST.get('company_logo')
-
-        if not (company_name | company_email | company_phone | company_address | company_logo):
-            return JsonResponse({'success' : False, 'message' : 'filled with * are required'})
-
-    return render(request, "manager/add_company.html")# manager index view
+        form = addNewCompanyForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success':True, 'message': 'Company added successfully'})
+        else:
+           errors = form.errors.as_json()
+           return JsonResponse({'success': False, 'message': errors})
+    else:
+        form = addNewCompanyForm()
+    return render(request, "manager/add_company.html")
 
 
 # add new vehicle to lish
@@ -146,7 +145,8 @@ def deleteCompany(request, company_id):
 
 @staff_member_required
 def companyDetail(request, company_id, slug ):
-    company = get_object_or_404( TransportationCompany ,id = company_id, slug = slug)
+    # company = get_object_or_404( TransportationCompany ,id = company_id, slug = slug)
+    company = get_object_or_404(TransportationCompany, id = company_id, slug = slug)
     return render(request, 'manager/companydetail.html', {'company': company})
 
 def company_analytics(request):

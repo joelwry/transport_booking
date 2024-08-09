@@ -6,7 +6,7 @@
     <div class="col-12 border rounded-2 shadow py-3 px-5">
         <h3 class=" fw-bold fs-2 text-gray">Welcome Back</h3>
         <p class="mb-4 ">Enter your details to login</p>
-        <form id='loginUserForm'>
+        <form id='loginUserForm' method='POST'>
             {% csrf_token %}
             <div class="row mb-4">
                <div class="form-group">

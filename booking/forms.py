@@ -16,7 +16,7 @@ class UserRegisterForm(UserCreationForm):
 class TravellerForm(forms.ModelForm):
     class Meta:
         model = Traveller
-        fields = ['phone', 'state', 'gender']
+        fields = ['phone', 'state', 'gender', 'nok_fullname', 'nok_phone', 'residential_address']
 
 class BookingForm(forms.ModelForm):
     class Meta:

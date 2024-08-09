@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from .models import Traveller, Booking, Vehicle, State, TransportationCompany
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
@@ -26,13 +27,13 @@ def index(request):
 @login_required(login_url='/login/')
 def dashboard_view(request):
     traveller = Traveller.objects.filter(user = request.user).first()
-    tickets = Booking.objects.filter(customer=traveller).all()
+    tickets = Booking.objects.filter(customer=traveller).all().order_by('-booking_date')[:5]
     ticket_type_count = {"pending":0,"confirmed":0,"cancelled":0}
     for ticket in tickets:
         if ticket.status == "PENDING":
             ticket.status_color = "pending"
             ticket_type_count['pending'] += 1
-            print('pending +1')
+           
         elif ticket.status == "CONFIRMED":
             ticket.status_color = "confirmed"
             ticket_type_count['confirmed'] += 1
@@ -144,19 +145,23 @@ def logout_view(request):
 @login_required
 def book(request,vehicle_id):
     vehicle = Vehicle.objects.filter(id=int(vehicle_id)).first()
-    if vehicle == None : #or vehicle.available == False:
+    if vehicle == None :
         return redirect("advanced_search_vehicles")
+    traveller = Traveller.objects.get(user=request.user)
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
-            booking.customer = Traveller.objects.get(user=request.user)
+            booking.customer = traveller
             booking.total_cost = calculate_total_cost(booking)
             booking.save()
             return redirect('payment', booking_id=booking.id)
     else:
-        form = BookingForm()
-    return render(request, 'booking/book.html', {'form': form, 'vehicle':vehicle})
+        next_of_kin_detail = {
+            "name": traveller.nok_fullname if traveller.nok_fullname != 'None' or len(traveller.nok_fullname) < 2 else None,
+            "phone" : traveller.nok_phone if traveller.nok_phone != 'None' else None
+        }  
+    return render(request, 'booking/book.html', {'vehicle':vehicle, 'next_of_kin_detail' : next_of_kin_detail, "vehicleId":vehicle_id})
 
 @login_required
 def payment(request, booking_id):
@@ -176,7 +181,7 @@ def payment(request, booking_id):
 @login_required
 def booking_success(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
-    return render(request, 'booking/booking_success.html', {'booking': booking})
+    return render(request, 'booking/booking_success.html', {'booking': booking, "booking_code":booking.booking_code})
 
 # this section shows search result for a traveller trying to find a vehicle that meets his/her requirement
 @login_required(login_url='/login/')
@@ -238,9 +243,10 @@ def advanced_search_vehicles(request):
         if max_price is not None:
             vehicles = vehicles.filter(price__lte=max_price)
         try:
+            print(f'AVAILABILITY : {request.GET.get('availability') }')
             if available and request.GET.get('availability') == "all":
                 pass
-            elif available :
+            elif available or request.GET.get('availability') == None :
                 vehicles = vehicles.filter(available=True)
             else :
                 vehicles = vehicles.filter(available=False)
@@ -261,6 +267,8 @@ def advanced_search_vehicles(request):
 def updateProfile(request):
     states = State.objects.all()
     traveller = Traveller.objects.filter(user = request.user).first()
+    if not traveller:
+        return JsonResponse({'success':False,'message':'user profile not found'}, status = 404)
     if request.method == 'POST':
         traveller_form = TravellerForm(request.POST)
         if traveller_form.is_valid() and traveller:
@@ -268,8 +276,11 @@ def updateProfile(request):
             traveller.gender = form.get('gender')
             traveller.state = form.get('state')
             traveller.phone = form.get('phone')
-            if request.POST['address'] : 
-                traveller.address = request.POST['address']
+            traveller.residential_address = form.get('residential_address')
+            traveller.nok_fullname = form.get('nok_fullname')
+            traveller.nok_phone = form.get('nok_phone')
+            # if request.POST['address'] : 
+            #     traveller.address = request.POST['address']
             if request.POST['first_name']:
                 traveller.user.first_name = request.POST['first_name']
                 traveller.user.save()
@@ -277,6 +288,8 @@ def updateProfile(request):
                 traveller.user.last_name = request.POST['last_name']
                 traveller.user.save()
             traveller.save()
+            return JsonResponse({'success':True, 'message': 'Profile updated successfully'}, status = 200)
+        return JsonResponse({'success' : False, 'message': traveller_form.errors}, status  = 400)
     return render(request, "booking/profile.html", {'states' : states,'traveller':traveller})
 
 def forgotPassword(request):

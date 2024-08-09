@@ -14,7 +14,7 @@ urlpatterns = [
     path("index/", views.manageIndexView, name='managerIndex'),
 
     # add new company
-    path("add-company/", views.AddCompany, name='newcompany'),
+    path("add-company/", views.addNewCompany, name='newcompany'),
 
     # company details view
     path("company-detail/<int:company_id>/<slug:slug>", views.companyDetail, name="company-detail"),

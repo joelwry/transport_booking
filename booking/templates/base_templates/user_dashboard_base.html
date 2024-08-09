@@ -12,6 +12,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% block customScript %} {% endblock %}
+
 </head>
 <style>
     .form-container {
@@ -67,7 +70,7 @@
                             </a>
                             <ul class="collapse nav ms-4" aria-labelledby="" id="collapse-booking">
                                 <li class="nav-item">
-                                    <a class="nav-link submenu " href="{% url "search_vehicles" %}">Book now</a>
+                                    <a class="nav-link submenu " href="{% url "advanced_search_vehicles" %}">Book now</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link submenu" href="bookings.html">Bookings</a>
@@ -136,8 +139,8 @@
                 </div>
                 
                <!-- wrapper starts here -->
-                <div class="col-12 px-2 ">
-                    <div class="row mt-3 justify-content-center">
+                <div class="col-12 px-4">
+                    <div class="row mt-3 justify-content-center pb-4">
                         
                         <!-- contennts starts here -->
 
@@ -193,7 +196,7 @@
                             </a>
                             <ul class="collapse nav ms-4" aria-labelledby="" id="collapse-booking">
                                 <li class="nav-item">
-                                    <a class="nav-link submenu " href="book_now.html">Book now</a>
+                                    <a class="nav-link submenu " href="{% url "advanced_search_vehicles" %}">Book now</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link submenu" href="bookings.html">Bookings</a>
@@ -219,9 +222,35 @@
                 </div>
             </div>
         </div>
+
+
+
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="ToastElement" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex toaser">
+                    <div class="toast-body" id='bodytoast'>
+                     
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+            </div>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+ 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script> 
+
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+     </script>
 </body>
 
+{% block heavyScript %}
+
+{% endblock %}
 </html>
