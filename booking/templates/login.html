@@ -34,8 +34,8 @@
 
             <div class="row mb-3">
                 <div class="form-group">
-                    <button type="submit" id="action-btn" class="btn col-12 btn-sm colorbtn text-white" >
-                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <button type="submit" id="action-btn " class="btn col-12 btn-sm colorbtn text-white action-login-btn" >
+                        <span class="spinner-border invisible spinner-border-sm" id='spiner' aria-hidden="true"></span>
                         <span role="status" id='action-btn-status'>Login</span>
                     </button>
                 </div>
@@ -55,7 +55,7 @@
 </div>
 
 <div class="toast-container position-fixed top-0 end-0 p-3">
-    <div id="loginToast" class="toast " role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="loginToast" class="toast  " role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex toaser">
             <div class="toast-body">
              
@@ -70,17 +70,26 @@
     $(document).ready(function() {
         $('#loginUserForm').on('submit', function(event) {
             event.preventDefault();
-           
+            let = btn_status = $('#action-btn-status')
+            let btn = $('#action-btn')
+            let spiner = $('#spiner')
             $.ajax({
                 url: "{% url 'login' %}",
                 type: 'POST',
                 data: $(this).serialize(),
                 beforeSend:function(){
                     console.log('am sending ')
+                    
+                    spiner.removeClass('invisible')
+                    btn_status.text('loading.........')
+                    btn.attr('disabled', true)
 
                 },
                 success: function(response) {
                     var toastEl = $('#loginToast');
+                    spiner.addClass('invisible')
+                    btn_status.text('login')
+                    btn.removeAttr('disabled')
                     var toast = new bootstrap.Toast(toastEl);
                     if (response.success) {
                         toastEl.find('.toast-body').text('Login successful!');

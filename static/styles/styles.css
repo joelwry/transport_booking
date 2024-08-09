@@ -10,6 +10,10 @@ body{
     font-size: small;
 }
 
+.action-login-btn:disabled{
+    background-color: #db5d0f !important;
+}
+
 .form-control:focus, select:focus{
     border:1px solid #fe7c2b;
     box-shadow: none;
