@@ -6,135 +6,121 @@
 
 {% block page-contents %}
 
-<div class="row">
-    <!-- page title -->
+
+<!-- <div class="row">
+   
     <h5 class="my-4 page-title">Edit Profile</h5>
-</div>
-<div class="col-md-12 m-auto">
+</div>  -->
+<div class="col-md-11 m-auto">
 
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body px-4 pt-5">
 
-            <div class="row justify-content-center align-items-center mb-2">
+           <div class="row align-items-end mb-2">
+                <div class="col-auto">
+                   <img src="{% static 'travellers logo/avatar.jpg' %}" class="rounded-pill" width="80px" alt="avatar">
+                </div>
                 <div class="col">
-                    <img src="{% static 'travellers logo/avatar.jpg' %}" class="rounded-pill" width="80px" alt="avatar">
-
+                    <span class="fw-bold h5">{{traveller.user.last_name |capfirst }}  {{traveller.user.first_name | capfirst}} </span><span style='cursor:pointer; color:#fe7c2b;'data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="edit profile" class=" pb-2 border-0 py-1 px-2" id="editButton"><small><i class="bi bi-pen-fill"></i> Edit</small></span>
+                    <br><span>{{traveller.user.email}}</span>
                 </div>
 
-            </div>
-
+            </div> 
+            <hr >
             <!-- form for user details -->
             <div class="row">
                 <div class="col-12">
                     <div class="card border-0 bg-white">
                         <div class="card-body">
                             <!-- form starts here -->
-                            <form action="#" method="post" class="user-form">
+                            <form id='UpdateProfile' method='POST' class="user-form">
                                 {% csrf_token %}
                                 <div class="row row-gap-2">
                                     <div class="col-sm-4 mb-3">
-                                        <label for="fname">First Name <span
-                                                class="text-danger">*</span></label>
-                                                <input type="text" name="first_name" id="fname"
-                                                class="form-control py-3 border-primary" value="{{ request.user.first_name}}">
+                                        <label for="fname">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="first_name" id="fname"
+                                               class="form-control py-3" 
+                                               value="{{ request.user.first_name }}" disabled>
                                     </div>
                                     <div class="col-sm-4 mb-3">
-                                        <label for="lname">Last Name <span
-                                                class="text-danger">*</span></label>
-                                                <input type="text" name="last_name" id="lname" class="form-control py-3"
-                                                placeholder="" value="{{request.user.last_name }}">
+                                        <label for="lname">Last Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="last_name" id="lname" 
+                                               class="form-control py-3" value="{{ request.user.last_name }}" disabled>
                                     </div>
                                     <div class="col-sm-4 mb-3">
-                                        <label for="email">Email <span
-                                                class="text-danger">*</span></label>
-                                                <input type="email" name="username" id="email" class="form-control py-3"
-                                                placeholder="" readonly value="{{ request.user.username}}">
+                                        <label for="email">Email <span class="text-danger">*</span></label>
+                                        <input type="text" name="username" id="email" 
+                                               class="form-control py-3" value="{{ request.user.email }}" disabled readonly>
                                     </div>
                                     <div class="col-sm-4 mb-3">
-                                        <label for="phone">Mobile Number <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" name="phone" id="phone" class="form-control py-3"
-                                            value="{{ traveller.phone }}">
+                                        <label for="phone">Phone Number <span class="text-danger">*</span></label>
+                                        <input type="text" name="phone" id="phone" 
+                                               class="form-control py-3" value="{{ traveller.phone }}" disabled>
                                     </div>
-
-
                                     <div class="col-sm-4 mb-3">
-                                        <label for="gender">Gender <span
-                                                class="text-danger">*</span></label>
-
+                                        <label for="State">State</label>
+                                        <select class="form-select user-state-form py-3" id="state" 
+                                                aria-label="" name="state" disabled>
+                                            {% for state in states %}
+                                                <option value="{{ state.name }}" 
+                                                        {% if state.name == traveller.state %}selected{% endif %}>
+                                                    {{ state.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="gender">Gender <span class="text-danger">*</span></label>
                                         <div class="row">
                                             <div class="col-12">
-                                                <div class="card">
+                                                <div class="card border border-0">
                                                     <div class="card-body">
                                                         <div class="row">
-                                                            <!-- male radio option -->
                                                             <div class="col">
-                                                                {% if traveller.gender == "M" %}
-                                                                <input type="radio" name="gender" id="gender"
-                                                                    value="M" class="form-check-input" checked>
-                                                                <label for="male" >Male</label>
-                                                                {% else %}
-                                                                <input type="radio" name="gender" id="gender"
-                                                                    value="M" class="form-check-input">
-                                                                <label for="male" >Male</label>
-                                                                {% endif %}
+                                                                <input type="radio" name="gender" id="gender_male"
+                                                                       value="M" class="form-check-input" 
+                                                                       {% if traveller.gender == "M" %}checked{% endif %} disabled>
+                                                                <label for="gender_male">Male</label>
                                                             </div>
-
-                                                            <!-- female radio option -->
                                                             <div class="col">
-                                                                {% if traveller.gender == "F" %}
-                                                                <input type="radio" name="gender" id="gender"
-                                                                    value="F" class="form-check-input" checked>
-                                                                <label for="fmale">Female</label>
-                                                                {% else %}
-                                                                <input type="radio" name="gender" id="gender"
-                                                                value="F" class="form-check-input">
-                                                                <label for="fmale">Female</label>
-                                                                {% endif %}
+                                                                <input type="radio" name="gender" id="gender_female"
+                                                                       value="F" class="form-check-input" 
+                                                                       {% if traveller.gender == "F" %}checked{% endif %} disabled>
+                                                                <label for="gender_female">Female</label>
                                                             </div>
                                                         </div>
-
-
-
-
-
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
-
-                                    <div class="col-sm-4 mb-3">
-                                        <label for="State">State</label>
-
-                                        <select class="form-select user-state-form py-3" id="" aria-label="" name="state">
-                                            {% for state in states %}
-                                                {% if state.name == traveller.state %}
-                                                    <option value="{{ state.name }}" selected>{{ state.name }}</option>
-                                                {% else %}
-                                                    <option value="{{ state.name }}">{{ state.name }}</option>
-                                                {% endif %}
-
-                                            {% endfor %}
-                                        </select>
-
+                                   
+                                    <div class="col-sm-12 mb-3">
+                                        <label for="address">Residential Address</label>
+                                        <input type="text" class="form-control resident-textarea py-3" id="address" 
+                                                  name="residential_address" value=" {{ traveller.residential_address }}" disabled>
+                                        
                                     </div>
-
-                                            <div class="col-sm-12 mb-3">
-                                                <label for="address">Residential Address</label>
-                                                <textarea class="form-control resident-textarea" id="address" rows="3"
-                                                    placeholder="" aria-label="" name="address"> {{ traveller.address }}</textarea>
-                                            </div>
-
-                                    <div class="col-sm-6 mb-1">
-                                        <input type="submit" value="Save Changes" class="btn colorbtn text-white btn-sm p-3">
-
-                                    </div>
-
-
                                 </div>
-                            </form>
+                                <div class="row">
+                                    <div class="col-12"><p class="fw-bold pt-3 pb-2"> Next of Kin Details</p></div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="nok_fullname">Full Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="nok_fullname" id="nok_fullname" 
+                                               class="form-control py-3" value="{{ traveller.nok_fullname }}" disabled>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="nok-phone">Phone Number <span class="text-danger">*</span></label>
+                                        <input type="text" name="nok_phone" id="nok-phone" 
+                                               class="form-control py-3" value="{{ traveller.nok_phone }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-1 pt-3">
+                                        <input type="submit" value="Save Changes" class="btn colorbtn text-white btn-sm p-3" disabled id="saveButton">
+                                    </div>
+                                </div>
+                            </form>                            
                         </div>
                     </div>
                 </div>
@@ -143,5 +129,58 @@
     </div>
 </div>
 
+<script>
+    document.getElementById('editButton').addEventListener('click', function() {
+        const formElements = document.querySelectorAll('.user-form input, .user-form select, .user-form textarea');
+        formElements.forEach(element => element.removeAttribute('disabled'));
+        document.getElementById('saveButton').removeAttribute('disabled');
+        this.setAttribute('disabled', 'true'); // Disable the Edit button once editing starts
+    });
+</script>
+{% endblock %}
 
+{% block heavyScript %}
+     <script>
+    $('#UpdateProfile').on('submit', function(e){
+        e.preventDefault();
+        var toastEl = $('#ToastElement');
+        var toast = new bootstrap.Toast(toastEl);
+        $.ajax({
+            url: '/profile/',
+            type: 'POST',
+            data: $(this).serialize(),  // Serialize the form data
+            success: function(response, textStatus, jqXHR) {
+                if (jqXHR.status === 200) {
+
+                    toastEl.find('#bodytoast').text(jqXHR.responseJSON.message);
+                     toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
+                    toast.show();
+                        setTimeout(function() {
+                            window.location.reload()
+                        }, 1500);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 400) {
+                    toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                    toastEl.find('.toaser').addClass('bg-danger text-white');
+                    toast.show();
+                } else if (jqXHR.status === 404) {
+                    // Handle 'Traveller profile not found'
+                    toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                    toastEl.find('.toaser').addClass('bg-danger text-white');
+                    toast.show();
+                } else {
+                    // Handle other types of errors
+                    toastEl.find('.toast-body').text('An unexpected error occurred: ' + errorThrown);
+                    toastEl.find('.toaser').addClass('bg-danger text-white');
+                    toast.show();
+                   
+                }
+            }
+        });
+
+    })
+    
+     </script>
 {% endblock %}

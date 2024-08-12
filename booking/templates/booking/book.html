@@ -1,29 +1,30 @@
 {% extends "base_templates/user_dashboard_base.html" %}
 {% load static %}
 {% block page-title %}book a ticket{% endblock page-title %}
-{% block customScript %} 
+{% block customScript %}
 <style>
     .card {
         margin-bottom: 1rem;
     }
-    .card-info {
+
+    
+
+    /* .card-info {
         display: flex;
         flex-direction: column;
     }
 
     .card-info div {
         margin-bottom: 0.25rem;
-    }
+    }  */
 
     .card-info .route {
         font-size: 1.0rem;
         font-weight: bold;
-        text-align: center;
     }
 
     .card-info .company {
         color: #d56314;
-        text-shadow: -1px -1px 2px #000000b8;
     }
 
     .card-info .times {
@@ -43,7 +44,7 @@
     }
 
     .seat.selected {
-        background-color: #6c757d;
+        background-color: #035818;
         color: white;
         filter: drop-shadow(1px 2px 4px rgba(11, 122, 13, 0.4));
         border: 2px solid white;
@@ -51,28 +52,33 @@
     }
 
     .seat.booked {
-        background-color: #dc3545;
+        background-color: #a00f1e;
         color: white;
         cursor: not-allowed;
     }
-</style>
 
-<style>
     .custom-radio {
         display: none;
     }
 
-    .custom-radio + label {
+    .custom-radio+label {
         display: inline-block;
-        padding: 10px 20px;
-        border: 2px solid #fd8135;
+        padding: 5px 20px;
+        
+        text-align: center;
+        margin: auto;
+        border: 1px solid #fd8135;
         border-radius: 5px;
         cursor: pointer;
         background-color: #fff;
         transition: background-color 0.3s;
     }
 
-    .custom-radio:checked + label {
+    .custom-radio+label:hover{
+        background-color: #d56314;
+    }
+
+    .custom-radio:checked+label{
         border-radius: 6px;
         background-color: #c16c38;
         color: #fff;
@@ -82,66 +88,70 @@
     .custom-radio-wrapper {
         margin-bottom: 10px;
         display: flex;
-        justify-content: center;
+        text-align: center;
+      
     }
 
     .toast {
         position: fixed;
         bottom: 20px;
         left: 50%;
-        transform: translateX(-50%);
-        background-color: #333;
-        color: #fff;
-        padding: 10px 20px;
-        border-radius: 5px;
-        z-index: 1000;
+       
     }
-
 </style>
 
 {% endblock %}
 {% block page-contents %}
 
-<div class="col-md-12 m-auto">
+<div class="col-md-12">
 
-    <div class="card border-0 shadow-sm">
+    <div class="card border-0 shadow-sm ">
         <div class="card-body">
 
-           
-
             <!-- form for user details -->
-            <div class="row">
+            <div class="row ">
                 <div class="col-12">
                     <div class="card border-0 bg-white">
                         <div class="card-body">
-                            <div class="row pb-2">
+                            <div class="row justify-content-center align-items-center mb-4">
+                                <div class="col">
+                                    <!-- <span><img src="{{vehicle.company.image.url}}" class="rounded-pill" width="32px"
+                                        alt="{{vehicle.company.name}}"></span> -->
+                                        <span><span class='px-2 fw-bold fs-5'>{{vehicle.company.name | upper}} </span> <br><span class="px-2">Booking Form</span></span>
+                                       
+                                </div>
 
-                                <div class="form-group">
-                                    <label for="trip-type">Trip Type:</label>
-                                    <div class="col-12 mb-4 align-items-center">
-                                        <input type="radio" id="one-way" name="trip-type" value="one-way" checked onclick="showForm('form1')">
-                                        <label for="one-way" class="px-2">One Way</label>
-                                        <input type="radio" id="round-trip" name="trip-type" value="round-trip" onclick="showForm('form2')">
-                                        <label for="round-trip" class="px-2">Round Trip</label>
+                            </div>
+                            <div class="row pb-2 mt-2">
+
+                                <div class=" col-lg-4 col-md-5 mb-2 py-2 bg-dark text-white rounded-2">
+                                    <label for="trip-type " class='fw-bold pb-2'>Trip Type:</label>
+                                    <div class="col-12 align-items-center">
+                                        <input type="radio" id="one-way" class="form-check-input p-2 " name="trip-type"
+                                            value="one-way" checked onclick="showForm('form1')">
+                                        <label for="one-way" class="px-2 fw-bold">One Way</label>
+                                        <input type="radio" id="round-trip" class="form-check-input p-2 "
+                                            name="trip-type" value="round-trip" onclick="showForm('form2')">
+                                        <label for="round-trip" class="px-2 fw-bold ">Round Trip</label>
                                     </div>
                                 </div>
-                                <hr>
+                                <hr class="border-dark-2">
                             </div>
 
                             <!-- One way Trip -->
                             <div id="form1" class="form-container active ">
                                 <form action="#" method="post" class="user-form" id="one-way-form">
-                                    {%  csrf_token %}
+                                    {% csrf_token %}
                                     <div class="row row-gap-2">
 
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling from</label>
 
-                                            <select class="form-select user-state-form py-3"
-                                                id="" aria-label="" name="pickup_state">
-                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
-                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
-                                                
+                                            <select class="form-select user-state-form py-3" id="" aria-label=""
+                                                name="pickup_state">
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{vehicle.terminal1.state.name }}</option>
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{vehicle.terminal2.state.name }}</option>
+
                                             </select>
 
                                         </div>
@@ -149,11 +159,13 @@
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling to</label>
 
-                                            <select class="form-select user-state-form py-3"
-                                                id="" aria-label="" name="destination_state">
-                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
-                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
-                                                
+                                            <select class="form-select user-state-form py-3" id="" aria-label=""
+                                                name="destination_state">
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{
+                                                    vehicle.terminal2.state.name }}</option>
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{
+                                                    vehicle.terminal1.state.name }}</option>
+
                                             </select>
 
 
@@ -162,21 +174,22 @@
                                         <div class="col-sm-4 mb-3">
                                             <label for="travel-date">Traveling date <span
                                                     class="text-danger">*</span></label>
-                                            <input type="date" id="date" name="travel_date"
-                                                id="travel-date" class="form-control py-3">
+                                            <input type="date" id="date" name="travel_date" id="travel-date"
+                                                class="form-control py-3">
                                         </div>
 
                                         <div class="row mt-4">
                                             <div class="col-sm-4 mb-3">
                                                 <label for="adults">Adults</label>
-                                                <input type="number" class="form-control" name="adults" value="1">
+                                                <input type="number" class="form-control py-3" name="adults" value="1">
                                             </div>
                                             <div class="col-sm-4 mb-3">
                                                 <label for="children">Children</label>
-                                                <input type="number" class="form-control" name="children" value="0">
+                                                <input type="number" class="form-control py-3" name="children" value="0">
                                             </div>
                                             <div class="col-sm-4 mb-3">
-                                                <div class="total-seats" data-max-seats="{{ vehicle.capacity }}">Total Seats Selected: 0</div>
+                                                <div class="total-seats" data-max-seats="{{ vehicle.capacity }}">Total
+                                                    Seats Selected: 0</div>
                                             </div>
                                         </div>
 
@@ -189,39 +202,41 @@
 
                                         <div class="col-sm-4 mb-3">
                                             <label for="travel-date">Full Name </label>
-                                           <input type="text" name="nok-name" id="nok-name" class="py-3 form-control" {% if next_of_kin_detail.name %} value ="{{ next_of_kin_detail.name }}" {% endif %}
-                                            >
+                                            <input type="text" name="nok-name" id="nok-name" class="py-3 form-control"
+                                                {% if next_of_kin_detail.name %} value="{{ next_of_kin_detail.name }}"
+                                                {% endif %}>
                                         </div>
 
                                         <div class="col-sm-4 mb-3">
                                             <label for="travel-date">Phone Number </label>
-                                           <input type="text" name="nok-phone" id="nok-phone" class="py-3 form-control" {% if next_of_kin_detail.phone %} value ="{{ next_of_kin_detail.phone }}" {% endif %}>
+                                            <input type="text" name="nok-phone" id="nok-phone" class="py-3 form-control"
+                                                {% if next_of_kin_detail.phone %} value="{{ next_of_kin_detail.phone }}"
+                                                {% endif %}>
                                         </div>
-                                        
-                                        
+
+
                                         <div class="col-sm-4 mb-3">
                                             <label for="travel-date">Address </label>
-                                           <input type="text" name="nok-address" id="nok-address" class="py-3 form-control">
+                                            <input type="text" name="nok-address" id="nok-address"
+                                                class="py-3 form-control">
                                         </div>
 
                                         <!-- BOOK SEAT CONTAINER -->
-                                    
-                                        <div class="row mt-4">
-                                            <h4 id="one-way-selected-schedule" class="py-2"></h4>
-                                        </div>
-                                        <div class="container mt-5">
-                                            <h3 class="mb-4">Vehicle Seats</h3>
+
+                                        <div class="row mt-2">
+                                            <h5 id="one-way-selected-schedule" class="py-2"></h5>
+                                            <p class="mb-3">Vehicle Seats</p>
                                             <div class="mb-3">
                                                 <label for="seats" class="form-label">Seats:</label>
                                                 <div id="one-way-seats" class="seats-container row"></div>
                                             </div>
                                             <input type="hidden" name="selected_seats" id="one-way-selected_seats">
                                         </div>
+                                      
 
                                     </div>
-                                    <div class="col-sm-6 mb-1">
-                                        <input type="submit" value="Proceed"
-                                            class="btn colorbtn text-white btn-sm p-3">
+                                    <div class="col-sm-12 text-start mb-1 mt-2">
+                                        <input type="submit" value="Proceed to Payment" class="btn colorbtn text-white btn-sm p-3">
 
                                     </div>
                                 </form>
@@ -230,17 +245,17 @@
                             <!-- Round trip form -->
                             <div id="form2" class="form-container 2wayform">
                                 <form action="#" method="post" class="user-form" id="round-trip-form">
-                                    {%  csrf_token %}
+                                    {% csrf_token %}
                                     <div class="row row-gap-2">
 
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling from</label>
 
-                                            <select class="form-select user-state-form py-3"
-                                                id="" aria-label="" name="pickup_state">
+                                            <select class="form-select user-state-form py-3" id="" aria-label=""
+                                                name="pickup_state">
                                                 <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
-                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
-                                                
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{vehicle.terminal1.state.name }}</option>
+
                                             </select>
 
                                         </div>
@@ -248,10 +263,10 @@
                                         <div class="col-sm-4 mb-3">
                                             <label for="State">Traveling to</label>
 
-                                            <select class="form-select user-state-form py-3"
-                                                id="" aria-label="" name="destination_state">
-                                                <option value="{{ vehicle.terminal1.state.id }}">{{ vehicle.terminal1.state.name }}</option>
-                                                <option value="{{ vehicle.terminal2.state.id }}">{{ vehicle.terminal2.state.name }}</option>
+                                            <select class="form-select user-state-form py-3" id="" aria-label=""
+                                                name="destination_state">
+                                                <option value="{{ vehicle.terminal1.state.id }}">{{vehicle.terminal1.state.name }}</option>
+                                                <option value="{{ vehicle.terminal2.state.id }}">{{vehicle.terminal2.state.name }}</option>
                                             </select>
 
 
@@ -260,32 +275,33 @@
                                         <div class="col-sm-4 mb-3">
                                             <label for="travel-date">Traveling date <span
                                                     class="text-danger">*</span></label>
-                                            <input type="date" id="date" name="lname"
-                                                id="travel-date" class="form-control py-3">
+                                            <input type="date" id="date" name="lname" id="travel-date"
+                                                class="form-control py-3">
                                         </div>
 
                                         <div class="col-sm-4 mb-3">
                                             <label for="travel-date">Returning date <span
                                                     class="text-danger">*</span></label>
-                                            <input type="date" id="date" name="lname"
-                                                id="travel-date" class="form-control py-3">
+                                            <input type="date" id="date" name="lname" id="travel-date"
+                                                class="form-control py-3">
                                         </div>
 
-                                        <div class="row mt-4">
+                                        
                                             <div class="col-sm-4 mb-3">
                                                 <label for="adults">Adults</label>
-                                                <input type="number" class="form-control" name="adults" value="1">
+                                                <input type="number" class="form-control py-3" name="adults" value="1">
                                             </div>
                                             <div class="col-sm-4 mb-3">
                                                 <label for="children">Children</label>
-                                                <input type="number" class="form-control" name="children" value="0">
+                                                <input type="number" class="form-control py-3" name="children" value="0">
                                             </div>
                                             <div class="col-sm-4 mb-3">
-                                                <div class="total-seats" data-max-seats="{{ vehicle.capacity }}">Total Seats Selected: 0</div>
+                                                <div class="total-seats" data-max-seats="{{ vehicle.capacity }}">Total
+                                                    Seats Selected: 0</div>
                                             </div>
                                         </div>
-    
-                                        
+
+
                                         <div class="row">
                                             <div class="col-12">
                                                 <p class="fw-bold py-2">Next of Kin Details</p>
@@ -293,39 +309,40 @@
 
                                             <div class="col-sm-4 mb-3">
                                                 <label for="travel-date">Full Name </label>
-                                               <input type="text" name="nok-name" id="nok-name" class="py-3 form-control">
+                                                <input type="text" name="nok-name" id="nok-name"
+                                                    class="py-3 form-control">
                                             </div>
 
                                             <div class="col-sm-4 mb-3">
                                                 <label for="travel-date">Phone Number </label>
-                                               <input type="text" name="nok-phone" id="nok-phone" class="py-3 form-control">
-                                            </div>
-                                            
-                                            
-                                            <div class="col-sm-4 mb-3">
-                                                <label for="travel-date">Address </label>
-                                               <input type="text" name="nok-address" id="nok-address" class="py-3 form-control">
+                                                <input type="text" name="nok-phone" id="nok-phone"
+                                                    class="py-3 form-control">
                                             </div>
 
-                                            <div class="row mt-4">
-                                                <h4 id="round-trip-selected-schedule" class="py-2"></h4>
+
+                                            <div class="col-sm-4 mb-3">
+                                                <label for="travel-date">Address </label>
+                                                <input type="text" name="nok-address" id="nok-address"
+                                                    class="py-3 form-control">
                                             </div>
-                                            
-                                            <div class="container mt-5">
-                                                <h3 class="mb-4">Vehicle Seats</h3>
+
+                                            <div class="row mt-2">
+                                                <h5 id="round-trip-selected-schedule"></h4>
+                                                    <p class="mb-3">Vehicle Seats</p>
                                                 <div class="mb-3">
                                                     <label for="seats" class="form-label">Seats:</label>
                                                     <div id="round-trip-seats" class="seats-container row"></div>
                                                 </div>
-                                                <input type="hidden" name="selected_seats" id="round-trip-selected_seats">
+                                                <input type="hidden" name="selected_seats"
+                                                    id="round-trip-selected_seats">
                                             </div>
-                                        
+
+                                            
                                         </div>
 
-                                        <div class="col-sm-6 mb-1">
-                                            <input type="submit" value="Proceed"
-                                                class="btn colorbtn text-white btn-sm p-3">
-
+                                        <div class="col-sm-12 text-start mb-1 mt-2">
+                                            <input type="submit" value="Proceed to Payment" class="btn colorbtn text-white btn-sm p-3">
+    
                                         </div>
 
                                     </div>
@@ -339,16 +356,42 @@
                 </div>
             </div>
         </div>
+
+        
     </div>
+
+    <!-- <div class="toast" id="toast"></div> -->
+
+
+{% comment %} the model to hold ans show all the schedular {% endcomment %}
+
+     <!-- Modal -->
+     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+     aria-hidden="true"  data-bs-backdrop="static" data-bs-keyboard="false">
+     <div class="modal-dialog modal-lg modal-dialog-scrollable ">
+         <div class="modal-content">
+             <div class="modal-header bgcolor text-white">
+                 <h6 class="modal-title " id="exampleModalLabel"><span class="me-2 text-dark"><i class="bi bi-date"></i></span>Available Travel Schedules</h6>
+                 
+             </div>
+             <div class="modal-body py-2">
+                {% comment %} the schedular container {% endcomment %}
+                <div class="row" id="schedule-container">
+                 
+                </div>
+             </div>
+             <div class="modal-footer border-0">
+                 
+             </div>
+         </div>
+     </div>
+ </div>
 </div>
 
 
-<div class="container mt-5">
-    <h1 class="mb-4">Available Travel Schedules</h1>
-    <div id="schedule-container" class="row"></div>
-</div>
 
-<div class="toast" id="toast"></div>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
@@ -357,6 +400,9 @@
         // Set the min attribute of the date input to today
         document.getElementById('date').setAttribute('min', today);
     });
+
+
+
 </script>
 
 
@@ -376,11 +422,11 @@
     document.addEventListener('DOMContentLoaded', function () {
         const allPickupStateSelect = document.querySelectorAll('select[name="pickup_state"]');
         const allDestinationStateSelect = document.querySelectorAll('select[name="destination_state"]');
-        
-        allPickupStateSelect.forEach((pickupStateSelect,index) =>{
+
+        allPickupStateSelect.forEach((pickupStateSelect, index) => {
             pickupStateSelect.addEventListener('change', function () {
                 const selectedPickupState = this.value;
-        
+
                 // Clear current options
                 // destinationStateSelect.innerHTML = '';
                 const destinationStateSelect = allDestinationStateSelect[index];
@@ -404,5 +450,5 @@
 {% endblock page-contents %}
 
 {% block heavyScript %}
-    <script src="{% static 'javascript/booking_scripts/book.js' %}"></script>
+<script src="{% static 'javascript/booking_scripts/book.js' %}"></script>
 {% endblock %}

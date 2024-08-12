@@ -33,16 +33,16 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <button type="button"
+                            <a href='{% url "advanced_search_vehicles" %}' 
                                 class="btn btn-sm btn-dark text-white action-button me-1"><span
-                                    class="me-1"><i class="bi bi-truck-front"></i></span>Book Now</button>
-                            <button type="button"
+                                    class="me-1"><i class="bi bi-truck-front"></i></span>Book Now</a>
+                            <a href='{% url "profile" %}' 
                                 class="btn btn-sm btn-outline-dark action-button me-1"><span
                                     class="me-1"><i
-                                        class="bi bi-person-circle"></i></span>Profile</button>
-                            <button type="button"
+                                        class="bi bi-person-circle"></i></span>Profile</a>
+                            <a 
                                 class="btn  btn-sm btn-outline-dark action-button"><span class="me-1"><i
-                                        class="bi bi-wallet2"></i></span>Payment</button>
+                                        class="bi bi-wallet2"></i></span>Payment</a>
                         </div>
                     </div>
                 </div>
@@ -75,13 +75,13 @@
                                 {% for ticket in tickets %}
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
-                                        <td>{{ ticket.id }}</td>
+                                        <td>{{ ticket.booking_code }}</td>
                                         <td>
                                             {{ ticket.vehicle.terminal1.state.name }}
                                         </td>
 
                                         <td>{{ ticket.vehicle.terminal2.state.name}}</td>
-                                        <td>{{ ticket.travel_date }}</td>
+                                        <td>{{ ticket.booking_date }}</td>
             
                                         {% if ticket.status_color == "pending" %}
                                             <td>

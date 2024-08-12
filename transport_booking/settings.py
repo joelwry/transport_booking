@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-*02=gw@!9-lx6_v6^9(y!-_=z$h87z%@%h+7)mduudz#)p4l0%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -130,3 +130,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #timezone setting 
 TIME_ZONE = 'Africa/Lagos'
 USE_TZ = True
+
+
+# django Email 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'joelwryjolomi@gmail.com'
+EMAIL_HOST_PASSWORD = 'your_app_password'

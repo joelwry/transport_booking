@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from .models import Traveller, Booking, Vehicle, State, TransportationCompany
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
@@ -30,13 +31,13 @@ def index(request):
 @login_required(login_url='/login/')
 def dashboard_view(request):
     traveller = Traveller.objects.filter(user = request.user).first()
-    tickets = Booking.objects.filter(customer=traveller).all()
+    tickets = Booking.objects.filter(customer=traveller).all().order_by('-booking_date')[:5]
     ticket_type_count = {"pending":0,"confirmed":0,"cancelled":0}
     for ticket in tickets:
         if ticket.status == "PENDING":
             ticket.status_color = "pending"
             ticket_type_count['pending'] += 1
-            print('pending +1')
+           
         elif ticket.status == "CONFIRMED":
             ticket.status_color = "confirmed"
             ticket_type_count['confirmed'] += 1
@@ -262,6 +263,8 @@ def advanced_search_vehicles(request):
 def updateProfile(request):
     states = State.objects.all()
     traveller = Traveller.objects.filter(user = request.user).first()
+    if not traveller:
+        return JsonResponse({'success':False,'message':'user profile not found'}, status = 404)
     if request.method == 'POST':
         traveller_form = TravellerForm(request.POST)
         if traveller_form.is_valid() and traveller:
@@ -269,8 +272,11 @@ def updateProfile(request):
             traveller.gender = form.get('gender')
             traveller.state = form.get('state')
             traveller.phone = form.get('phone')
-            if request.POST['address'] : 
-                traveller.address = request.POST['address']
+            traveller.residential_address = form.get('residential_address')
+            traveller.nok_fullname = form.get('nok_fullname')
+            traveller.nok_phone = form.get('nok_phone')
+            # if request.POST['address'] : 
+            #     traveller.address = request.POST['address']
             if request.POST['first_name']:
                 traveller.user.first_name = request.POST['first_name']
                 traveller.user.save()
@@ -278,6 +284,8 @@ def updateProfile(request):
                 traveller.user.last_name = request.POST['last_name']
                 traveller.user.save()
             traveller.save()
+            return JsonResponse({'success':True, 'message': 'Profile updated successfully'}, status = 200)
+        return JsonResponse({'success' : False, 'message': traveller_form.errors}, status  = 400)
     return render(request, "booking/profile.html", {'states' : states,'traveller':traveller})
 
 def forgotPassword(request):

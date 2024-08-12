@@ -3,9 +3,15 @@ body{
     font-size:small;
     background-color: #fdbe9726;
 }
-
+.fbg-color{
+    background-color: #fdbe9726;
+}
 .form-control{
     font-size: small;
+}
+
+.action-login-btn:disabled{
+    background-color: #db5d0f !important;
 }
 
 .form-control:focus, select:focus{
@@ -146,6 +152,13 @@ table{
     right: 0%;
 }
 
+input[type='text']:disabled,input[type='email'], select:disabled{
+    background-color:hsla(0, 0%, 100%, 0.181) !important;
+    color: gray;
+    /* border: none; */
+    cursor: not-allowed;
+    
+}
 
 @media (width < 500px){
     #mobilemenu{

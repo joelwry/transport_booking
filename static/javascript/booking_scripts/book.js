@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     const vehicleId = VEHICLE_ID; // This is gotten from the variable  passed down from the views down to the book.html  
     const scheduleContainer = document.getElementById('schedule-container');
+
+    // getting the bootstrap toast elements to send the message
+    
+
+
     let schedules = [] // for storing vehicle schedules
     // this will be used to recieve the user booked seats 
     let SELECTED_SEATS = [] // USER BOOKED SEATS
@@ -58,6 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
             destinationState = document.querySelector('#round-trip-form select[name="destination_state"]').value;
         }
         
+        // triggervmodal
+        $(document).ready(function() {
+            $('#exampleModal').modal('show');
+        });
+        
         const filteredSched = schedules.filter(schedule => {
             return schedule.pickup_state === parseInt(pickupState) && schedule.destination_state === parseInt(destinationState);
         });
@@ -82,12 +92,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const maxSeats = parseInt(totalSeats.dataset.maxSeats);
 
             if (totalPassengers > maxSeats) {
-                showToast('Total passengers exceed vehicle capacity!');
+                // showToast('Total passengers exceed vehicle capacity!');
                 return;
             }
 
             if (SELECTED_SEATS.length > totalPassengers) {
-                showToast('Selected seats exceed total passengers!');
+                showToast(message='Selected seats exceed total passengers!', success = false);
                 return;
             }
 
@@ -95,14 +105,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function showToast(message) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.innerText = message;
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            document.body.removeChild(toast);
-        }, 3000);
+    function showToast(message,success) {
+        // const toast = document.createElement('div');
+        const toastEl = $('#ToastElement');
+        const toast = new bootstrap.Toast(toastEl); 
+       
+        if(success){
+            toastEl.find('#bodytoast').text(message);
+            toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
+        }else{
+            toastEl.find('#bodytoast').text(message);
+            toastEl.find('.toaser').addClass('bg-danger text-white');
+        }
+        toast.show();
+        // document.body.appendChild(toast);
+        // setTimeout(() => {
+        //     document.body.removeChild(toast);
+        // }, 3000);
     }
 
     
@@ -110,13 +129,13 @@ document.addEventListener('DOMContentLoaded', function () {
         scheduleContainer.innerHTML = '';
         schedules.forEach(schedule => {
             const card = document.createElement('div');
-            card.className = 'col-md-4';
+            card.className = 'col-lg-3 col-md-4';
             card.innerHTML = `
-                    <div class="card" style='box-shadow: 1px 1px 5px rgba(12, 12, 1, 0.1); border: 2px solid #d7f1febf; border-radius: 10px;  margin-bottom: 1rem;'>
-                        <div class="card-body" style=' display: flex;justify-content: space-between;align-items: flex-start;flex-direction: column;'>
+                    <div class="card shadow-sm border-custom-color">
+                        <div class="card-body" >
                             <div class="card-info">
                                 <div class="route">${schedule.pickup_state_name} &rarr; ${schedule.destination_state_name}</div>
-                                <div class="company" align="center">${schedule.vehicle_company}</div>
+                                <div class="company" >${schedule.vehicle_company}</div>
                                 <div class="times">
                                     ${new Date(schedule.travel_datetime).toLocaleString()}
                                     <br>
@@ -126,13 +145,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </div>
                             </div>
                             <div class="price">
-                                <div class="cost" style="color: darkgreen; font-family: monospace;">${new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(schedule.vehicle_price)}</div>
+                                <div class="cost fw-bold" style="color: darkgreen; font-family: monospace;">${new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(schedule.vehicle_price)}</div>
                             </div>
                 
                         </div>
                         <div class="custom-radio-wrapper">
-                            <input type="radio" class="custom-radio" id="schedule-${schedule.id}" name="schedule" value="${schedule.id}">
-                            <label for="schedule-${schedule.id}">Select</label>
+                            <input type="radio" class="custom-radio"  id="schedule-${schedule.id}" name="schedule" value="${schedule.id}">
+                            <label for="schedule-${schedule.id}" data-bs-dismiss="modal">Select</label>
                         </div>
                         
                     </div>
@@ -186,15 +205,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const tripType = document.querySelector('input[name="trip-type"]:checked').value;
         console.log(event.target);
 
+        
         let scheduleId;
         try{
             scheduleId = document.querySelector('.custom-radio-wrapper input[name="schedule"]:checked').value;
         }catch(error){
-            return alert("You have to select a vehicle schedule to book ");
+            // return alert("You have to select a vehicle schedule to book ");
+            showToast(message='You have to select a vehicle schedule to book', success = false);
+
+           
         }
 
         if(SELECTED_SEATS.length < 1){
-            return alert('You haven"t booked a seat');
+            return showToast(message = 'You haven"t booked a seat', success = false) ;
         }
         const adults = parseInt(document.querySelector('input[name="adults"]').value);
         const children = parseInt(document.querySelector('input[name="children"]').value);
@@ -206,7 +229,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if ( adults + actual_children_count > SELECTED_SEATS.length){
-            return alert("Passenger boarding this vehicle is more than the seats booked\nNote 1 Child below 10 years of age can be lapped by guardina, while 2 children below 10 years of age equals 1 seat .. any other above 2 will have to book complete seat");
+            return showToast(message = 'Passenger boarding this vehicle is more than the seats booked\nNote 1 Child below 10 years of age can be lapped by guardina, while 2 children below 10 years of age equals 1 seat .. any other above 2 will have to book complete seat', success = false) ;
+            // alert("Passenger boarding this vehicle is more than the seats booked\nNote 1 Child below 10 years of age can be lapped by guardina, while 2 children below 10 years of age equals 1 seat .. any other above 2 will have to book complete seat");
         }
         let trip;
         if( tripType == "one-way" ){
@@ -232,20 +256,22 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (response.ok) {
-                showToast('Booking successful!');
-                alert('booking successfull')
+                 showToast('Booking successful!', sucess= true);
+                // alert('booking successfull')
                 const data = await response.json()
                 console.log(data);
             } else {
-                showToast('Booking failed!');
-                alert('failed booking your ')
+                showToast('Booking failed!', success=false);
+                // alert('failed booking your ')
+
+               
                 const data = await response.json()
                 console.log(data);
             }
         } catch (error) {
             console.error('Error booking seat:', error);
-            showToast('Error booking seat!');
-            alert('error occurred')
+            showToast('Error booking seat!', sucess=false);
+               
         }
     }
 

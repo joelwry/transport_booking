@@ -9,6 +9,8 @@ from django.http import JsonResponse,HttpRequest
 from django.utils import timezone
 from django.db.models import Count
 
+from .forms import addNewVehicle, addNewCompanyForm
+
 
 # Create your views here.
 
@@ -46,7 +48,7 @@ def manageIndexView(request):
     traveller = Traveller.objects.all().count()
     companies = TransportationCompany.objects.all().count()
     bookings_pending = Booking.objects.filter( status="PENDING").count()
-    print(bookings_pending)
+    
 
 # Get today's date
     today = timezone.now().date()
@@ -80,25 +82,44 @@ def manageIndexView(request):
 
 # add new company
 @staff_member_required(login_url='manager:managerlogin')
-def AddCompany(request):
+def addNewCompany(request):
     if request.method == 'POST':
-        company_name = request.POST.get('company_name')
-        company_email = request.POST.get('company_email')
-        company_phone = request.POST.get('company_phone')
-        company_address = request.POST.get('company_address')
-        company_info = request.POST.get('company_info')
-        company_logo = request.POST.get('company_logo')
-
-        if not (company_name | company_email | company_phone | company_address | company_logo):
-            return JsonResponse({'success' : False, 'message' : 'filled with * are required'})
-
-    return render(request, "manager/add_company.html")# manager index view
+        form = addNewCompanyForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success':True, 'message': 'Company added successfully'})
+        else:
+           errors = form.errors.as_json()
+           return JsonResponse({'success': False, 'message': errors})
+    else:
+        form = addNewCompanyForm()
+    return render(request, "manager/add_company.html")
 
 
 # add new vehicle to lish
 @staff_member_required(login_url='manager:managerlogin')
 def AddVehicle(request):
-    return render(request, "manager/add_vehicle.html")
+    terminalsall = Terminals.objects.all()
+    companies = TransportationCompany.objects.all()
+    if request.method == 'POST':
+       
+        form = addNewVehicle(request.POST)
+        if form.is_valid:
+            vehicle = form.save(commit = False)
+            vehicle.terminal1 = Terminals.objects.get(id = request.POST['terminal-1'])
+            vehicle.terminal2 = Terminals.objects.get(id = request.POST['terminal-2'])
+            vehicle.comapny = TransportationCompany.objects.get(id = request.POST['company'])
+            vehicle.save()
+
+            # plate_number = form.cleaned_data.get('plate_number')
+            # terminal1 = form.cleaned_data.get('terminal1')
+            # terminal2 = form.cleaned_data.get('terminal2')
+           
+            # capacity = form.cleaned_data.get('capacity')
+
+           
+
+    return render(request, "manager/add_vehicle.html", {'terminals' : terminalsall, 'companies' : companies})
 
 
 # company list
@@ -108,9 +129,24 @@ def companyList(request):
     return render(request,'manager/company_list.html', {'companies':companies})
 
 
+
+
 @staff_member_required
-def companyDetail(request, company):
-    company = get_object_or_404( TransportationCompany ,id = company)
+def deleteCompany(request, company_id):
+    company = get_object_or_404(TransportationCompany, pk = company_id)
+    try:
+        company.delete()
+    except Exception as e:
+        return JsonResponse({'success':False, 'message' : 'An error occured object can\'t be deleted'})
+    return JsonResponse({'success': True, 'message': 'company deleted successfully'})
+
+
+
+
+@staff_member_required
+def companyDetail(request, company_id, slug ):
+    # company = get_object_or_404( TransportationCompany ,id = company_id, slug = slug)
+    company = get_object_or_404(TransportationCompany, id = company_id, slug = slug)
     return render(request, 'manager/companydetail.html', {'company': company})
 
 def company_analytics(request):
