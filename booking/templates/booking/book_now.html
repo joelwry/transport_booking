@@ -60,58 +60,68 @@
     </div>
 
         <!-- travellers list container -->
-        <div class="row traveller-list mt-2 row-gap-3 pt-3 justify-content-center align-items-top">
-            {% for vehicle in vehicles %}
+         {% if vehicles %}
+            <div class="row traveller-list mt-2 row-gap-3 pt-3 justify-content-center align-items-top">
+                {% for vehicle in vehicles %}
 
-            <div class="col-lg-3 col-sm-4">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-12">
-                                        {% if vehicle.company.image %}
-                                        <img src="{{vehicle.company.image.url}}" class="rounded-pill"
-                                            width="25px" alt="">
-                                        {% else %}
-                                        <img src="{% static 'travellers logo/logo.png' %}" class="rounded-pill"
-                                        width="25px" alt="default logo">
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-8">
-                                        <h5 class="traveller-name">{{ vehicle.company.name }}</h5>
+                <div class="col-lg-3 col-sm-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            {% if vehicle.company.image %}
+                                            <img src="{{vehicle.company.image.url}}" class="rounded-pill"
+                                                width="25px" alt="">
+                                            {% else %}
+                                            <img src="{% static 'travellers logo/logo.png' %}" class="rounded-pill"
+                                            width="25px" alt="default logo">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-8">
+                                            <h5 class="traveller-name">{{ vehicle.company.name }}</h5>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-12">
-                                <p class="traveller-price">{{ vehicle.capacity }} people capacity</p>
-                                <p class="traveller-price">NGN{{ vehicle.price }}</p>
-                                <p class="traveller-states">
-                                    
-                                    <span style="font-size: smaller;">
-                                        {{ vehicle.terminal1.state.name }}({{vehicle.terminal1.area}})
-                                    </span> 
-                                    <span>
-                                        <i class="bi bi-arrow-left-right"></i>
-                                    </span>
-                                    <span style="font-size: smaller;">
-                                        {{ vehicle.terminal2.state.name }} ({{vehicle.terminal2.area}})
-                                    </span>
+                                <div class="col-12">
+                                    <p class="traveller-price">{{ vehicle.capacity }} people capacity</p>
+                                    <p class="traveller-price">NGN{{ vehicle.price }}</p>
+                                    <p class="traveller-states">
+                                        
+                                        <span style="font-size: smaller;">
+                                            {{ vehicle.terminal1.state.name }}({{vehicle.terminal1.area}})
+                                        </span> 
+                                        <span>
+                                            <i class="bi bi-arrow-left-right"></i>
+                                        </span>
+                                        <span style="font-size: smaller;">
+                                            {{ vehicle.terminal2.state.name }} ({{vehicle.terminal2.area}})
+                                        </span>
 
-                                </p>
-                            </div>
-                            <div class="col-12">
-                                <a href="{% url 'book' vehicle.id %}">
-                                    <button class="btn btn-sm  book-btn" style="width:100%">Book Now</button>
-                                </a>
+                                    </p>
+                                </div>
+                                <div class="col-12">
+                                    <a href="{% url 'book' vehicle.id %}">
+                                        <button class="btn btn-sm  book-btn" style="width:100%">Book Now</button>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {% endfor %}
+                {% endfor %}
+            </div>
+        
+        {%  else %}
+        <div class="row traveller-list mt-2 row-gap-3 pt-3 justify-content-center align-items-top">
+
+            <div class="col-12">
+                <h3  align='center'>No vehicles meet search requirements</h3>
+            </div>
         </div>
+        {% endif %}
     </div>
 </div>
 </div>

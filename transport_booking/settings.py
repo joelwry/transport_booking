@@ -130,3 +130,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #timezone setting 
 TIME_ZONE = 'Africa/Lagos'
 USE_TZ = True
+
+
+# django Email 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'joelwryjolomi@gmail.com'
+EMAIL_HOST_PASSWORD = 'your_app_password'
