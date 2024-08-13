@@ -3,7 +3,7 @@ from booking.models import Vehicle, TransportationCompany, Booking, Terminals, T
 from django.contrib.auth import login, authenticate
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_POST
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views.decorators.csrf import csrf_protect
 from django.http import JsonResponse,HttpRequest, HttpResponse
 
@@ -266,13 +266,20 @@ def StateDetailView(request, statecode):
 
 
 
-# @staff_member_required
+ #@staff_member_required
 class BookingListView(ListView):
     model = Booking
     template_name = "manager/bookings.html"
     context_object_name = 'bookings'
     ordering = '-booking_date'
 
+# BOOKING DETAILS
+def bookingDetailView(request, bookcode):
+    try:
+        ticket = Booking.objects.get(booking_code = bookcode)
+    except Booking.DoesNotExist():
+        raise render(request, '404.html', status=404)
+    return render(request, 'manager/booking-detail.html', {'ticket' : ticket})
 
 
 

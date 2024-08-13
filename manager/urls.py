@@ -60,6 +60,7 @@ urlpatterns = [
 
 
     path("bookings/", views.BookingListView.as_view(), name="bookings"),
+    path("bookings-detail/<str:bookcode>/", views.bookingDetailView, name="booking-detail"),
 
     # # show analytics
     # path("analytics/", views.booking_stats, name="analytics"),

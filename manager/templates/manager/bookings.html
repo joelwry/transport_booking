@@ -18,32 +18,34 @@
                         style="background-color: transparent;">
                         <thead>
                             <tr>
-                                <th>Booking Date</th>
+                                
                                 <th>Booking Code</th>
                                 <th>Customer Number</th>
-                                <th>Vehicle Number</th>
+                                
                                 <th>Company</th>
                                 <th>Pickup State</th>
                                 <th>Destination State</th>
                                 <th>Trip Type</th>
-                                <th>Number of Seat</th>
+                               
                                 <th>Price</th>
+                                <th>Ation</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for booking in bookings  %}
                             
                             <tr>
-                                <td>{{booking.booking_date}}</td>
                                 <td>{{booking.booking_code}}</td>
                                 <td>{{booking.customer}}</td>
-                                <td>{{booking.vehicle.plate_number}}</td>
+                                
                                 <td>{{booking.vehicle.company}}</td>
                                 <td>{{booking.pickup_state}}</td>
                                 <td>{{booking.destination_state}}</td>
                                 <td>{{booking.trip_type}}</td>
-                                <td>{{booking.number_of_seats}}</td>
                                 <td>{{booking.total_cost}}</td>
+                                <td>                                    
+                                    <a href = '{% url "manager:booking-detail" booking.booking_code %}' class=" m-1 btn btn-sm  btn-primary"  ><i class="bi bi-eye"></i></a>
+                                </td>
                                
                             </tr>
 

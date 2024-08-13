@@ -1,0 +1,88 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block page-contents %}
+
+
+<!-- wrapper starts here -->
+<div class="col-11  px-4  pb-4">
+    <h2 class="mb-4">Booking Details</h2>
+    <div class="card p-2 rounded-0 shadow-sm">
+        <div class="card-header">
+            Booking Code: {{ ticket.booking_code }}
+        </div>
+        <div class="card-body border-1">
+            <div class="row row-gap-3">
+                <div class="col-md-6">
+                    <h5 class="card-title fw-bold">Customer Information</h5>
+                    <p class="card-text"><strong>Name:</strong> {{ ticket.customer.user.last_name }} {{ ticket.customer.user.first_name }}</p>
+                    <p class="card-text"><strong>Email:</strong> {{ ticket.customer }}</p>
+                    <p class="card-text"><strong>Phone:</strong> {{ ticket.customer.phone }}</p>
+                    <p class="card-text"><strong>Next of Kin:</strong> {{ ticket.customer.nok_fullname }}</p>
+                    <p class="card-text"><strong>Nok Phone No.:</strong> {{ ticket.customer.nok_phone }}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <h5 class="card-title fw-bold">Trip Information</h5>
+                    <p class="card-text"><strong>Trip Type:</strong> {{ ticket.trip_type }}</p>
+                    <p class="card-text"><strong>Vehicle:</strong> {{ ticket.vehicle.company.name }}</p>
+                    <p class="card-text"><strong>Pickup State:</strong> {{ ticket.pickup_state.name }}</p>
+                    <p class="card-text"><strong>Destination State:</strong> {{ ticket.destination_state.name }}</p>
+                    <p class="card-text"><strong>Travel Date:</strong> {{ ticket.travel_date|date:"F d, Y h:i A" }}</p>
+                    {% if ticket.return_date %}
+                    <p class="card-text"><strong>Return Date:</strong> {{ ticket.return_date|date:"F d, Y h:i A" }}</p>
+                    {% endif %}
+                </div>
+
+                <hr>
+
+                <div class="col-md-6">
+                    <h5 class="card-title fw-bold">Booking Details</h5>
+                    <p class="card-text"><strong>Status:</strong> <span class="badge bg-info">{{ ticket.status }}</span>
+                    </p>
+                    <p class="card-text"><strong>Number of Seats:</strong> {{ ticket.number_of_seats }}</p>
+                    <p class="card-text"><strong>Number of Adults:</strong> {{ ticket.number_of_adults }}</p>
+                    <p class="card-text"><strong>Number of Children Below 10:</strong> {{ticket.number_of_children_below_10 }}</p>
+                    <p class="card-text"><strong>Total Cost:</strong> ${{ ticket.total_cost }}</p>
+                    <p class="card-text"><strong>Booking Date:</strong> {{ ticket.booking_date|date:"F d, Y h:i A" }}
+                    </p>
+                </div>
+                <div class="col-md-6">
+
+                    <h5 class="card-title fw-bold">Payment Information</h5>
+                    {% if ticket.payment_id %}
+                    <p class="card-text"><strong>Payment ID:</strong> {{ ticket.payment_id }}</p>
+                    {% else %}
+                    <p class="card-text text-danger"><strong>Payment Status:</strong> Not Paid</p>
+                    {% endif %}
+                    <p class="card-text"><strong>Confirmed:</strong> {{ ticket.confirmed|yesno:"Yes,No" }}</p>
+                    <p class="card-text"><strong>Ticket Sent:</strong> {{ ticket.ticket_sent|yesno:"Yes,No" }}</p>
+
+                    <hr>
+
+                    <h5 class="card-title fw-bold">Booked Seats</h5>
+                    <p class="card-text">{{ ticket.booked_seats }}</p>
+
+                </div>
+            </div>
+
+
+
+            <hr>
+
+
+            <a href="{% url 'manager:bookings' %}" class="btn btn-primary mt-3">Back to Bookings</a>
+
+            {% if not ticket.confirmed %}
+            <form method="POST" action="#">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success mt-3">Approve Ticket</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+<!-- wrapper ends here -->
+
+
+{% endblock page-contents %}
