@@ -1,10 +1,11 @@
 {% extends "base_templates/base.html" %}
+{% block page-title %}Express Naija | Login{% endblock page-title %}
 {% block page-contents %}
 {% load static %}
 <div class="container col-lg-5 mt-5 ">
     <img src="{% static "logo.png" %}" width="56px" alt="">
     <div class="col-12 border rounded-2 shadow py-3 px-5">
-        <h3 class=" fw-bold fs-2 text-gray">Welcome Back</h3>
+        <h3 class=" fw-bold fs-2 text-gray pt-2">Welcome Back</h3>
         <p class="mb-4 ">Enter your details to login</p>
         <form id='loginUserForm' method='POST'>
             {% csrf_token %}

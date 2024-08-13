@@ -14,8 +14,8 @@ body{
     background-color: #db5d0f !important;
 }
 
-.form-control:focus, select:focus{
-    border:1px solid #fe7c2b;
+.form-control:focus, .form-check-input:focus{
+    border:1px solid #fc8338;
     box-shadow: none;
 }
 
@@ -26,10 +26,10 @@ body{
 } */
 
 /* input check and radio color control */
-.form-check-input:focus{
+.form-check-input:focus, select:focus{
     outline: #db5d0f;
     border: none;
-    background-color: #db5d0f;
+   
 }
 
 .form-check-input:checked{
@@ -49,11 +49,11 @@ body{
 }
 
 .colorbtn{
-    background-color: #fe7c2b;
+    background-color: #fc8135;
 }
 
 .colorbtn:hover{
-    background-color: #f86e18;
+    background-color: #f96d17;
 }
 
 /* shadow- control */
@@ -63,7 +63,7 @@ input:focus{
 
 /* border color control */
 .border-custom-color {
-    border-color: #fe7c2b;
+    border-color: #f47d33d4;
 }
 
 /* links color on hover control */

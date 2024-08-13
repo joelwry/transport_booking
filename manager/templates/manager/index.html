@@ -5,73 +5,76 @@
 
 
 {% block page-contents %}
-<div class='row row-gap-2'>
-    <div class="col-lg-3 col-sm-4">
-        <div class="card p-2 shadow border-0">
-            <div class="card-body">
-                <div class="text-end">
-                    <span class="rounded-pill p-3 num-bg-color text-white ">{{num_pending_booking}}</span>
+<div class="col-md-11 m-auto">
+    <div class='row row-gap-2'>
+        <div class="col-lg-3 col-sm-4">
+            <div class="card p-2 shadow border-0">
+                <div class="card-body">
+                    <div class="text-end">
+                        <span class="rounded-pill p-3 num-bg-color text-white ">{{num_pending_booking}}</span>
+                    </div>
+                    <h5 class="medium fw-bold"><span class="me-1"><i class="bi bi-journal-check"></i></span>Bookings</h5>
+                    <p class="primary-color">Total pending Bookings</p>
+    
                 </div>
-                <h5 class="medium fw-bold"><span class="me-1"><i class="bi bi-journal-check"></i></span>Bookings</h5>
-                <p class="primary-color">Total pending Bookings</p>
-
             </div>
         </div>
-    </div>
-
-
-    <div class="col-lg-3 col-sm-4">
-        <div class="card p-2 shadow border-0">
-            <div class="card-body">
-                <div class="text-end">
-                    <span class="rounded-pill p-3 num-bg-color text-white ">{{num_companies}}</span>
+    
+    
+        <div class="col-lg-3 col-sm-4">
+            <div class="card p-2 shadow border-0">
+                <div class="card-body">
+                    <div class="text-end">
+                        <span class="rounded-pill p-3 num-bg-color text-white ">{{num_companies}}</span>
+                    </div>
+                    <h5 class="medium fw-bold"><span class="me-1"><i class="bi bi-bus-front"></i></span>Companies</h5>
+                    <p class="primary-color">Registered Companies</p>
+    
                 </div>
-                <h5 class="medium fw-bold"><span class="me-1"><i class="bi bi-bus-front"></i></span>Companies</h5>
-                <p class="primary-color">Registered Companies</p>
-
             </div>
         </div>
-    </div>
-
-    <div class="col-lg-3 col-sm-4">
-        <div class="card p-2 shadow border-0">
-            <div class="card-body">
-                <div class="text-end">
-                    <span class="rounded-pill p-3 num-bg-color text-white ">{{num_traveller}}</span>
+    
+        <div class="col-lg-3 col-sm-4">
+            <div class="card p-2 shadow border-0">
+                <div class="card-body">
+                    <div class="text-end">
+                        <span class="rounded-pill p-3 num-bg-color text-white ">{{num_traveller}}</span>
+                    </div>
+                    <h4 class="medium fw-bold"><span class="me-1"><i class="bi bi-person-circle"></i></span>Users</h4>
+                    <p class="primary-color">Total Registered Users</p>
+    
                 </div>
-                <h4 class="medium fw-bold"><span class="me-1"><i class="bi bi-person-circle"></i></span>Users</h4>
-                <p class="primary-color">Total Registered Users</p>
-
             </div>
         </div>
-    </div>
-
-    <div class="col-lg-3">
-        <div class="card p-2 shadow border-0">
-            <div class="card-body">
-                <div class="text-end">
-                    <span class="rounded-pill p-3 num-bg-color text-white ">10M</span>
+    
+        <div class="col-lg-3">
+            <div class="card p-2 shadow border-0">
+                <div class="card-body">
+                    <div class="text-end">
+                        <span class="rounded-pill p-3 num-bg-color text-white ">10M</span>
+                    </div>
+                    <h5 class="medium fw-bold"><span class="me-1"><i class="bi bi-person-circle"></i></span>Users</h5>
+                    <p class="primary-color">Total Registered Users</p>
+    
                 </div>
-                <h5 class="medium fw-bold"><span class="me-1"><i class="bi bi-person-circle"></i></span>Users</h5>
-                <p class="primary-color">Total Registered Users</p>
-
             </div>
         </div>
+    
     </div>
-
-</div>
-
-<div class="row  mt-3">
-    <div class="col-12">
-        <div class="card  m-auto border-0 ">
-        <div class="card-body">
-            <h1 class='page-title py-3'>Weekly Booking Statistics</h1>
-            <canvas id="weeklyBookingsChart">
-                <p>No values yet</p>
-            </canvas>
+    
+    <div class="row  mt-3">
+        <div class="col-12">
+            <div class="card  m-auto border-0 ">
+            <div class="card-body">
+                <h1 class='page-title py-3'>Weekly Booking Statistics</h1>
+                <canvas id="weeklyBookingsChart">
+                    <p>No values yet</p>
+                </canvas>
+            </div>
+        </div>
         </div>
     </div>
-    </div>
+    
 </div>
 
 

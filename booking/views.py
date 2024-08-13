@@ -201,11 +201,6 @@ def search_form(request):
 # GOOD TO GO
 # this is for advanced search functionality
 
-# from django.shortcuts import render
-# from django.db.models import Q
-# from .models import Vehicle, Terminals, TransportationCompany, State
-# from .forms import AdvancedSearchForm
-@login_required
 def advanced_search_vehicles(request):
     form = AdvancedSearchForm(request.POST or None)
     vehicles = Vehicle.objects.all()

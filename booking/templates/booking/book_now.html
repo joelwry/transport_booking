@@ -72,7 +72,7 @@
                                     <div class="col-12">
                                         {% if vehicle.company.image %}
                                         <img src="{{vehicle.company.image.url}}" class="rounded-pill"
-                                            width="25px" alt="">
+                                            width="25px" alt="{{vehicle.company.name}}">
                                         {% else %}
                                         <img src="{% static 'travellers logo/logo.png' %}" class="rounded-pill"
                                         width="25px" alt="default logo">
