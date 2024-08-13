@@ -14,7 +14,7 @@ from .serializers import (
 from rest_framework.decorators import action
 from django.utils import timezone
 from datetime import timedelta
-from .utils.payment_gateway import initiate_payment, process_payment, verify_payment
+from .utils.payment_gateway import initiate_payment, verify_payment
 from .utils.seats_handler import calculateNumbersOfPassegers as passengerCount
 
 
@@ -128,8 +128,6 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
 
-    
-
     @action(detail=True, methods=['post'])
     def book_seat(self, request, pk=None):
         schedule = get_object_or_404(VehicleSchedule, pk=pk)
@@ -170,22 +168,24 @@ class BookingViewSet(viewsets.ModelViewSet):
         )
 
         # Redirect to payment gateway
-        payment_detail = initiate_payment(booking.booking_code,booking.total_cost, request.user.email)
-        if payment_detail['success']:
-            payment_url = payment_detail['payment_url']
-            access_code = payment_detail['access_code']
-            url = reverse('payment', args=[booking.booking_code,access_code,booking.total_cost*100])
-            #return HttpResponseRedirect(url)
-            return Response({
-                'payment_url': payment_url,
-                'booking_code': booking.booking_code,
-                'access_code' : access_code,
-                'total_amount': booking.total_cost
-            }, status=status.HTTP_201_CREATED) 
-        else :
+        try:
+            payment_detail = initiate_payment(booking.booking_code,booking.total_cost, request.user.email)
+            if payment_detail['success']:
+                payment_url = payment_detail['payment_url']
+                access_code = payment_detail['access_code']
+                access_code_modified = payment_detail['access_modified']
+                return Response({
+                    'external_payment_url': payment_url,
+                    'booking_code': booking.booking_code,
+                    'access_code' : access_code,
+                    'total_amount': booking.total_cost,
+                    'access_code_modified': access_code_modified,
+                    'internal_payment_url':f'/payment/{booking.booking_code}/{access_code}/{payment_detail['amount']}/'
+                }, status=status.HTTP_201_CREATED) 
+        except Exception as e :
             booking.delete()
             return Response({
-                'message': payment_detail['error'] 
+                'message': 'Unable to serve a connection to our payment gateway.. ensure you have an internet connection other retry booking'
             }, status = status.HTTP_402_PAYMENT_REQUIRED)
 
     
@@ -220,6 +220,62 @@ class VehicleScheduleViewSet(viewsets.ModelViewSet):
     def available_seats(self, request, pk=None):
         schedule = self.get_object()
         return Response({'available_seats': schedule.available_seats()})
+
+
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def verifyPaymentView(request, reference):
+    user = request.user
+
+    # Verify the payment with Paystack
+    payment_verification = verify_payment(reference)
+    
+    if not payment_verification['status']:
+        return Response({'status': False, 'message': payment_verification['error']}, status=400)
+
+    booking_code = payment_verification['reference']
+    try:
+        booking = Booking.objects.get(booking_code=booking_code, customer__user=user)
+        
+        if booking.status != 'PENDING':
+            return Response({'status': False, 'message': 'Booking is not pending.'}, status=400)
+        
+        # Additional validations (e.g., amount check)
+        required_payment = booking.total_cost * 100
+        payment_made = payment_verification['amount']
+        if required_payment < payment_made :
+            return Response({'status': False, 'message': f'Incorrect payment amount.. A payment of NGN{booking.total_cost} was required but a payment of {payment_made/100} was made which is NGN{(payment_made/100) - booking.total_cost} less than the specified amount'}, status=400)
+        
+        # Update booking status and reserved seats
+        booking.status = 'CONFIRMED'
+        booking.payment_id = payment_verification['id']
+        booking.confirmed = True
+        booking.save()
+
+        payment = Payment.objects.filter(booking = booking).first()
+        if payment == None :
+            Payment.objects.create(booking=booking, amount= booking.total_cost,status='COMPLETED')
+        elif payment.status != 'COMPLETED':
+            payment.status = 'COMPLETED'
+            payment.amount = booking.total_cost
+            payment.save()
+
+        # Update VehicleSchedule for reserved seats
+        schedule = booking.schedule
+        seats = booking.booked_seats
+        schedule.booked_seats.extend(seats)
+        # still need validation for seat if already booked by someone else etc
+        # for seat in booking.booked_seats:
+        #     schedule.reserve_seat(seat)
+        schedule.save()
+
+
+        return Response({'status': True, 'message': 'Payment verified and booking confirmed', 'vehicle_schedule':schedule.id, 'booking':"booking.id"})
+    
+    except Booking.DoesNotExist:
+        return Response({'status': False, 'message': 'Booking does not exist or does not belong to the user.'}, status=404)
+
 
 class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Payment.objects.all()
