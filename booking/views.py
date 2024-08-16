@@ -288,6 +288,12 @@ def updateProfile(request):
         return JsonResponse({'success' : False, 'message': traveller_form.errors}, status  = 400)
     return render(request, "booking/profile.html", {'states' : states,'traveller':traveller})
 
+
+def testerView(request):
+    return render(request, 'result-search.html')
+
+
+
 def forgotPassword(request):
     return render(request, "forgot_password.html", {})
 

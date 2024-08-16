@@ -85,6 +85,11 @@
     font-size: 14px;
     border-radius:5px
 }
+.filter {
+    position: sticky;
+    top: 20px;
+}
+
 
 
 
@@ -96,19 +101,13 @@ body{
     font-size:small;
     background-color: #fdbe9726;
 }
-.fbg-color{
-    background-color: #fdbe9726;
-}
+
 .form-control{
     font-size: small;
 }
 
-.action-login-btn:disabled{
-    background-color: #db5d0f !important;
-}
-
-.form-control:focus, .form-check-input:focus{
-    border:1px solid #fc8338;
+.form-control:focus, select:focus{
+    border:1px solid #fe7c2b;
     box-shadow: none;
 }
 
@@ -119,10 +118,10 @@ body{
 } */
 
 /* input check and radio color control */
-.form-check-input:focus, select:focus{
+.form-check-input:focus{
     outline: #db5d0f;
     border: none;
-   
+    background-color: #db5d0f;
 }
 
 .form-check-input:checked{
@@ -142,11 +141,11 @@ body{
 }
 
 .colorbtn{
-    background-color: #fc8135;
+    background-color: #fe7c2b;
 }
 
 .colorbtn:hover{
-    background-color: #f96d17;
+    background-color: #f86e18;
 }
 
 /* shadow- control */
@@ -156,7 +155,7 @@ input:focus{
 
 /* border color control */
 .border-custom-color {
-    border-color: #f47d33d4;
+    border-color: #fe7c2b;
 }
 
 /* links color on hover control */
@@ -202,7 +201,7 @@ input:focus{
     font-size: 14px;
 }
 table{
-    font-size: 14px;
+    font-size: 12px;
 }
 .history-row{
     overflow-x: scroll;
@@ -245,13 +244,6 @@ table{
     right: 0%;
 }
 
-input[type='text']:disabled,input[type='email'], select:disabled{
-    background-color:hsla(0, 0%, 100%, 0.181) !important;
-    color: gray;
-    /* border: none; */
-    cursor: not-allowed;
-    
-}
 
 @media (width < 500px){
     #mobilemenu{
@@ -282,17 +274,17 @@ input[type='text']:disabled,input[type='email'], select:disabled{
 }
 
 
-/* .banner-1{
-    background-image: url('../bus_image.jpg');
+.banner-1{
+    background-image: url("../banners/bus.jpg");
 }
 
 .banner-2{
-    background-image: url("{% static '../bus_image.jpg' %}");
+    background-image: url("../banners/male-bus-driver-portrait.jpg");
 
 }
 .banner-3{
     background-image: url("../banners/BRT-LAGOS-1140x570.jpg");
-} */
+}
 
 .banner-3, .banner-2,.banner-1{
     background-position: top;

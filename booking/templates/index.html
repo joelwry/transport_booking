@@ -1,438 +1,192 @@
-{% extends "base_templates/base.html" %}
+{% extends "base_templates/header.html" %}
 {% load static %}
 {% block page-contents %}
 
-<header>
-    <nav class="navbar navbar-expand-md top-nav ">
-      <div class="container">
-        <a class="navbar-brand" href="#">
-          <img src="{% static 'logo.png' %}" width="80px">
-        </a>
 
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-          <ul class="navbar-nav ms-auto mb-2 mb-md-0">
-            <li class="nav-item me-3">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item me-3">
-              <a class="nav-link" href="#">About Us</a>
-            </li>
-            <li class="nav-item me-3">
-              <a class="nav-link" href="#">Contact Us</a>
-            </li>
-
-
-          </ul>
-        </div>
-
-
-        <button class="btn ">
-          <a class=" btn btn-sm primary-color" href="{% url 'login' %}"><span class="me-1"><i
-                class="bi bi-person-circle"></i></span>Account</a>
-        </button>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      </div>
-    </nav>
-  </header>
-
-  <!-- banner starts here -->
-
-  <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true"
-        aria-label="Slide 1"></button>
-      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-    </div>
-    <div class="carousel-inner">
-
-      <div class="carousel-item banner-1 active">
-        <div class="container">
-          <div class="carousel-caption mb-2 text-start">
-            <h1 class="home-title">Travel Made Simple.</h1>
-            <p class="home-sub-title">
-              Seamless booking for hassle-free travel. Enjoy a smooth and efficient booking experience,
-              <br>allowing you to focus on the excitement of your upcoming journey.
-            </p>
-            <p><a class="btn btn-lg btn-primary home-action-button" href="#">Learn more</a></p>
-          </div>
-        </div>
-      </div>
-      <!-- banner 2 -->
-      <div class="carousel-item banner-2 " style="background-image: url({% static './bus_image.jpg' %});">
-        <div class="container">
-          <div class="carousel-caption mb-2 text-start">
-            <h1 class="home-title">Book Your Dream Trip Today.</h1>
-            <p class="home-sub-title">
-              Find the best deals and destinations at your fingertips.
-              <br>Experience the world with our comprehensive travel options and exclusive offers.
-            </p>
-            <p><a class="btn btn-lg btn-primary home-action-button" href="#">Get Started</a></p>
-          </div>
-        </div>
-      </div>
-      <!-- banner 3 -->
-      <div class="carousel-item banner-3">
-        <div class="container">
-          <div class="carousel-caption mb-2 text-start">
-            <h1 class="home-title">Book Your Dream Trip Today.</h1>
-            <p class="home-sub-title">
-              Find the best deals and destinations at your fingertips.
-              <br>Experience the world with our comprehensive travel options and exclusive offers.
-            </p>
-            <p><a class="btn btn-lg btn-primary home-action-button" href="#">Get Started</a></p>
-          </div>
-        </div>
-      </div>
+<div class="main pt-5 main-color p-4">
+  <!-- About Us -->
+  <div class="row  align-items-center">
+    <div class="col-xl-5 p-5">
+      <h3 class="fbg-color primary-color sub-heading-home">About Us</h3>
+      <h2 class="fw-bold primary-color">Ducimus rerum libero reprehenderit cumque</h2>
+      <p>Ipsa sint sit. Quis ducimus tempore dolores impedit et dolor cumque alias maxime. Enim reiciendis minus et
+        rerum hic non. Dicta quas cum quia maiores iure. Quidem nulla qui assumenda incidunt voluptatem tempora
+        deleniti soluta.</p>
     </div>
 
-
-  </div>
-
-  <!-- banner ends here -->
-
-  <div class="container-fluid">
-    <div class=" main">
-
-
-
-      <!-- about us section -->
-      <div class="col-10 m-auto pb-3">
-        <div class="row mb-4 align-items-center row-gap-3">
-          <div class="col-md-6">
-            <img src="{% static 'travellers logo/avatar.jpg' %}" alt="" width="100%">
-          </div>
-
-          <div class="col-md-6">
-            <h3 class="fw-bold ">About Us</h3>
-            <p class="primary-color">Who we are</p>
-            <div class="col-12">
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae odio sapiente blanditiis, possimus
-                dolor, similique architecto
-                dolorum explicabo autem illo quos voluptatibus voluptas commodi eum necessitatibus unde tempore
-                quibusdam ducimus.
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nemo iusto deserunt delectus,
-                harum quisquam possimus aliquid. Nisi at tempora, commodi aspernatur iusto explicabo animi rem dicta,
-                accusamus repellat libero nam!
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Non ut similique provident ratione. Accusantium
-                dicta,
-                vel atque natus vitae commodi nemo unde quam quaerat, numquam fuga quasi doloremque! Cumque, molestiae.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, necessitatibus, suscipit rem fugiat
-                tenetur nesciunt
-                accusantium sed voluptas voluptates, distinctio numquam eum earum? Non fugit nulla dolorum voluptas
-                blanditiis obcaecati!
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- how to get start section -->
-      <div class="row steps-div pb-3 sep-bg">
-        <div class="col-10 m-auto mt-4">
-          <div class="section pb-3 mb-4 ">
-            <h2 class="section-title text-center fs-4 text-dark">How to Get Started</h2>
-          </div>
-          <!-- how to get started -->
-          <div class="row row-gap-3 justify-content-center text-center align-items-center mb-3 pb-3">
-            <!-- step 1 -->
-            <div class="col-lg-2 col-sm-6">
-              <div class="card shadow-sm">
-                <span class="col-4 ms-auto step-number"><span class="sub-title  fs-5 fw-bold ms-1">1</span></span>
-                <div class="card-body">
-                  <span><i class="bi bi-truck-front fs-4"></i></span>
-                  <h2 class="how-title">Register</h2>
-                  <p class="subtitled-how">
-                    click the account menu to create account
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- step 2 -->
-            <div class="col-lg-2 col-sm-6">
-              <div class="card shadow-sm">
-                <span class="col-4 ms-auto step-number"><span class="sub-title  fs-5 fw-bold ms-1">2</span></span>
-                <div class="card-body">
-                  <span><i class="bi bi-truck-front fs-4"></i></span>
-                  <h2 class="how-title">Book a trip</h2>
-                  <p class="subtitled-how">
-                    login to your dashbard to book a seat
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- step 3 -->
-            <div class="col-lg-2 col-sm-6">
-              <div class="card shadow-sm">
-                <span class="col-4 ms-auto step-number"><span class="sub-title  fs-5 fw-bold ms-1">3</span></span>
-                <div class="card-body">
-                  <span><i class="bi bi-truck-front fs-4"></i></span>
-                  <h2 class="how-title">Make payment</h2>
-                  <p class="subtitled-how">
-                    choose from the option and make payment
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- step 4 -->
-            <div class="col-lg-2 col-sm-6">
-              <div class="card shadow-sm">
-                <span class="col-4 ms-auto step-number"><span class="sub-title  fs-5 fw-bold ms-1">4</span></span>
-                <div class="card-body">
-                  <span><i class="bi bi-truck-front fs-4"></i></span>
-                  <h2 class="how-title">Get Reciept</h2>
-                  <p class="subtitled-how">
-                    Download reciept. and present to the agent
-                  </p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-
-
-
-      <div class="col-10 m-auto mb-3">
-        <!-- Trending destination -->
-        <div class="row py-5">
-          <div class="col-12 mb-2">
-            <h2 class="section-title fs-4">Trending Destinations</h2>
-            <hr>
-          </div>
-
-          <swiper-container css-mode="true">
-
-            <swiper-slide class="swiper-slide">
-              <!-- trending location 1 -->
-              <div class="col-12">
-                <div class="card border-0">
-                  <img src="{% static 'location/2.jpg' %}" class="card-img" alt="">
-                  <div class="card-body card-img-overlay trend-container pt-5">
-                    <div class="hold">
-                      <h4 class="card-text trend-title ">Ondo to Abuja</h4>
-                      <a href="#3" class="btn btn-sm trend-book-btn">Book now</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </swiper-slide>
-
-            <swiper-slide class="swiper-slide">
-              <!-- trending location 2 -->
-              <div class="col-12">
-                <div class="card border-0">
-                  <img src="{% static 'location/2.jpg' %}" class="card-img" alt="">
-                  <div class="card-body card-img-overlay trend-container pt-5">
-                    <div class="hold">
-                      <h4 class="card-text trend-title ">Ondo to Abuja</h4>
-                      <a href="#3" class="btn btn-sm trend-book-btn">Book now</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </swiper-slide>
-
-            <swiper-slide class="swiper-slide">
-              <!-- trending location 3 -->
-              <div class="col-12">
-                <div class="card border-0">
-                  <img src="{% static 'location/2.jpg' %}" class="card-img" alt="">
-                  <div class="card-body card-img-overlay trend-container pt-5">
-                    <div class="hold">
-                      <h4 class="card-text trend-title ">Ondo to Abuja</h4>
-                      <a href="#3" class="btn btn-sm trend-book-btn">Book now</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </swiper-slide>
-
-            <swiper-slide class="swiper-slide">
-              <!-- trending location 4 -->
-              <div class="col-12">
-                <div class="card border-0">
-                  <img src="{% static 'location/2.jpg' %}" class="card-img" alt="">
-                  <div class="card-body card-img-overlay trend-container pt-5">
-                    <div class="hold">
-                      <h4 class="card-text trend-title ">Ondo to Abuja</h4>
-                      <a href="#3" class="btn btn-sm trend-book-btn">Book now</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </swiper-slide>
-
-            <swiper-slide class="swiper-slide">
-              <!-- trending location 5 -->
-              <div class="col-12">
-                <div class="card border-0">
-                  <img src="{% static 'location/2.jpg' %}" class="card-img" alt="">
-                  <div class="card-body card-img-overlay trend-container pt-5">
-                    <div class="hold">
-                      <h4 class="card-text trend-title ">Ondo to Abuja</h4>
-                      <a href="#3" class="btn btn-sm trend-book-btn">Book now</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </swiper-slide>
-
-          </swiper-container>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="col-12 sep-bg">
-    <!-- contac us section -->
-    <div class="col-10 m-auto pb-3 ">
-      <div class="row mb-4 align-items-center row-gap-3">
-
-
+    <div class="col-xl-7 p-5">
+      <div class="row row-gap-3">
         <div class="col-md-6">
-          <h3 class="fw-bold ">Contact Us</h3>
-          <p class="primary-color">Reach us</p>
-          <div class="col-12">
-            <form action="#" method="post">
+          <div class="card  shadow border-0">
+            <div class="card-body">
+              <div class="col-12 mb-2">
+                <span class=" fs-3  primary-color fbg-color px-2 rounded-2">
+                  <i class="bi bi-command "></i>
+                </span>
+              </div>
 
-            </form>
+              <h3 class="primary-color ">Veniam omnis</h3>
+              <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur corrupti</p>
+            </div>
           </div>
         </div>
 
         <div class="col-md-6">
-          <img src="{% static 'travellers logo/avatar.jpg' %}" alt="" width="100%">
+          <div class="card  shadow border-0">
+            <div class="card-body">
+              <div class="col-12 mb-2">
+                <span class=" fs-3  primary-color fbg-color px-2 rounded-2">
+                  <i class="bi bi-command "></i>
+                </span>
+              </div>
+
+              <h3 class="primary-color">Veniam omnis</h3>
+              <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur corrupti</p>
+            </div>
+          </div>
         </div>
+
+        <div class="col-md-6">
+          <div class="card  shadow border-0">
+            <div class="card-body">
+              <div class="col-12 mb-2">
+                <span class=" fs-3  primary-color fbg-color px-2 rounded-2">
+                  <i class="bi bi-command "></i>
+                </span>
+              </div>
+
+              <h3 class="primary-color">Veniam omnis</h3>
+              <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur corrupti</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card  shadow border-0">
+            <div class="card-body">
+              <div class="col-12 mb-2">
+                <span class=" fs-3  primary-color fbg-color px-2 rounded-2">
+                  <i class="bi bi-command "></i>
+                </span>
+              </div>
+
+              <h3 class="primary-color">Veniam omnis</h3>
+              <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur corrupti</p>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
       </div>
     </div>
   </div>
-  <div class="col-10 m-auto">
-    <!-- our partners -->
-    <div class="section mt-4">
-      <h2 class="section-title fs-4">Our Partners</h2>
-      <hr>
+
+
+
+  <!-- services -->
+  <!-- About Us -->
+  <div class="row  align-items-center">
+    <div class="col-xl-5 order-xl-last p-5">
+      <h3 class="fbg-color primary-color sub-heading-home">About Us</h3>
+      <h2 class="fw-bold primary-color">Ducimus rerum libero reprehenderit cumque</h2>
+      <p>Ipsa sint sit. Quis ducimus tempore dolores impedit et dolor cumque alias maxime. Enim reiciendis minus et
+        rerum hic non. Dicta quas cum quia maiores iure. Quidem nulla qui assumenda incidunt voluptatem tempora
+        deleniti soluta.</p>
     </div>
-    <div class="col-12 pb-5 ">
-      <div class="row justify-content-center align-items-center">
 
-        <div class="col-2 text-center">
-          <img src="{% static 'travellers logo/cbmlogo.webp' %}" alt="" class="partners-logo">
+    <div class="col-xl-7 p-5">
+      <div class="row row-gap-3">
+        <div class="col-md-6">
+          <div class="card  shadow border-0">
+            <div class="card-body">
+              <div class="col-12 mb-2">
+                <span class=" fs-3  primary-color fbg-color px-2 rounded-2">
+                  <i class="bi bi-command "></i>
+                </span>
+              </div>
+
+              <h3 class="primary-color ">Veniam omnis</h3>
+              <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur corrupti</p>
+            </div>
+          </div>
         </div>
 
-        <div class="col-2 text-center">
-          <img src="{% static 'travellers logo/APS Logo.png' %}" alt="" class="partners-logo">
+        <div class="col-md-6">
+          <div class="card  shadow border-0">
+            <div class="card-body">
+              <div class="col-12 mb-2">
+                <span class=" fs-3  primary-color fbg-color px-2 rounded-2">
+                  <i class="bi bi-command "></i>
+                </span>
+              </div>
+
+              <h3 class="primary-color">Veniam omnis</h3>
+              <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur corrupti</p>
+            </div>
+          </div>
         </div>
 
+        <div class="col-md-6">
+          <div class="card  shadow border-0">
+            <div class="card-body">
+              <div class="col-12 mb-2">
+                <span class=" fs-3  primary-color fbg-color px-2 rounded-2">
+                  <i class="bi bi-command "></i>
+                </span>
+              </div>
 
-        <div class="col-2 text-center">
-          <img src="{% static 'travellers logo/GIGM.png' %}" alt="" class="partners-logo">
+              <h3 class="primary-color">Veniam omnis</h3>
+              <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur corrupti</p>
+            </div>
+          </div>
         </div>
 
-        <div class="col-2 text-center">
-          <img src="{% static 'travellers logo/pmt.webp' %}" alt="" class="partners-logo">
-        </div>
+        <div class="col-md-6">
+          <div class="card  shadow border-0">
+            <div class="card-body">
+              <div class="col-12 mb-2">
+                <span class=" fs-3  primary-color fbg-color px-2 rounded-2">
+                  <i class="bi bi-command "></i>
+                </span>
+              </div>
 
-        <div class="col-2 text-center">
-          <img src="{% static 'travellers logo/APS Logo.png' %}" alt="" class="partners-logo">
-        </div>
-
-        <div class="col-2 text-center">
-          <img src="{% static 'travellers logo/cbmlogo.webp' %}" alt="chukwubikem motors" class="partners-logo">
+              <h3 class="primary-color">Veniam omnis</h3>
+              <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur corrupti</p>
+            </div>
+          </div>
         </div>
 
       </div>
     </div>
   </div>
-  </div>
 
-
-
-  </div>
-
-  <footer>
-    <div class="col-12 bg-dark py-4">
-      <div class="col-10 m-auto">
+  <!-- call to action
+  <div class="row justify-content-center">
+    <div class="col-10 m-auto bg-dark py-5 rounded-2">
+      <h2 class="fw-bold primary-color text-center">Sign Up With Us</h2>
+      <p class="text-white text-center">Be the first to recieve updates on our new improvement </p>
+      <div class="col-8 m-auto">
         <div class="row">
-          <div class="col-4 text-white">
-            <h5>Naija Travel</h5>
-            <p>Lorem ipsum dolor Commodi corrupti eius modi vero, numquam hic error.</p>
-          </div>
-          <div class="col-4 text-white">
-            <h5>Quick Link</h5>
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link text-white" href="">Home</a>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link text-white" href="">About us</a>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link text-white" href="">contact us</a>
-              </li>
-            </ul>
-          </div>
-          <div class="col-4"></div>
+          <form action="#" id="Newsletter" method="post">
+            <div class="row justify-content-center">
+              <div class=" row  col-xl-6 border-0 rounded-1 bg-white p-0">
+                <div class="col-8 p-0 m-0">
+                  <input type="email" name="email" id="email" placeholder="E-Mail Address"
+                    class=" border-0 form-control p-2 ">
+                </div>
+                <div class="col m-0 p-0">
+                  <input type="submit" value="Submit" class="form-control  btn btn-sm colorbtn p-2">
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </footer>
-
-
-
-
-
-
-
-
-
-
-
-   <!-- initalize swiper -->
-   <script>
-    // swiper element
-    const swiperEl = document.querySelector('swiper-container');
-
-    // swiper parameters
-    const swiperParams = {
-      slidesPerView: 1,
-      breakpoints: {
-        640: {
-          slidesPerView: 2,
-        },
-        1024: {
-          slidesPerView: 4,
-        },
-      },
-      on: {
-        init() {
-          // ...
-        },
-      },
-    };
-
-    // now we need to assign all parameters to Swiper element
-    Object.assign(swiperEl, swiperParams);
-
-    // and now initialize it
-    swiperEl.initialize();
-  </script>
-
-
-  <!-- swipper js -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+  </div> -->
+</div>
 
 {% endblock page-contents %}
