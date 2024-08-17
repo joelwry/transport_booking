@@ -1,7 +1,44 @@
-{% extends "base_templates/header.html" %}
+{% extends "base_templates/header_generic.html" %}
 {% load static %}
 {% block page-contents %}
 
+<section>
+  <h2>Available Vehicles</h2>
+  {% if schedules %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Vehicle</th>
+                <th>Company</th>
+                <th>Travel Date</th>
+                <th>Available Seats</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule.vehicle.plate_number }}</td>
+                <td>{{ schedule.vehicle.company.name }}</td>
+                <td>{{ schedule.travel_datetime }}</td>
+                <td>{{ schedule.number_of_available_seats }}</td>
+                <td>{{ schedule.vehicle.price }}</td>
+                <td>
+                   
+                    <a href="#" class="btn btn-primary">Book Now</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  
+  {% else %}
+    <p align="center" style="color:red;font-weight: bold; font-size: large;"> No Vehicle available </p>
+    <a href="{% url 'index' %}">search again</a>
+  {% endif %}
+
+</section>
 
 <div class="main pt-5 main-color p-4">
   <!-- About Us -->

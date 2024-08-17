@@ -1,0 +1,298 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{company.name}}{% endblock title %}
+{% block page-contents %}
+
+
+<div class="col-md-12 m-auto">
+
+  
+
+    <!-- list of STATE WITH TERMINAL NUMBER -->
+    <div class="col-md-11 m-auto  mt-3">
+        <div class="card border-0  px-3 shadow">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-10"><h4 class="page-title py-4">States With Terminals</h4></div>
+                    <div class="col-2 text-end"><buttun class="btn btn-sm  colorbtn text-white rounded-pill shadow-sm " data-bs-toggle="modal" data-bs-target="#addState"><span  data-bs-toggle="tooltip" data-bs-title="Add new State"><i class="bi bi-plus"></i></span>Add New</button></div>
+                      
+                </div>
+                <div class="row row-gap-2 history-row">
+                    <table id="myTable" class="table text-light table-hover table-bordered  table-responsive">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                               
+                                <th>State </th>
+                                <th>Terminals</th>
+                                <th>Pickup Vehicles</th>
+                                <th>Destination Vehicles</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                           
+
+                           {% for state in states%}
+                           
+                           <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{state.name}}</td>
+                                <td>{{state.num_terminals}}</td>
+                                 <td>{{state.pickup_vehicles}}</td>
+                                <td>{{state.des_vehicles}}</td>
+                               
+                                <td>
+                                    <button class=" m-1 btn btn-sm rounded-pill btn-dark"id='createTerminalBtn' data-id = {{state.id}} data-name='{{state.name}}' data-bs-toggle='modal', data-bs-target = '#createTerminal'><i class="bi bi-plus"></i></button>
+                                    <a href='{% url "manager:states-detail" state.id %}' class=" m-1 btn btn-sm  btn-primary"  ><i class="bi bi-eye"></i></a>
+                                </td>
+                            </tr>
+                            
+                            {% endfor %}
+                            
+                       
+
+                        
+
+                            
+                            
+
+                        </tbody>
+                        <tfooter>
+                            <tr>
+                                <th>S/N</th>
+                               
+                                <th>State </th>
+                                <th>Terminals</th>
+                                <th>Pickup Vehicles</th>
+                                <th>Destination Vehicles</th>
+                                <th colspan='2'>Action</th>
+                            </tr>
+                        </tfooter>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  <!-- Add new State Modal -->
+  <div class="modal fade " id="addState" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addStateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg shadow" >
+      <div class="modal-content">
+        <div class="modal-header bgcolor">
+          <h1 class="modal-title fs-5" id="addStateLabel">Create New State </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 p-2">
+                <div class="card border-0">
+                    <div class="card-body">
+            <!-- form starts here -->
+           <form id='addStateForm' method="post" class="user-form">
+            {% csrf_token %}
+             <div class="row row-gap-2">
+                 <div class="col-sm-6 mb-3">
+                     <label for="state-name">State Name <span
+                             class="text-danger">*</span></label>
+                     <input type="text" name="name" id="state-name"
+                         class="form-control py-2" style='text-transform:capitalize'
+                         placeholder="Lagos" required>
+                 </div>
+                
+             </div>
+             
+             <div class="col-sm-6 mb-1 mt-3">
+                 <input type="submit" value="Save State"
+                     class="btn colorbtn text-white btn-sm col-16 p-3">
+
+             </div>
+         </form>
+                    </div>
+                </div>
+           
+            </div>
+          
+        </div>
+       
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Add new Terminal Modal -->
+    <div class="modal fade " id="createTerminal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createTerminalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg shadow" >
+          <div class="modal-content">
+            <div class="modal-header bgcolor">
+              <h1 class="modal-title fs-5" id="createTerminalLabel">Add Terminal to <span id='statename'></span> </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12 p-2">
+                    <div class="card border-0">
+                        <div class="card-body">
+                                  <!-- form starts here -->
+               <form id='createTerminalForm' method="post" class="user-form">
+                {% csrf_token %}
+                 <div class="row row-gap-2">
+                     
+
+                     <div class="col-sm-6 mb-3">
+                        <label for="area">Terminal Area <span
+                                class="text-danger">*</span></label>
+                        <input type="text" name="area" id="areaForm"
+                            class="form-control py-2" style='text-transform:capitalize'
+                            placeholder="Lagos" required>
+                    </div>
+
+
+                    <div class="col-sm-6 mb-3">
+                        <label for="address">Terminal Address <span
+                                class="text-danger">*</span></label>
+                        <input type="text" name="address" id="addressForm"
+                            class="form-control py-2" style='text-transform:capitalize'
+                            placeholder="Lagos" required>
+                    </div>
+                    
+                 </div>
+                 
+                 <div class="col-sm-6 mb-1 mt-3">
+                     <input type="submit" value="Save Terminal"
+                         class="btn colorbtn text-white btn-sm col-16 p-3">
+    
+                 </div>
+             </form>
+                        </div>
+                    </div>
+               
+                </div>
+              
+            </div>
+           
+          </div>
+        </div>
+      </div>
+
+
+{% endblock page-contents %}
+
+{% block heavyScript %}
+
+var terminal
+document.querySelectorAll('#createTerminalBtn').forEach(button=>{
+    button.addEventListener('click', function(){
+        let name = $(this).data('name')
+        terminal = $(this).data('id')
+        $('#statename').text(name)
+        $('stateForm').val(terminal)
+    })
+})
+
+$('#createTerminalForm').on('submit', function(e){
+    e.preventDefault()
+    var toastEl = $('#ToastElement');
+    var toast = new bootstrap.Toast(toastEl);
+   
+    var area = $("#areaForm").val();
+    var address = $('#addressForm').val();
+    console.log(area, address, terminal)
+
+   $.ajax({
+       
+        url:'{% url "manager:add-terminal-action" %}',
+        type: 'POST',
+        data : {
+            'state' : terminal,
+            'area' : area,
+            'address': address,
+            'csrfmiddlewaretoken' :$('input[name="csrfmiddlewaretoken"]').val()
+        },
+        success: function(response, textStatus, jqXHR){
+            if (jqXHR.status === 200){
+                toastEl.find('#bodytoast').text(jqXHR.responseJSON.message);
+                     toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
+                    toast.show();
+                        setTimeout(function() {
+                            window.location.reload()
+                        }, 1500);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+           if (jqXHR.status === 400) {
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else if (jqXHR.status === 404) {
+                // Handle 'Traveller profile not found'
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else {
+                // Handle other types of errors
+                toastEl.find('.toast-body').text('An unexpected error occurred: ' + errorThrown);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+               
+            }
+        }
+   })
+})
+
+
+
+$('#addStateForm').on('submit', function(e){
+    e.preventDefault();
+
+    var toastEl = $('#ToastElement');
+    var toast = new bootstrap.Toast(toastEl);
+
+    $.ajax({
+        url : '{% url "manager:states"%}',
+        type : 'POST',
+        data: $(this).serialize() ,
+        success: function(response, textStatus, jqXHR){
+             if (jqXHR.status === 200) {
+                    
+                    toastEl.find('#bodytoast').text(jqXHR.responseJSON.message);
+                     toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
+                    toast.show();
+                        setTimeout(function() {
+                            window.location.reload()
+                        }, 1500);
+                }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            if (jqXHR.status === 400) {
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else if (jqXHR.status === 404) {
+                // Handle 'Traveller profile not found'
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else {
+                // Handle other types of errors
+                toastEl.find('.toast-body').text('An unexpected error occurred: ' + errorThrown);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+               
+            }
+        }
+
+    })  
+})
+
+
+
+
+
+{% endblock heavyScript %}
+
+
+
+

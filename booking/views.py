@@ -3,7 +3,9 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from .models import Traveller, Booking, Vehicle, State, TransportationCompany
+
+from booking.utils.vehicle_search import indexPageSearchVehiclesSchedule
+from .models import Traveller, Booking, Vehicle, State, TransportationCompany,Terminals
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
@@ -11,16 +13,27 @@ from django.utils import timezone
 from datetime import timedelta
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
+from dotenv import load_dotenv
+load_dotenv()
+import os 
 
+PAYSTACK_PUBLIC_KEY = os.getenv('PAYSTACK_PUBLIC_KEY')
 
 # will be used to track user login attempt
 MAX_ATTEMPTS = 5
 LOCKOUT_TIME = 5  # in minutes
 
-# SHOW THE UPDATE LANDING PAGE FROM FRANK
+
 # this should be for landing page
 def index(request):
-    return render(request, 'index.html')
+    if request.method == 'POST':
+        terminal1_data = request.POST.get('terminal-1')
+        terminal2_data = request.POST.get('terminal-2')
+        travel_date = request.POST.get('travelling-date')
+        schedules = indexPageSearchVehiclesSchedule(terminal1_data,terminal2_data,travel_date)
+        return render(request, 'index_search_result.html', {'schedules': schedules})
+    terminals = Terminals.objects.all()
+    return render(request, 'index.html', {'terminals':terminals})
 
 # GOOD TO GO
 # user dashboard.. user must be authenticated to view this page
@@ -133,8 +146,6 @@ def login_view(request: HttpRequest):
     return render(request, 'login.html', {'form': form})
 
 
-
-
 # GOOD TO GO
 @login_required
 def logout_view(request):
@@ -164,19 +175,19 @@ def book(request,vehicle_id):
     return render(request, 'booking/book.html', {'vehicle':vehicle, 'next_of_kin_detail' : next_of_kin_detail, "vehicleId":vehicle_id})
 
 @login_required
-def payment(request, booking_id):
-    booking = Booking.objects.get(id=booking_id)
-    if request.method == 'POST':
-        amount = request.POST['amount']
-        status = request.POST['status']
-        payment = process_payment(booking, amount, status)
-        if payment.status == 'COMPLETED':
-            booking.confirmed = True
-            booking.payment_id = payment.id
-            booking.save()
-            send_booking_email(booking)
-            return redirect('booking_success', booking_id=booking.id)
-    return render(request, 'booking/payment.html', {'booking': booking})
+def makePayment(request, booking_code, access_code, amount_to_pay):
+    #booking = Booking.objects.get(id=booking_id)
+    # if request.method == 'POST':
+    #     amount = request.POST['amount']
+    #     status = request.POST['status']
+    #     payment = process_payment(booking, amount, status)
+    #     if payment.status == 'COMPLETED':
+    #         booking.confirmed = True
+    #         booking.payment_id = payment.id
+    #         booking.save()
+    #         send_booking_email(booking)
+    #         return redirect('booking_success', booking_id=booking.id)
+    return render(request, 'booking/make_payment.html', {'email':request.user.email,'amount':float(amount_to_pay),"reference":booking_code,'PAYSTACK_PUBLIC_KEY':PAYSTACK_PUBLIC_KEY, "access_code":access_code})
 
 @login_required
 def booking_success(request, booking_id):
@@ -199,12 +210,6 @@ def search_form(request):
     return render(request, 'booking/search_form.html', {'states': states})
 
 # GOOD TO GO
-# this is for advanced search functionality
-
-# from django.shortcuts import render
-# from django.db.models import Q
-# from .models import Vehicle, Terminals, TransportationCompany, State
-# from .forms import AdvancedSearchForm
 @login_required
 def advanced_search_vehicles(request):
     form = AdvancedSearchForm(request.POST or None)
@@ -291,6 +296,12 @@ def updateProfile(request):
             return JsonResponse({'success':True, 'message': 'Profile updated successfully'}, status = 200)
         return JsonResponse({'success' : False, 'message': traveller_form.errors}, status  = 400)
     return render(request, "booking/profile.html", {'states' : states,'traveller':traveller})
+
+
+def testerView(request):
+    return render(request, 'result-search.html')
+
+
 
 def forgotPassword(request):
     return render(request, "forgot_password.html", {})

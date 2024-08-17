@@ -1,0 +1,105 @@
+{% extends "base_templates/header.html" %}
+{% load static %}
+
+{% block home-banner %}{% endblock home-banner %}
+
+{% block page-contents %}
+
+<div class="main py-4 px-3 main-color">
+ 
+    <div class="row">
+        <div class="col-xl-3 p-4" style="border-right: 1px solid black;">
+            <!-- Filter button only visible on smaller screens -->
+            <div class="top-filter mb-3 col-12 d-xl-none">
+                <button type="button" class="bg-dark text-white btn btn-sm col-12 rounded-0" data-bs-toggle="collapse" data-bs-target="#filterContainer" aria-expanded="false" aria-controls="filterContainer">
+                    Filter
+                </button>
+            </div>
+            <!-- Filter container, always visible on xl and above, collapsible on lg and below -->
+            <div class="collapse d-xl-block" id="filterContainer">
+                <form action="#" method="post">
+                    <div class="row">
+                        <div class="form-group mb-2">
+                            <label for="travel-from">Traveling from</label>
+                            <select class="form-select" id="current-state" aria-label="" name="start_state">
+                                <option selected></option>
+                                {% for state in states %}
+                                <option value="{{state.id}}">{{ state.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="travel-to">Traveling to</label>
+                            <select class="form-select" id="current-state" aria-label="" name="destination_state">
+                                <option selected></option>
+                                {% for state in states %}
+                                <option value="{{state.id}}">{{ state.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="max-price">Max Price</label>
+                            <input type="text" name="max_price" id="max-price" class="form-control">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="min-price">Min Price</label>
+                            <input type="text" name="min_price" id="min-price" class="form-control">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="company">Company</label>
+                            <select class="form-select" id="current-state" aria-label="" name="company">
+                                <option selected></option>
+                                {% for company in transport_companies %}
+                                <option value="{{company.id}}">{{ company.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="submit" class="form-control colorbtn rounded-0 text-white" value="Apply">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-xl-9 " >
+            <div class="row">
+                <p class="fw-bold h4 py-2 p-4">From Delta to Lagos</p>
+            </div>
+            <div class="row p-2 row-gap-3 " style="overflow-y: scroll; height: 70vh; position: relative;">
+                <div class="col-xl-4 col-lg-6 col-md-6">
+                    <div class="card rounded-0 border-0  pb-0 shadow">
+                        <div class="card-body">
+                            <div class="row pb-0">
+                                <div class="col-12">
+                                    <img src="./travellers logo/GIGM.png" class="rounded-pill" width="32px" alt="">
+                                    <span class="px-1 fw-bold">God is Good</span>
+                                </div>
+                                <div class="col-12 pt-2">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <p class="traveller-price">Traveling Date : 22/08/2024</p>
+                                            <p class="traveller-price">Time : 6:00Am</p>
+                                            <p class="traveller-price">Available Seat : 4</p>
+                                        </div>
+                                        <div class="col-4">
+                                           
+                                            <p class="traveller-price"><span class="fw-bold primary-color h6">$24000</span></p>
+                                            <a class="btn btn-sm rounded-0 text-white colorbtn p-2  book-btn">Book Now</a>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  </div>
+
+{% endblock page-contents %}

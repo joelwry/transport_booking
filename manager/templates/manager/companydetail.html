@@ -5,9 +5,9 @@
 {% block page-contents %}
 
 
-<div class="col-md-12 m-auto">
+<div class="col-md-11 m-auto">
 
-    <div class="card border-0 shadow">
+    <div class="card border-1 shadow border-custom-color">
         <div class="card-body">
 
 
@@ -31,8 +31,7 @@
                 <div class="col-4 text-end ">
                     <a href="#" target="_blank" rel="noopener noreferrer" class=" btn btn-dark btn-sm rounded-pill mb-1 mx-1" data-bs-toggle="tooltip" data-bs-title="edit"><span
                            ><i class="bi bi-pen"></i></span> </a>
-                    <a href="#" target="_blank" rel="noopener noreferrer" class="btn-sm btn btn-outline-dark rounded-pill shadow-sm mb-1" data-bs-toggle="tooltip" data-bs-title="delete"><span
-                            class=""><i class="bi bi-trash"></i> </span></a>
+                    
                 </div>
 
             </div>
@@ -46,8 +45,8 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-10"><h4 class="page-title py-4">Vehicles Registered Under {{company.name}} </h4></div>
-                    <div class="col-2 text-end"><a href="{% url 'manager:newvehicle' %}" class="btn btn-sm colorbtn text-white rounded-pill shadow-sm "data-bs-toggle="tooltip" data-bs-title="Add new vehicle"><span class="h4"><i class="bi bi-plus"></i></span></a></div>
-
+                    <div class="col-2 text-end"><buttun class="btn btn-sm colorbtn text-white rounded-pill shadow-sm " data-bs-toggle="modal" data-bs-target="#AddnewVehicle"><span class="h4" data-bs-toggle="tooltip" data-bs-title="Add new vehicle to {{company.name}}"><i class="bi bi-plus"></i></span></button></div>
+                      
                 </div>
                 <div class="row row-gap-2 history-row">
                     <table class="table text-gray table-hover table-responsive">
@@ -81,8 +80,9 @@
                             {% endif %}
                             </td>
                             <td>
-                                <a class="btn btn-sm rounded-pill btn-outline-primary"><i class="bi bi-pen"></i></a>
-                                <a class="btn btn-sm rounded-pill btn-outline-danger"><i class="bi bi-trash"></i></a>
+                                <button class="btn btn-sm rounded-pill btn-outline-primary"><i class="bi bi-pen"></i></button>
+                                <button class="btn btn-sm rounded-pill btn-outline-danger" id="deletevehicle-action" data-id='{{vehicle.id}}' data-name ='{{vehicle.plate_number}}'  data-bs-toggle="modal"  
+                                data-bs-target="#AlertModel"><i class="bi bi-trash"></i></button>
                             </td>
                         </tr> 
 
@@ -99,4 +99,219 @@
     </div>
 </div>
 
+
+  <!-- Add new vehicle Modal -->
+  <div class="modal fade " id="AddnewVehicle" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="AddnewVehicleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg shadow" >
+      <div class="modal-content">
+        <div class="modal-header bgcolor">
+          <h1 class="modal-title fs-5" id="AddnewVehicleLabel">Add New Vehicle to {{company.name}}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 p-2">
+                <div class="card border-0">
+                    <div class="card-body">
+                              <!-- form starts here -->
+           <form id='addNewVehicleForm' method="post" class="user-form">
+            {% csrf_token %}
+             <div class="row row-gap-2">
+                 <div class="col-sm-6 mb-3">
+                     <label for="plate_number">Plate Number <span
+                             class="text-danger">*</span></label>
+                     <input type="text" name="plate_number" id="plate-number"
+                         class="form-control py-2"
+                         placeholder="AWX-423-213" required>
+                 </div>
+                 <div class="col-sm-6 mb-3">
+                     <label for="terminal-1">Terminal 1 <span
+                             class="text-danger">*</span></label>
+                    
+                         <select name="terminal1" id="terminal-1"  class="form-select py-2" required>
+                             {% for terminal in terminals %}
+                             <option value="{{terminal.id}}">{{terminal}}</option>
+                             {% endfor %}
+                         </select>
+                 </div>
+                 <div class="col-sm-6 mb-3">
+                     <label for="termina-2">Terminal 2<span
+                             class="text-danger">*</span></label>
+                    
+                             <select name="terminal2" id="terminal-2" class="form-select py-2" required>
+                                 {% for terminal in terminals %}
+                                 <option value="{{terminal.id }}">{{terminal}}</option>
+                                 {% endfor %}
+                             </select>
+                             
+                 </div> 
+                 <div class="col-sm-6 ">
+                    <label for="fname">Company <span
+                        class="text-danger">*</span></label>
+                        <select name="company" id="company" class="form-select py-2" readonly>
+                                                   
+                            <option selected value={{company.pk}}>{{company.name}}</option>
+                           
+                               
+                            </select>                             
+                 </div>
+
+               <div class="col-sm-6 mb-3">
+                     <label for="fname">Bus Capacity <span
+                             class="text-danger">*</span></label>
+                     <input type="number" name="capacity" id="bus-capacity"
+                         class="form-control py-2" min="7"
+                         placeholder="" required>
+                 </div> 
+
+                 <div class="col-sm-6 mb-3">
+                     <label for="fname">Price <span
+                             class="text-danger">*</span></label>
+                     <input type="number" name="price" id="price" min='500'
+                         class="form-control py-2" 
+                         placeholder="20000" required>
+                 </div>
+                 
+                 {% comment %} <div class="col-sm-4 mb-3">
+                    
+                     <input type="checkbox" name="avaliability" id="bus-avaliability"
+                         class="form-check-input p-2" min="7"
+                         placeholder="">
+
+                         <label for="fname">Is Bus Avalable <span
+                             class="text-danger">*</span></label>
+                 </div> {% endcomment %}
+                 
+                
+
+
+             </div>
+             
+             <div class="col-sm-6 mb-1 mt-3">
+                 <input type="submit" value="Add Vehicle"
+                     class="btn colorbtn text-white btn-sm col-16 p-3">
+
+             </div>
+         </form>
+                    </div>
+                </div>
+           
+            </div>
+          
+        </div>
+       
+      </div>
+    </div>
+  </div>
+
+
 {% endblock page-contents %}
+
+{% block heavyScript %}
+
+
+
+
+
+
+$('#addNewVehicleForm').on('submit', function(e){
+    e.preventDefault();
+
+    var toastEl = $('#ToastElement');
+    var toast = new bootstrap.Toast(toastEl);
+
+    $.ajax({
+        url : '{% url "manager:newvehicle" company.id company.slug %}',
+        type : 'POST',
+        data: $(this).serialize() ,
+        success: function(response, textStatus, jqXHR){
+             if (jqXHR.status === 200) {
+                    console.log(jqXHR.responseJSON.message)
+                    toastEl.find('#bodytoast').text(jqXHR.responseJSON.message);
+                     toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
+                    toast.show();
+                        setTimeout(function() {
+                            window.location.reload()
+                        }, 1500);
+                }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            if (jqXHR.status === 400) {
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else if (jqXHR.status === 404) {
+                // Handle 'Traveller profile not found'
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else {
+                // Handle other types of errors
+                toastEl.find('.toast-body').text('An unexpected error occurred: ' + errorThrown);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+               
+            }
+        }
+
+    })  
+})
+
+
+{% comment %} to delete vehicle {% endcomment %}
+
+ 
+var Alertid 
+  
+document.querySelectorAll('#deletevehicle-action').forEach(button =>{
+    button.addEventListener('click', function(){
+       Alertid = $(this).data('id')
+       let Alertname = $(this).data('name')
+       $('#alertmodel-item').text(Alertname)
+    })
+})
+
+$('#confirm-delete').on('click', ()=>{
+    var toastEl = $('#ToastElement');
+    var toast = new bootstrap.Toast(toastEl);
+    $.ajax({
+        url : '/manager/delete-vehicle/'+ Alertid + '/',
+        type : 'POST',
+        data : {'csrfmiddlewaretoken': '{{csrf_token}}'},
+        success: function(response, textStatus, jqXHR ){
+            if(jqXHR.status === 200){
+                     toastEl.find('#bodytoast').text(jqXHR.responseJSON.message);
+                     toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
+                     toast.show();
+                        setTimeout(function() {
+                            window.location.reload()
+                        }, 1500);
+            }
+
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            if (jqXHR.status === 400) {
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else if (jqXHR.status === 404) {
+                // Handle 'Traveller profile not found'
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else {
+                // Handle other types of errors
+                toastEl.find('.toast-body').text('An unexpected error occurred: ' + errorThrown);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+               
+            }
+        }
+    })
+    $('#AlertModel').modal('hide')
+})
+
+{% endblock heavyScript %}
+
+
+
+

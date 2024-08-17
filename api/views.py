@@ -1,8 +1,11 @@
+from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, viewsets
-from rest_framework.permissions import IsAuthenticated, IsAdminUser,AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from booking.models import TransportationCompany, State, Terminals, Vehicle, Traveller, Message, Booking, Payment, VehicleSchedule
 from .serializers import (
     TransportationCompanySerializer, StateSerializer, TerminalsSerializer, VehicleScheduleSerializer, VehicleSerializer,
@@ -11,8 +14,10 @@ from .serializers import (
 from rest_framework.decorators import action
 from django.utils import timezone
 from datetime import timedelta
-from .utils.payment_gateway import process_payment, verify_payment
+from .utils.payment_gateway import initiate_payment, process_payment, verify_payment
 from .utils.seats_handler import calculateNumbersOfPassegers as passengerCount
+
+
 
 # TransportationCompany CRUD FOR ADMIN
 @api_view(['GET', 'POST'])
@@ -123,6 +128,8 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
 
+    
+
     @action(detail=True, methods=['post'])
     def book_seat(self, request, pk=None):
         schedule = get_object_or_404(VehicleSchedule, pk=pk)
@@ -163,12 +170,38 @@ class BookingViewSet(viewsets.ModelViewSet):
         )
 
         # Redirect to payment gateway
-        payment_url = process_payment(booking)
-        return Response({
-            'booking': BookingSerializer(booking).data,
-            'payment_url': payment_url
-        }, status = status.HTTP_201_CREATED)
+        payment_detail = initiate_payment(booking.booking_code,booking.total_cost, request.user.email)
+        if payment_detail['success']:
+            payment_url = payment_detail['payment_url']
+            access_code = payment_detail['access_code']
+            url = reverse('payment', args=[booking.booking_code,access_code,booking.total_cost*100])
+            #return HttpResponseRedirect(url)
+            return Response({
+                'payment_url': payment_url,
+                'booking_code': booking.booking_code,
+                'access_code' : access_code,
+                'total_amount': booking.total_cost
+            }, status=status.HTTP_201_CREATED) 
+        else :
+            booking.delete()
+            return Response({
+                'message': payment_detail['error'] 
+            }, status = status.HTTP_402_PAYMENT_REQUIRED)
 
+    
+    @action(detail=True, methods=['delete'])
+    def remove(self, request : HttpRequest, pk=None):
+        if not request.user.is_superuser:
+            return Response({
+                "message":"You do not have the priviledge to remove this"
+            }, status= status.HTTP_401_UNAUTHORIZED)
+        booking = get_object_or_404(Booking, pk=pk)
+        booking.delete()
+        return Response({
+            'message': "Deleted successfully" 
+        }, status = status.HTTP_204_NO_CONTENT)
+
+        
 class VehicleScheduleViewSet(viewsets.ModelViewSet):
     queryset = VehicleSchedule.objects.all()
     serializer_class = VehicleScheduleSerializer

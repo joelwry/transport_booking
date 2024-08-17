@@ -6,7 +6,7 @@
 
 
  <!--  company item -->
- <div class="col-md-4 ">
+ <div class="col-lg-3 col-md-4 ">
 
     <div class="card border-0 shadow">
         <div class="card-body">
@@ -30,13 +30,13 @@
                     <span class="fw-bold">Vehicles : {{company.vehicle_set.all.count}}</span>
                 </div>
                 <div class="col-3 text-end column-gap-2 gap-y-2 gap-2">
-                    <a href="{% url "manager:company-detail" company.id company.slug %}" target="_blank" rel="noopener noreferrer"
+                    <a href="{% url "manager:company-detail" company.id company.slug %}" 
                         class=" btn btn-primary btn-sm rounded-pill mb-1"><span><i
                                 class="bi bi-eye"></i></span> </a>
-                    <a href="#" target="_blank" rel="noopener noreferrer"
+                    <button href="#" target="_blank" rel="noopener noreferrer" id='deletCompany-action'
                         class="btn-sm btn btn-danger rounded-pill shadow-sm mb-1" data-bs-toggle="modal"
-                        data-bs-target="#AlertModel"><span
-                            class=""><i class="bi bi-trash"></i> </span></a>
+                        data-bs-target="#AlertModel" data-id={{company.id}} data-name='{{company.name}}'><span
+                            class=""><i class="bi bi-trash"></i> </span></button>
                 </div>
 
             </div>
@@ -80,3 +80,56 @@
 
 
 {% endblock page-contents %}
+
+{% block heavyScript %}
+
+document.querySelectorAll('#deletCompany-action').forEach(button =>{
+    button.addEventListener('click', function(){
+       Alertid = $(this).data('id')
+       let Alertname = $(this).data('name')
+       $('#alertmodel-item').text(Alertname)
+    })
+})
+
+$('#confirm-delete').on('click', ()=>{
+    var toastEl = $('#ToastElement');
+    var toast = new bootstrap.Toast(toastEl);
+    $.ajax({
+        url : '/manager/deletecompany/'+ Alertid,
+        type : 'POST',
+        data : {'csrfmiddlewaretoken': '{{csrf_token}}'},
+        success: function(response, textStatus, jqXHR ){
+            if(jqXHR.status === 200){
+                     toastEl.find('#bodytoast').text(jqXHR.responseJSON.message);
+                     toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
+                     toast.show();
+                        setTimeout(function() {
+                            window.location.reload()
+                        }, 1500);
+            }
+
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            if (jqXHR.status === 400) {
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else if (jqXHR.status === 404) {
+                // Handle 'Traveller profile not found'
+                toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+            } else {
+                // Handle other types of errors
+                toastEl.find('.toast-body').text('An unexpected error occurred: ' + errorThrown);
+                toastEl.find('.toaser').addClass('bg-danger text-white');
+                toast.show();
+               
+            }
+        }
+    })
+    $('#AlertModel').modal('hide')
+})
+
+
+{% endblock heavyScript %}

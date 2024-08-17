@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from booking.models import Vehicle, TransportationCompany, Booking, Terminals, Traveller
+from booking.models import Vehicle, TransportationCompany, Booking, Terminals, Traveller, State
 from django.contrib.auth import login, authenticate
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.generic import ListView
+from django.views.decorators.http import require_POST
+from django.views.generic import ListView, DetailView
 from django.views.decorators.csrf import csrf_protect
-from django.http import JsonResponse,HttpRequest
+from django.http import JsonResponse,HttpRequest, HttpResponse
 
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count,Q
 
-from .forms import addNewVehicle, addNewCompanyForm
+from .forms import addNewVehicle, addNewCompanyForm, addTerminal, addState
 
 
 # Create your views here.
@@ -82,44 +83,27 @@ def manageIndexView(request):
 
 # add new company
 @staff_member_required(login_url='manager:managerlogin')
+@csrf_protect
 def addNewCompany(request):
     if request.method == 'POST':
         form = addNewCompanyForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return JsonResponse({'success':True, 'message': 'Company added successfully'})
+            company = form.save(commit=False)
+            name = request.POST.get('name')
+            name = name.upper()
+            checker = TransportationCompany.objects.filter(name = name).first()
+            if checker:
+                return JsonResponse({'success':False, 'message': 'Transportation Company already exist'}, status = 400)
+            else:
+                company.save()
+                return JsonResponse({'success':True, 'message': 'Company added successfully'}, status = 200)
         else:
-           errors = form.errors.as_json()
-           return JsonResponse({'success': False, 'message': errors})
+           errors = form.errors.as_json(escape_html=True)
+           return JsonResponse({'success': False, 'message': errors }, status = 400)
     else:
         form = addNewCompanyForm()
     return render(request, "manager/add_company.html")
 
-
-# add new vehicle to lish
-@staff_member_required(login_url='manager:managerlogin')
-def AddVehicle(request):
-    terminalsall = Terminals.objects.all()
-    companies = TransportationCompany.objects.all()
-    if request.method == 'POST':
-       
-        form = addNewVehicle(request.POST)
-        if form.is_valid:
-            vehicle = form.save(commit = False)
-            vehicle.terminal1 = Terminals.objects.get(id = request.POST['terminal-1'])
-            vehicle.terminal2 = Terminals.objects.get(id = request.POST['terminal-2'])
-            vehicle.comapny = TransportationCompany.objects.get(id = request.POST['company'])
-            vehicle.save()
-
-            # plate_number = form.cleaned_data.get('plate_number')
-            # terminal1 = form.cleaned_data.get('terminal1')
-            # terminal2 = form.cleaned_data.get('terminal2')
-           
-            # capacity = form.cleaned_data.get('capacity')
-
-           
-
-    return render(request, "manager/add_vehicle.html", {'terminals' : terminalsall, 'companies' : companies})
 
 
 # company list
@@ -132,8 +116,9 @@ def companyList(request):
 
 
 @staff_member_required
+@require_POST
 def deleteCompany(request, company_id):
-    company = get_object_or_404(TransportationCompany, pk = company_id)
+    company = TransportationCompany.objects.filter(pk = company_id).first()
     try:
         company.delete()
     except Exception as e:
@@ -145,9 +130,9 @@ def deleteCompany(request, company_id):
 
 @staff_member_required
 def companyDetail(request, company_id, slug ):
-    # company = get_object_or_404( TransportationCompany ,id = company_id, slug = slug)
+    terminalsall = Terminals.objects.all()
     company = get_object_or_404(TransportationCompany, id = company_id, slug = slug)
-    return render(request, 'manager/companydetail.html', {'company': company})
+    return render(request, 'manager/companydetail.html', {'company': company, 'terminals':terminalsall})
 
 def company_analytics(request):
     # Get today's date
@@ -177,13 +162,124 @@ def company_analytics(request):
     return JsonResponse(monthly_bookings, safe=False)
 
 
+# ADD NEW VEHICLE
+@require_POST
+def AddVehicle(request, id , slug):
+    if request.user.is_staff:
+        company = get_object_or_404(TransportationCompany, pk = id, slug = slug)   
+        form = addNewVehicle(request.POST)
+        if form.is_valid:
+            vehicle_form = form.save(commit=False)
+            plate_number = request.POST.get('plate_number')
+            checker = Vehicle.objects.filter(plate_number = plate_number).first()
+            if checker:
+                return JsonResponse({'success' : False, 'message' : 'vehicle with plate number already Exist!'}, status = 400)
+            vehicle_form.save()
+            return JsonResponse({'success' : True, 'message' : 'Vehicle Added successfully'}, status = 200)
+        else:
+            # else return error message
+            return JsonResponse({'success' : False, 'message' : vehicle_form.errors }, status = 400)
+    return JsonResponse({'success' : False, 'message' : 'An error Occured'}, status = 400)
 
-# @staff_member_required
+# DELETE VEHICLE
+@require_POST
+@csrf_protect
+def DeleteVehicle(request, id):
+    if request.user.is_staff:
+        VehicleItem = Vehicle.objects.get(id = id)
+        if VehicleItem:
+            VehicleItem.delete()
+            return JsonResponse({'success' : True, 'message': 'Vehicle deleted successfully'}, status = 200)
+        return JsonResponse({'success' : False, 'message' : 'Error Deleting Vehicle'}, status = 404)
+    return JsonResponse({'success': False, 'message':'An Error Occured'}, status = 400)
+
+
+# ADD TERMINAL ACTION VIEW
+@staff_member_required(login_url='manager:managerlogin')
+@require_POST
+def AddNewTerminal(request):
+    if request.user.is_staff:
+        state = request.POST.get('state')
+        area = request.POST.get('area')
+        address = request.POST.get('address') 
+        state = State.objects.get(id = state)
+        try:
+            creator = Terminals.objects.create(state = state, area = area, address = address)
+        except Exception as e:
+            
+            return JsonResponse({'success' : False, 'message': 'Error Saving Terminal'}, status = 400)
+        if creator:
+            return JsonResponse({'success' : True, 'message': 'Terminal Added Success'}, status = 200)
+        return JsonResponse({'success' : False, 'message': 'An error occured try Again!'}, status = 400)
+        
+    return JsonResponse({'success': False, 'message' : 'you dont permission to create terminals'})
+
+
+@require_POST
+@csrf_protect
+def CreateTerminal(request):
+    form = addTerminal(request.POST)
+    if form.is_valid:
+        form.save()
+        return JsonResponse({'success' : True, 'message' : 'Terminal Saved Successfully'}, status = 200)
+    return JsonResponse({'success' : False, 'message' : form.errors.as_json(escape_html=True)}, status = 400)
+
+# ADD TERMINAL VIEW PAGE
+@staff_member_required(login_url='manager:managerlogin')
+def addTerminaLView(request):
+    states = State.objects.all()
+    return render(request, 'manager/add_terminal.html', {'states' : states})
+
+
+# STATES VIEW
+def StateView(request):
+    if request.method == 'POST':
+        form = addState(request.POST)
+        if form.is_valid():
+            state = form.save(commit=False)
+            insate = request.POST.get('name').strip().lower()  # Normalize the state name
+            checker = State.objects.filter(name__iexact=insate).first()  # Case-insensitive check
+            if checker:
+                return JsonResponse({'success': False, 'message': 'State Already Exists'}, status=400)
+            state.name = insate.capitalize()  # Store the name capitalized
+            state.save()
+            return JsonResponse({'success': True, 'message': 'State Saved Successfully'}, status=200)
+        errors = form.errors.as_json(escape_html=True)  
+        return JsonResponse({'success': False, 'message': errors}, status=400)
+
+    states = State.objects.annotate(
+        num_terminals=Count('terminals', distinct=True),
+        pickup_vehicles=Count('schedule_pickup_state', distinct=True),
+        des_vehicles=Count('schedule_destination_state', distinct=True)
+    ).order_by('-id')
+    
+    return render(request, 'manager/states.html', {'states': states})
+
+
+@staff_member_required(login_url='/login/')
+def StateDetailView(request, statecode):
+    checker = State.objects.get(id = statecode)
+    if checker:
+        terminal = Terminals.objects.filter(state = checker)
+        return render(request, 'manager/state-detail.html', {'state' : checker, 'terminals' : terminal})
+
+
+
+
+ #@staff_member_required
 class BookingListView(ListView):
     model = Booking
     template_name = "manager/bookings.html"
-    context_object_name = 'bookins'
+    context_object_name = 'bookings'
+    ordering = '-booking_date'
 
+# BOOKING DETAILS
+def bookingDetailView(request, bookcode):
+    try:
+        ticket = Booking.objects.get(booking_code = bookcode)
+    except Booking.DoesNotExist():
+        raise render(request, '404.html', status=404)
+    return render(request, 'manager/booking-detail.html', {'ticket' : ticket})
 
 
 

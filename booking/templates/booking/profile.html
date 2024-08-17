@@ -130,21 +130,18 @@
 </div>
 
 <script>
-    document.getElementById('editButton').addEventListener('click', function() {
-        const formElements = document.querySelectorAll('.user-form input, .user-form select, .user-form textarea');
-        formElements.forEach(element => element.removeAttribute('disabled'));
-        document.getElementById('saveButton').removeAttribute('disabled');
-        this.setAttribute('disabled', 'true'); // Disable the Edit button once editing starts
-    });
+   
 </script>
 {% endblock %}
 
 {% block heavyScript %}
      <script>
-    $('#UpdateProfile').on('submit', function(e){
-        e.preventDefault();
         var toastEl = $('#ToastElement');
         var toast = new bootstrap.Toast(toastEl);
+
+    $('#UpdateProfile').on('submit', function(e){
+        e.preventDefault();
+       
         $.ajax({
             url: '/profile/',
             type: 'POST',
@@ -181,6 +178,18 @@
         });
 
     })
+
+    document.getElementById('editButton').addEventListener('click', function() {
+        const formElements = document.querySelectorAll('.user-form input, .user-form select, .user-form textarea');
+        formElements.forEach(element => element.removeAttribute('disabled'));
+        document.getElementById('saveButton').removeAttribute('disabled');
+        this.setAttribute('disabled', 'true'); // Disable the Edit button once editing starts
+
+        toastEl.find('.toast-body').text('Profile has been enabled for Upate');
+        toastEl.find('.toaser').addClass('bg-success text-white');
+        toast.show();
+    });
+   
     
      </script>
 {% endblock %}
