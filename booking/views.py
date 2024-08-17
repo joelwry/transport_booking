@@ -3,17 +3,19 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from .models import Traveller, Booking, Vehicle, State, TransportationCompany
+from django.views.decorators.csrf import csrf_protect
+from .models import Traveller, Booking, Vehicle, State, TransportationCompany,Terminals, VehicleSchedule
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
 from django.utils import timezone
-from datetime import timedelta
-from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
+from datetime import timedelta, datetime
+from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, HttpResponse
 from django.db.models import Q
 from dotenv import load_dotenv
 load_dotenv()
 import os 
+
 
 PAYSTACK_PUBLIC_KEY = os.getenv('PAYSTACK_PUBLIC_KEY')
 
@@ -24,7 +26,43 @@ LOCKOUT_TIME = 5  # in minutes
 # SHOW THE UPDATE LANDING PAGE FROM FRANK
 # this should be for landing page
 def index(request):
-    return render(request, 'index.html')
+    terminal1 = Terminals.objects.all()
+    terminal2 = terminal1.order_by('state_id')
+    return render(request, 'index.html', {'terminal1' :terminal1, 'terminal2': terminal2})
+
+
+
+@require_POST
+@csrf_protect
+def searchResult(request):
+    term1 = request.POST.get('terminal-1')
+    term2 = request.POST.get('terminal-2')
+    adults = request.POST.get('adults')
+    travel_date_str = request.POST.get('travelDate')
+
+    # Convert travel_date string to a datetime object
+    error = None
+    if not term1 or not term2 or not travel_date_str or not adults:
+        error = 'All fileds are required!'
+    else:
+        try:
+            travel_date = datetime.strptime(travel_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            travel_date = None
+
+    if not error and travel_date:
+        vehicles = VehicleSchedule.objects.filter(
+            pickup_state = term1,
+            destination_state = term2, 
+            travel_datetime__date = travel_date
+            ).only('vehicle','travel_datetime' ).select_related('vehicle')
+        
+    else:
+        vehicles  = VehicleSchedule.objects.none()
+
+    return render(request, 'result-search.html', {'vehicles' : vehicles, 'error' : error})
+
+
 
 # GOOD TO GO
 # user dashboard.. user must be authenticated to view this page

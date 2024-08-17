@@ -18,5 +18,9 @@ urlpatterns = [
     path('book-now/', views.advanced_search_vehicles, name='advanced_search_vehicles'),
 
 
+    # from home search result
+    path("searchHome/", views.searchResult, name="search-from-home"),
+
+
     path("tester/", views.testerView, name="")
 ]

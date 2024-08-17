@@ -189,4 +189,15 @@
   </div> -->
 </div>
 
+<script>
+  function showForm(formId) {
+      // Hide all forms
+      var forms = document.getElementsByClassName('form-container');
+      for (var i = 0; i < forms.length; i++) {
+          forms[i].classList.remove('active');
+      }
+      // Show the selected form
+      document.getElementById(formId).classList.add('active');
+  }
+</script>
 {% endblock page-contents %}
