@@ -5,101 +5,268 @@
 
 {% block page-contents %}
 
-<div class="main py-4 px-3 main-color">
- 
+<div class="main   main-color">
+
     <div class="row">
-        <div class="col-xl-3 p-4" style="border-right: 1px solid black;">
+        <div class="col-xl-12 bgcolor ">
             <!-- Filter button only visible on smaller screens -->
-            <div class="top-filter mb-3 col-12 d-xl-none">
-                <button type="button" class="bg-dark text-white btn btn-sm col-12 rounded-0" data-bs-toggle="collapse" data-bs-target="#filterContainer" aria-expanded="false" aria-controls="filterContainer">
-                    Filter
-                </button>
-            </div>
-            <!-- Filter container, always visible on xl and above, collapsible on lg and below -->
-            <div class="collapse d-xl-block" id="filterContainer">
-                <form action="#" method="post">
+            <div class="row   px-3 align-items-center p-2">
+                <div class="col-md-9">
                     <div class="row">
-                        <div class="form-group mb-2">
-                            <label for="travel-from">Traveling from</label>
-                            <select class="form-select" id="current-state" aria-label="" name="start_state">
-                                <option selected></option>
-                                {% for state in states %}
-                                <option value="{{state.id}}">{{ state.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="col-md-5">
+                            <span class="h6"><span><i class="bi bi-geo-alt"></i></span> Lagos(iyana ipaja) <span><i
+                                        class="bi bi-arrow-right"></i></span> Delta(abraka)</span class="h6">
                         </div>
-                        <div class="form-group mb-2">
-                            <label for="travel-to">Traveling to</label>
-                            <select class="form-select" id="current-state" aria-label="" name="destination_state">
-                                <option selected></option>
-                                {% for state in states %}
-                                <option value="{{state.id}}">{{ state.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="col-md-3">
+                            <span class="h6"><i class="bi bi-calendar"></i> Aug 18 2024</span>
                         </div>
-                        <div class="form-group mb-2">
-                            <label for="max-price">Max Price</label>
-                            <input type="text" name="max_price" id="max-price" class="form-control">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="min-price">Min Price</label>
-                            <input type="text" name="min_price" id="min-price" class="form-control">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="company">Company</label>
-                            <select class="form-select" id="current-state" aria-label="" name="company">
-                                <option selected></option>
-                                {% for company in transport_companies %}
-                                <option value="{{company.id}}">{{ company.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group mb-2">
-                            <input type="submit" class="form-control colorbtn rounded-0 text-white" value="Apply">
+                        <div class="col-md-4">
+                            <span class="h6 me-2">One Way</span>
+                            <span class="h6"> Adults (3)</span>
+                            <span class="h6"> Children (2)</span>
                         </div>
                     </div>
-                </form>
+
+
+                </div>
+                <div class="col-md-3 text-end px-4">
+                    <div class="top-filter col-12 ">
+                        <button type="button" class="bg-dark text-white btn btn-sm  rounded-0" data-bs-toggle="collapse"
+                            data-bs-target="#filterContainer" aria-expanded="false" aria-controls="filterContainer">
+                            Filter
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div class="col-xl-9 " >
-            <div class="row">
-                <p class="fw-bold h4 py-2 p-4">From Delta to Lagos</p>
-            </div>
-            <div class="row p-2 row-gap-3 " style="overflow-y: scroll; height: 70vh; position: relative;">
-                <div class="col-xl-4 col-lg-6 col-md-6">
-                    <div class="card rounded-0 border-0  pb-0 shadow">
-                        <div class="card-body">
-                            <div class="row pb-0">
-                                <div class="col-12">
-                                    <img src="./travellers logo/GIGM.png" class="rounded-pill" width="32px" alt="">
-                                    <span class="px-1 fw-bold">God is Good</span>
-                                </div>
-                                <div class="col-12 pt-2">
-                                    <div class="row align-items-center">
-                                        <div class="col-8">
-                                            <p class="traveller-price">Traveling Date : 22/08/2024</p>
-                                            <p class="traveller-price">Time : 6:00Am</p>
-                                            <p class="traveller-price">Available Seat : 4</p>
-                                        </div>
-                                        <div class="col-4">
-                                           
-                                            <p class="traveller-price"><span class="fw-bold primary-color h6">$24000</span></p>
-                                            <a class="btn btn-sm rounded-0 text-white colorbtn p-2  book-btn">Book Now</a>
-                                        </div>
+
+            <!-- Filter container, always visible on xl and above, collapsible on lg and below -->
+            <div class="collapse bg-dark shadow-sm px-3 py-2 primary-color" id="filterContainer">
+                <div class="col-lg-12 order-last rounded-2" data-aos="zoom-out" data-aos-delay="100">
+                    <div class="col-sm-3 mb-2">
+                        <input type="radio" id="one-way" class="form-check-input p-2" name="trip-type" value="one-way"
+                            checked onclick="showForm('form1')">
+                        <label for="one-way" class="px-2 fw-bold">One Way</label>
+                        <input type="radio" id="round-trip" class="form-check-input p-2" name="trip-type"
+                            value="round-trip" onclick="showForm('form2')">
+                        <label for="round-trip" class="px-2 fw-bold">Round Trip</label>
+                    </div>
+
+                    <div class="col-12">
+                        <!-- One Way Form -->
+                        <div id="form1" class="form-container active">
+                            <form action="{% url "search-from-home" %}" method="post" class="user-form">
+                                {% csrf_token %}
+                                <div class="row row-gap-2 align-items-end">
+                                    <!-- Form fields as before -->
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="terminal-1 text-white">Traveling From <span
+                                                class="text-danger">*</span></label>
+                                        <select name="terminal-1" id="terminal-1" class="form-select py-1 multiple">
+                                            {% for terminal in terminal1 %}
+                                            <option value="{{terminal.state.id}}">
+                                                {{terminal.state.name}}({{terminal.area}})</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
-                                    
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="terminal-2 text-white">Traveling To<span
+                                                class="text-danger">*</span></label>
+                                        <select name="terminal-2" id="terminal-2" class="form-select py-1 ">
+                                            {% for terminal in terminal2 %}
+                                            <option value="{{terminal.state.id}}">
+                                                {{terminal.state.name}}({{terminal.area}})</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="adults text-white">Adult No.:<span
+                                                class="text-danger">*</span></label>
+                                        <select name="adults" id="adults" class="form-select py-1">
+                                            <option value="1">1</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="children text-white">Children No.:<span
+                                                class="text-danger">*</span></label>
+                                        <select name="children" id="children" class="form-select py-1">
+                                            <option value="1">1</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="travelDate text-white">Traveling Date<span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="travelDate" id="travelDate" class="form-control p-1">
+                                    </div>
+                                    <div class="col-sm-2 mb-2">
+                                        <input type="submit" value="Search Vehicle"
+                                            class="btn colorbtn col-12 text-white btn-sm p-2">
+                                    </div>
                                 </div>
-                                
-                            </div>
-                           
+                            </form>
+                        </div>
+
+                        <!-- Round Trip Form -->
+                        <div id="form2" class="form-container" style="display:none;">
+                            <form action="{% url "search-from-home" %}" method="post" class="user-form">
+                                {% csrf_token %}
+                                <div class="row row-gap-2 align-items-end">
+                                    <!-- Form fields as before -->
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="terminal-1 text-white">Traveling From <span
+                                                class="text-danger">*</span></label>
+                                        <select name="terminal-1" id="terminal-1" class="form-select py-1">
+                                            {% for terminal in terminal1 %}
+                                            <option value="{{terminal.state.id}}">{{terminal.state.name}}({{terminal.area}})</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="terminal-2 text-white">Traveling To<span
+                                                class="text-danger">*</span></label>
+                                        <select name="terminal-2" id="terminal-2" class="form-select py-1">
+                                            {% for terminal in terminal2 %}
+                                            <option value="{{terminal.state.id}}">{{terminal.state.name}}({{terminal.area}})</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="adults text-white">Adult No.:<span
+                                                class="text-danger">*</span></label>
+                                        <select name="adults" id="adults" class="form-select py-1">
+                                            <option value="1">1</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="children text-white">Children No.:<span
+                                                class="text-danger">*</span></label>
+                                        <select name="children" id="children" class="form-select py-1">
+                                            <option value="1">1</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="travelDate text-white">Traveling Date<span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="travelDate" id="travelDate" class="form-control p-1">
+                                    </div>
+                                    <div class="col-sm-3 mb-2">
+                                        <label for="returningDate text-white">Returning Date<span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="returningDate" id="returningDate"
+                                            class="form-control p-1">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="submit" value="Search Vehicle"
+                                            class="btn colorbtn col-12 text-white btn-sm p-2">
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="col-xl-11 py-4 m-auto ">
+            <div class="row p-2 row-gap-3">
+                {% for vehicle in vehicles %}
+                <div class="col-xl-6 col-lg-6 col-md-12">
+                    <div class="card rounded-0 border-0  pb-0 shadow">
+                        <div class="card-body">
+                            <div class="row pb-0">
+                                <div class="col-12">
+                                    <img src="{{vehicle.vehicle.company.image.url}}" class="rounded-pill" width="32px"
+                                        alt="">
+                                    <span class="px-1 fw-bold">{{vehicle.vehicle.company}}</span>
+                                </div>
+                                <div class="col-12 pt-2">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date |date:"M d"}}</p>
+                                            <p class="traveller-price">Time : {{vehicle.travel_datetime.time |time:"H:i"}}</p>
+                                            <p class="traveller-price">Available Seat : 4</p>
+                                        </div>
+                                        <div class="col-4">
+
+                                            <p class="traveller-price"><span
+                                                    class="fw-bold primary-color h6">${{vehicle.vehicle.price|floatformat:"-3"}}</span></p>
+                                            <button class="btn btn-sm rounded-0 text-white colorbtn p-2  book-btn"
+                                                data-bs-target="#seats{{vehicle.id}}" data-bs-toggle="collapse">View Seats</button>
+                                        </div>
+                                        
+                                        <div class="collapse " id="seats{{vehicle.id}}">
+                                            <hr>
+                                            <div class="col-sm-9 mb-3">
+                                                <div class="row align-items-center">
+                                                    <div class="col">
+                                                        <span
+                                                            class="col text-center text-white  bg-danger px-2 py-1 rounded-3">-</span><span
+                                                            class="px-1">Unavailable</span>
+                                                    </div>
+                                                    <div class="col">
+                                                        <span
+                                                            class="col text-center text-white bg-black px-2 py-1 rounded-3">-</span><span
+                                                            class="px-1">Available</span>
+                                                    </div>
+                                                    <div class="col">
+                                                        <span
+                                                            class="col text-center text-white  bg-success px-2 py-1 rounded-3">-</span><span
+                                                            class="px-1">Selected</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="row">
+                                                <div class="col-sm-10 me-auto ">
+                                                    <div class="col-12 py-2"><Span>Select Seat Here</Span></div>
+                                                    <div class="card py-0 px-2 ">
+                                                        <div class="card-body px-1 py-1">
+                                                            <div class="row row-gap-1">
+                                                                <div class=" col text-center m-1 bg-danger text-white px-2 py-1 rounded-3">1</div>
+                                                                <div class=" col text-center m-1 bg-success text-white px-2 py-1 rounded-3"> 2</div>
+                                                                <div class=" col text-center m-1 bg-success text-white px-2 py-1 rounded-3"> 3</div>
+                                                                <div class=" col text-center m-1 bg-danger text-white px-2 py-1 rounded-3"> 4</div>
+                                                                <div class=" col text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> 5</div>
+                                                                <div class=" col text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> 6</div>
+                                                                <div class=" col text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> 7</div>
+                                                                <div class=" col text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> 8</div>
+                                                                <div class=" col text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> 9</div>
+                                                                <div class=" col text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> 10</div>
+                                                                <div class=" col text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> 11</div>
+                                                                <div class=" col text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> 12</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+                                                </div>
+                                                <div class="col-sm-10 m-auto mt-3 text-end px-4">
+                                                    <a href="#" class="btn btn-sm btn-success">Continue</a>
+                                                </div>
+
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                {% empty %}
+                    <p>No Vehicle Found</p>
+                    {% endfor %}
+            </div>
+        </div>
+
     </div>
 
-  </div>
-
-{% endblock page-contents %}
+    {% endblock page-contents %}

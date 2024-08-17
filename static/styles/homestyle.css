@@ -1,6 +1,8 @@
 /*--------------------------------------------------------------
 # Hero Section
 --------------------------------------------------------------*/
+
+
 .dark-background {
     --background-color: #000000d4;
     --default-color: #ffffff;
@@ -20,7 +22,7 @@
 
 .hero {
   width: 100%;
-  max-height: 80vh;
+  max-height: 100vh;
   position: relative;
   padding: 120px 0 120px 0;
   display: flex;

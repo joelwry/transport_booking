@@ -11,13 +11,8 @@ from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignU
 from .utils.payment_utils import process_payment, send_booking_email
 from django.utils import timezone
 from datetime import timedelta
-from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponseRedirect
 from django.db.models import Q
-from dotenv import load_dotenv
-load_dotenv()
-import os 
-
-PAYSTACK_PUBLIC_KEY = os.getenv('PAYSTACK_PUBLIC_KEY')
 
 # will be used to track user login attempt
 MAX_ATTEMPTS = 5
@@ -35,27 +30,29 @@ def index(request):
     terminals = Terminals.objects.all()
     return render(request, 'index.html', {'terminals':terminals})
 
-# GOOD TO GO
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
 def dashboard_view(request):
     traveller = Traveller.objects.filter(user = request.user).first()
-    tickets = Booking.objects.filter(customer=traveller).all().order_by('-booking_date')[:5]
+    tickets = Booking.objects.filter(customer=traveller).all()
     ticket_type_count = {"pending":0,"confirmed":0,"cancelled":0}
     for ticket in tickets:
         if ticket.status == "PENDING":
             ticket.status_color = "pending"
             ticket_type_count['pending'] += 1
-           
+            print('pending +1')
         elif ticket.status == "CONFIRMED":
             ticket.status_color = "confirmed"
             ticket_type_count['confirmed'] += 1
         else:
             ticket.status_color = "cancelled"
             ticket_type_count['cancelled'] += 1
+
+    print(tickets)
+    print(traveller)
+    print(ticket_type_count)
     return render(request, 'booking/user_dashboard.html', {'tickets': tickets, "ticket_analysis":ticket_type_count})
 
-# GOOD TO GO
 def signup(request):
     if request.method == 'POST':
         print(request.POST)
@@ -93,24 +90,25 @@ def signupTraveller(request):
     return render(request, 'signup.html', {'user_form': user_form, 'traveller_form': traveller_form})
 
 # ow to check /accounts/login/?next=/dashboard/ if request has next param
-MAX_ATTEMPTS = 5
-LOCKOUT_TIME = 5  # in minutes
-
 def login_view(request: HttpRequest):
+    # direct user automatically to dashboard if user is already logged in
     if request.user.is_authenticated:
         return redirect('user_dashboard')
 
+    # Initialize session variables if not already set
     if 'login_attempts' not in request.session:
         request.session['login_attempts'] = 0
     if 'locked_until' not in request.session:
         request.session['locked_until'] = None
 
-    locked_until = request.session.get('locked_until')
-    if locked_until:
-        locked_until_time = timezone.datetime.fromisoformat(locked_until)
-        if timezone.now() < locked_until_time:
-            remaining_time = (locked_until_time - timezone.now()).seconds // 60
-            return JsonResponse({'success': False, 'message': f"Too many failed attempts. Try again in {remaining_time} minutes."})
+    # Check if the user is currently locked out
+    if request.session['locked_until']:
+        locked_until = timezone.datetime.fromisoformat(request.session['locked_until'])
+        if timezone.now() < locked_until:
+            form = LoginForm()
+            remaining_time = (locked_until - timezone.now()).seconds // 60
+            form.add_error(None,f"Too many failed attempts. Try again in {remaining_time} minutes.")
+            return render(request, 'login.html', {'form': form, 'error': f"Too many failed attempts. Try again in {remaining_time} minutes."})
 
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -121,81 +119,78 @@ def login_view(request: HttpRequest):
 
             if user is not None:
                 login(request, user)
-                request.session['login_attempts'] = 0
-                request.session['locked_until'] = None
-
-                next_url = request.GET.get('next')
-                if next_url:
-                    return JsonResponse({'success': True, 'redirect_url': next_url})
-                return JsonResponse({'success': True, 'redirect_url': '/dashboard/'})
+                request.session['login_attempts'] = 0  # Reset attempts after successful login
+                request.session['locked_until'] = None  # Reset lockout time
+                try : 
+                    if request.GET['next'] :
+                        return HttpResponseRedirect(request.GET['next'])
+                        #return redirect(request.GET['next'])
+                        # work on redirect based off next
+                except : 
+                    print('Not a redirect')
+                    pass 
+                return redirect('user_dashboard')
             else:
                 request.session['login_attempts'] += 1
 
                 if request.session['login_attempts'] >= MAX_ATTEMPTS:
                     lockout_time = timezone.now() + timedelta(minutes=LOCKOUT_TIME)
                     request.session['locked_until'] = lockout_time.isoformat()
-                    print( f"Too many failed attempts. Try again in {LOCKOUT_TIME} minutes.")
-                    return JsonResponse({'success': False, 'message': f"Too many failed attempts. Try again in {LOCKOUT_TIME} minutes."})
+                    remaining_time = LOCKOUT_TIME
+                    form.add_error(None,f"Too many failed attempts. Try again in {remaining_time} minutes.")
+                    return render(request, 'login.html', {'form': form,  })
                 else:
                     attempts_left = MAX_ATTEMPTS - request.session['login_attempts']
-                    print(f"Invalid credentials. {attempts_left} attempts left.")
-                    return JsonResponse({'success': False, 'message': f"Invalid credentials. {attempts_left} attempts left."})
+                    form.add_error(None, f"Invalid credentials. {attempts_left} attempts left.")
+
     else:
         form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
 
 
-# GOOD TO GO
+# to logout a user, user must have already been logged in b4 he/she can logout
 @login_required
 def logout_view(request):
     logout(request)
     return redirect('index')
 
-
 @login_required
-def book(request,vehicle_id):
-    vehicle = Vehicle.objects.filter(id=int(vehicle_id)).first()
-    if vehicle == None :
-        return redirect("advanced_search_vehicles")
-    traveller = Traveller.objects.get(user=request.user)
+def book(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
-            booking.customer = traveller
+            booking.customer = Traveller.objects.get(user=request.user)
             booking.total_cost = calculate_total_cost(booking)
             booking.save()
             return redirect('payment', booking_id=booking.id)
     else:
-        next_of_kin_detail = {
-            "name": traveller.nok_fullname if traveller.nok_fullname != 'None' or len(traveller.nok_fullname) < 2 else None,
-            "phone" : traveller.nok_phone if traveller.nok_phone != 'None' else None
-        }  
-    return render(request, 'booking/book.html', {'vehicle':vehicle, 'next_of_kin_detail' : next_of_kin_detail, "vehicleId":vehicle_id})
+        form = BookingForm()
+    return render(request, 'booking/booking.html', {'form': form})
 
 @login_required
-def makePayment(request, booking_code, access_code, amount_to_pay):
-    #booking = Booking.objects.get(id=booking_id)
-    # if request.method == 'POST':
-    #     amount = request.POST['amount']
-    #     status = request.POST['status']
-    #     payment = process_payment(booking, amount, status)
-    #     if payment.status == 'COMPLETED':
-    #         booking.confirmed = True
-    #         booking.payment_id = payment.id
-    #         booking.save()
-    #         send_booking_email(booking)
-    #         return redirect('booking_success', booking_id=booking.id)
-    return render(request, 'booking/make_payment.html', {'email':request.user.email,'amount':float(amount_to_pay),"reference":booking_code,'PAYSTACK_PUBLIC_KEY':PAYSTACK_PUBLIC_KEY, "access_code":access_code})
+def payment(request, booking_id):
+    booking = Booking.objects.get(id=booking_id)
+    if request.method == 'POST':
+        amount = request.POST['amount']
+        status = request.POST['status']
+        payment = process_payment(booking, amount, status)
+        if payment.status == 'COMPLETED':
+            booking.confirmed = True
+            booking.payment_id = payment.id
+            booking.save()
+            send_booking_email(booking)
+            return redirect('booking_success', booking_id=booking.id)
+    return render(request, 'booking/payment.html', {'booking': booking})
 
 @login_required
 def booking_success(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
-    return render(request, 'booking/booking_success.html', {'booking': booking, "booking_code":booking.booking_code})
+    return render(request, 'booking/booking_success.html', {'booking': booking})
 
 # this section shows search result for a traveller trying to find a vehicle that meets his/her requirement
-@login_required(login_url='/login/')
+#@login_required
 def search_vehicles(request):
     start_state = request.GET.get('start_state')
     destination_state = request.GET.get('destination_state')
@@ -209,10 +204,10 @@ def search_form(request):
     states = State.objects.all()
     return render(request, 'booking/search_form.html', {'states': states})
 
-# GOOD TO GO
+# this is for advanced search functionality
 @login_required
 def advanced_search_vehicles(request):
-    form = AdvancedSearchForm(request.POST or None)
+    form = AdvancedSearchForm(request.GET or None)
     vehicles = Vehicle.objects.all()
     states = State.objects.all()
     transport_companies = TransportationCompany.objects.all()
@@ -224,6 +219,8 @@ def advanced_search_vehicles(request):
         max_price = form.cleaned_data.get('max_price')
         available = form.cleaned_data.get('available')
         company = form.cleaned_data.get('company')
+
+        print(f'START : {start_state},\nDest : {destination_state},\n Min price : {min_price}\nMax Price :{max_price}\nAvailable: {available},\nCompany : {company}')
 
         if start_state and destination_state:
             start_state = State.objects.get(id=int(start_state))
@@ -248,10 +245,9 @@ def advanced_search_vehicles(request):
         if max_price is not None:
             vehicles = vehicles.filter(price__lte=max_price)
         try:
-            print(f'AVAILABILITY : {request.GET.get('availability') }')
             if available and request.GET.get('availability') == "all":
                 pass
-            elif available or request.GET.get('availability') == None :
+            elif available :
                 vehicles = vehicles.filter(available=True)
             else :
                 vehicles = vehicles.filter(available=False)
@@ -272,36 +268,8 @@ def advanced_search_vehicles(request):
 def updateProfile(request):
     states = State.objects.all()
     traveller = Traveller.objects.filter(user = request.user).first()
-    if not traveller:
-        return JsonResponse({'success':False,'message':'user profile not found'}, status = 404)
-    if request.method == 'POST':
-        traveller_form = TravellerForm(request.POST)
-        if traveller_form.is_valid() and traveller:
-            form = traveller_form.clean()
-            traveller.gender = form.get('gender')
-            traveller.state = form.get('state')
-            traveller.phone = form.get('phone')
-            traveller.residential_address = form.get('residential_address')
-            traveller.nok_fullname = form.get('nok_fullname')
-            traveller.nok_phone = form.get('nok_phone')
-            # if request.POST['address'] : 
-            #     traveller.address = request.POST['address']
-            if request.POST['first_name']:
-                traveller.user.first_name = request.POST['first_name']
-                traveller.user.save()
-            if request.POST['last_name']:
-                traveller.user.last_name = request.POST['last_name']
-                traveller.user.save()
-            traveller.save()
-            return JsonResponse({'success':True, 'message': 'Profile updated successfully'}, status = 200)
-        return JsonResponse({'success' : False, 'message': traveller_form.errors}, status  = 400)
+    print(traveller.gender, traveller.state, traveller.phone)
     return render(request, "booking/profile.html", {'states' : states,'traveller':traveller})
-
-
-def testerView(request):
-    return render(request, 'result-search.html')
-
-
 
 def forgotPassword(request):
     return render(request, "forgot_password.html", {})
