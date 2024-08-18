@@ -17,11 +17,5 @@ urlpatterns = [
     path('search_vehicles/', views.search_vehicles, name='search_vehicles'),
     path('search_form/', views.search_form, name='search_form'),
     path('book-now/', views.advanced_search_vehicles, name='advanced_search_vehicles'),
-
-
-    # from home search result
-    path("searchHome/", views.searchResult, name="search-from-home"),
-
-
-    path("tester/", views.testerView, name="")
+    path("searchHome/", views.searchResult, name="search-from-home")
 ]

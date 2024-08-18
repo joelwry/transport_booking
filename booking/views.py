@@ -3,14 +3,14 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-
+from django.views.decorators.csrf import csrf_protect
 from booking.utils.vehicle_search import indexPageSearchVehiclesSchedule
-from .models import Traveller, Booking, Vehicle, State, TransportationCompany,Terminals
+from .models import Traveller, Booking, Vehicle, State, TransportationCompany,Terminals, VehicleSchedule
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.http import HttpRequest, HttpResponseRedirect
 from django.db.models import Q
 
@@ -27,8 +27,51 @@ def index(request):
         travel_date = request.POST.get('travelling-date')
         schedules = indexPageSearchVehiclesSchedule(terminal1_data,terminal2_data,travel_date)
         return render(request, 'index_search_result.html', {'schedules': schedules})
-    terminals = Terminals.objects.all()
-    return render(request, 'index.html', {'terminals':terminals})
+    
+    terminal1 = Terminals.objects.all()
+    terminal2 = terminal1.order_by('state_id')
+    return render(request, 'index.html', {'terminal1' :terminal1, 'terminal2': terminal2})
+
+
+@require_POST
+@csrf_protect
+def searchResult(request):
+    term1 = request.POST.get('terminal-1')
+    term2 = request.POST.get('terminal-2')
+    adults = request.POST.get('adults')
+    travel_date_str = request.POST.get('travelDate')
+    
+    # Convert travel_date string to a datetime object
+    error = None
+    if not term1 or not term2 or not travel_date_str or not adults:
+        error = 'All fileds are required!'
+    else:
+        try:
+            travel_date = datetime.strptime(travel_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            travel_date = None
+
+    if not error and travel_date:
+        
+        vehicles = VehicleSchedule.objects.filter(
+            pickup_state = term1,
+            destination_state = term2, 
+            travel_datetime__date = travel_date
+            ).only('vehicle','travel_datetime' ).select_related('vehicle')
+        if vehicles:     
+            termin1 = vehicles[0].vehicle.terminal1
+            termin2 = vehicles[0].vehicle.terminal2
+            print(f'Vehicle : {vehicles[0].vehicle}')
+            print(f'VNM : {vehicles[0].vehicle.capacity}')
+            pickup_from = f'{termin1.state.name}({termin1.area})'
+            destination_at = f'{termin2.state.name}({termin2.area})'
+    else:
+        vehicles  = VehicleSchedule.objects.none()
+
+    pickup = pickup_from if pickup_from else None
+    destination = destination_at if destination_at else None
+    travel_date = travel_date_str if travel_date_str else 'No Date Specified'
+    return render(request, 'result-search.html', {'vehicles' : vehicles, 'error' : error, 'destination_at':destination , "pickup_from":pickup, 'travel_date': travel_date })
 
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
@@ -170,7 +213,7 @@ def book(request):
     return render(request, 'booking/booking.html', {'form': form})
 
 @login_required
-def payment(request, booking_id):
+def makePayment(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
     if request.method == 'POST':
         amount = request.POST['amount']
@@ -182,7 +225,7 @@ def payment(request, booking_id):
             booking.save()
             send_booking_email(booking)
             return redirect('booking_success', booking_id=booking.id)
-    return render(request, 'booking/payment.html', {'booking': booking})
+    return render(request, 'booking/make_payment.html', {'booking': booking})
 
 @login_required
 def booking_success(request, booking_id):

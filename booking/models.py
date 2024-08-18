@@ -109,6 +109,9 @@ class VehicleSchedule(models.Model):
 
     def number_of_booked_seats(self):
         return len(self.get_booked_seats())
+    
+    def show_booked_seats_as_str(self):
+        return str(self.booked_seats)
 
     def clean(self):
         if self.travel_datetime <= timezone.now():
