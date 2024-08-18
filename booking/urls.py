@@ -21,6 +21,6 @@ urlpatterns = [
     # from home search result
     path("searchHome/", views.searchResult, name="search-from-home"),
 
-
-    path("tester/", views.testerView, name="")
+    # new book view
+    path("newbook/", views.NewBookView, name="newbook")
 ]

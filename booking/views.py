@@ -64,6 +64,20 @@ def searchResult(request):
 
 
 
+# new book view
+def NewBookView(request):
+    return render(request, 'new-book.html')
+
+
+
+
+
+
+
+
+
+
+
 # GOOD TO GO
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
@@ -327,8 +341,7 @@ def updateProfile(request):
     return render(request, "booking/profile.html", {'states' : states,'traveller':traveller})
 
 
-def testerView(request):
-    return render(request, 'result-search.html')
+
 
 
 
