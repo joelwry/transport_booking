@@ -1,0 +1,197 @@
+{% extends "base_templates/header.html" %}
+{% load static %}
+
+{% block home-banner %}{% endblock home-banner %}
+
+{% block page-contents %}
+
+<div class="main   main-color">
+
+    <div class="row">
+      <div class="col-11 m-auto py-4 px-4 ">
+
+        <div class="row row-gap-3">
+          <div class="col-xl-3 col-md-4">
+            <div class="row mb-2">
+                <div class="col-12 text-center">
+                 <a href="#" class="btn border-0"> <span class="fs-5"><i class="bi bi-arrow-left me-2"></i>go back</span></a>
+                </div>
+              </div>
+            <div class="card shadow  border-0 rounded-top-2 bgcolor p-0">
+              <div class="card-body ">
+                <div class="row">
+                  <div class="col-12 py-2">
+                    <h4 class="text-white">Trip Summary</h4>
+                  </div>
+                  <hr>
+                </div>
+                <!-- details here -->
+                <div class="row">
+                  <h6>Peace Mass</h6>
+                  <p>
+                    Lagos to Enugu <br>
+                    Aug 18 2024 <br>
+                    6:00AM
+                  </p>
+                </div>
+
+                <div class="row">
+                  <div class="col-12 py-2">
+                    <h4 class="text-white">Price</h4>
+                  </div>
+                  <hr>
+                  <!-- price details -->
+                  <div class="row">
+                    <div class="col-12">
+                      <table class="fs-6 col-12 ">
+                        <tr>
+                          <td><span>Departure</span></td>
+                          <td> <span class="text-end">$28000</span></td>
+                        </tr>
+
+                        <tr>
+                          <td><span>Returning</span></td>
+                          <td> <span class="text-end">$30000</span></td>
+                        </tr>
+
+                        <tr>
+                          <td><span>Adults</span></td>
+                          <td> <span class="text-end">x 1</span></td>
+                        </tr>
+
+                        <tr>
+                          <td><span>Children</span></td>
+                          <td> <span class="text-end">x 0</span></td>
+                        </tr>
+
+                      </table>
+                    </div>
+                  </div>
+
+                </div>
+                <hr>
+                <!-- total -->
+                <div class="row">
+                  <div class="col-12 pb-3 ">
+                    <table class="col-12">
+                      <tr>
+                        <td><span class="h4 text-white">Total</span></td>
+                        <td> <span class="h5">$ 58000</span></td>
+                      </tr>
+                    </table>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- the form for them to fill -->
+          <div class="col-xl-9 col-md-8 ">
+            <div class="card    border-1">
+              <div class="card-header text-white bgcolor  ">
+                <div class="row align-items-end">
+                  <div class="col-12">
+                    <p class="fs-5 m-0 fw-bold">Personal Details</p>
+                    <span class="text-dark">Enter your personal detail as it is in Government Documents</span>
+                   
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-4">
+
+                <form action="#" method="post">
+                  <div class="col-12">
+                    <div class="row row-gap-3">
+                      <div class="col-sm-2 mb-3">
+                        <label for="title">Title</label>
+                        <select name="title" id="title" class="p-2 form-select rounded-0">
+                          <option value="Mr">Mr</option>
+                          <option value="Mr">Mrs</option>
+                          <option value="Mr">Miss</option>
+                        </select>
+                      </div>
+
+                      <div class="col-sm-5 mb-3">
+                        <label for="surname">Surname:</label>
+                        <input type="text" name="surname" id="" class=" rounded-0 p-2 form-control">
+                      </div>
+
+
+                      <div class="col-sm-5 mb-3">
+                        <label for="firstname">First Name:</label>
+                        <input type="text" name="firstname" id="" class="rounded-0 p-2 form-control">
+                      </div>
+
+                      <div class="col-sm-4 mb-3">
+                        <label for="DOB">Date of Birth:</label>
+                        <input type="date" name="DOB" id="" class="rounded-0 p-2 form-control">
+                      </div>
+
+                      <div class="col-sm-4 mb-3">
+                        <label for="email">E-mail Address:</label>
+                        <input type="email" name="email" id="" class="rounded-0 p-2 form-control">
+                      </div>
+
+                      <div class="col-sm-4 mb-3">
+                        <label for="phone">Phone Number:</label>
+                        <input type="phone" name="phone" id="" class="rounded-0 p-2 form-control">
+                      </div>
+
+                      <!-- next of kin details  -->
+
+                      <div class="col-12">
+                        <p class="h5">Next of Kin Details</p>
+                      </div>
+
+                      <div class="col-sm-2 mb-3">
+                        <label for="nok-title">Title</label>
+                        <select name="nok-title" id="nok-title" class="rounded-0 p-2 form-select ">
+                          <option value="Mr">Mr</option>
+                          <option value="Mr">Mrs</option>
+                          <option value="Mr">Miss</option>
+                        </select>
+                      </div>
+
+                      <div class="col-sm-5 mb-3">
+                        <label for="nok-surname">Srname:</label>
+                        <input type="text" name="nok-surname" id="" class="rounded-0 p-2 form-control">
+                      </div>
+
+                      <div class="col-sm-5 mb-3">
+                        <label for="nok-surname">Srname:</label>
+                        <input type="text" name="nok-surname" id="" class="rounded-0 p-2 form-control">
+                      </div>
+                      
+                      <div class="col-sm-4 mb-3">
+                        <label for="phone">Phone Number:</label>
+                        <input type="phone" name="phone" id="" class="rounded-0 p-2 form-control">
+                      </div>
+
+                      <div class="col-12">
+                        <input type="checkbox" name="terms-condition" class="form-check-input p-2" id="terms-condition">
+                        <label for="terms-condition">I Agree to Terms and Condition</label>
+                      </div>
+                      <div class="col-12">
+                        <button type="button" class="btn colorbtn p-2 text-white rounded-0">Proceed to Payment</button>
+                      </div>
+
+
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+
+
+
+    {% endblock page-contents %}
