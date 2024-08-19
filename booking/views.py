@@ -39,39 +39,71 @@ def searchResult(request):
     term1 = request.POST.get('terminal-1')
     term2 = request.POST.get('terminal-2')
     adults = request.POST.get('adults')
+    children = request.POST.get('children')
     travel_date_str = request.POST.get('travelDate')
-    
-    # Convert travel_date string to a datetime object
+    returning_date_str = request.POST.get('returningDate')
+    travel_type = request.POST.get('travel-type')
+
     error = None
-    if not term1 or not term2 or not travel_date_str or not adults:
+    travel_date = None
+    returning_date = None
+
+    if not term1 or not term2 or not travel_date_str or not adults or not children:
         error = 'All fileds are required!'
     else:
         try:
             travel_date = datetime.strptime(travel_date_str, '%Y-%m-%d').date()
+            if travel_type == 'round-trip' and returning_date_str:
+                returning_date = datetime.strptime(returning_date_str, '%Y-%m-%d').date()
         except ValueError:
             travel_date = None
+            if travel_type == 'round-trip':
+                returning_date = None
 
+    vehicles = VehicleSchedule.objects.none()
     if not error and travel_date:
-        
         vehicles = VehicleSchedule.objects.filter(
-            pickup_state = term1,
-            destination_state = term2, 
-            travel_datetime__date = travel_date
-            ).only('vehicle','travel_datetime' ).select_related('vehicle')
-        if vehicles:     
-            termin1 = vehicles[0].vehicle.terminal1
-            termin2 = vehicles[0].vehicle.terminal2
-            print(f'Vehicle : {vehicles[0].vehicle}')
-            print(f'VNM : {vehicles[0].vehicle.capacity}')
-            pickup_from = f'{termin1.state.name}({termin1.area})'
-            destination_at = f'{termin2.state.name}({termin2.area})'
-    else:
-        vehicles  = VehicleSchedule.objects.none()
+            pickup_state=term1,
+            destination_state=term2,
+            travel_datetime__date=travel_date
+        ).select_related('vehicle')
 
-    pickup = pickup_from if pickup_from else None
-    destination = destination_at if destination_at else None
+        pickup_terminal = vehicles[0].vehicle.terminal1
+        destination_terminal = vehicles[0].vehicle.terminal2
+        pickup_from = f'{pickup_terminal.state.name}({ pickup_terminal.area })'
+        destination_at = f'{destination_terminal.state.name}({ destination_terminal.area })'
+
+        if travel_type == 'round-trip' and returning_date:
+            round_trip_vehicles = VehicleSchedule.objects.filter(
+                pickup_state=term2,
+                destination_state=term1,
+                travel_datetime__date=returning_date,
+                vehicle__in=[v.vehicle for v in vehicles]
+            ).select_related('vehicle')
+        else:
+            round_trip_vehicles = None
+    else:
+        vehicles = None
+        round_trip_vehicles = None
+        pickup_from = None
+        destination_at = None
+    
     travel_date = travel_date_str if travel_date_str else 'No Date Specified'
-    return render(request, 'result-search.html', {'vehicles' : vehicles, 'error' : error, 'destination_at':destination , "pickup_from":pickup, 'travel_date': travel_date })
+    context = {
+        'vehicles': vehicles,
+        'round_trip_vehicles': round_trip_vehicles,
+        'travel_type': travel_type,
+        'error': error,
+        'pickup_from':pickup_from,
+        'destination_at':destination_at,
+        'travel_date':travel_date,
+        'adult':adults,
+        "children":children
+    }
+
+    print(context['round_trip_vehicles'])
+    return render(request, 'result-search.html', context)
+    
 
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')

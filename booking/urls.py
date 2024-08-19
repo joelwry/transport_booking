@@ -15,4 +15,5 @@ urlpatterns = [
     path('search_vehicles/', views.search_vehicles, name='search_vehicles'),
     path('search_form/', views.search_form, name='search_form'),
     path('book-now/', views.advanced_search_vehicles, name='advanced_search_vehicles'),
+    path("searchHome/", views.searchResult, name="search-from-home")
 ]

@@ -1,3 +1,4 @@
+{% load range_filter %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -81,10 +82,11 @@
                     <div class="col-12">
                         <!-- One Way Form -->
                         <div id="form1" class="form-container active">
-                            <form action="{% url "search-from-home" %}" method="post" class="user-form">
+                            <form action="{% url 'search-from-home' %}" method="post" class="user-form">
                                 {% csrf_token %}
                                 <div class="row row-gap-2">
                                     <!-- Form fields as before -->
+                                    <input type="hidden" name="travel-type" value="one-way"> 
                                     <div class="col-sm-6 mb-2">
                                         <label for="terminal-1 text-white">Traveling From <span class="text-danger">*</span></label>
                                         <select name="terminal-1" id="terminal-1" class="form-select py-1 multiple">
@@ -104,13 +106,17 @@
                                     <div class="col-sm-6 mb-2">
                                         <label for="adults text-white">Adult No.:<span class="text-danger">*</span></label>
                                         <select name="adults" id="adults" class="form-select py-1">
-                                            <option value="1">1</option>
+                                            {% for i in 1|to:16 %}
+                                                <option value="{{ i }}">{{ i }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <div class="col-sm-6 mb-2">
                                         <label for="children text-white">Children No.:<span class="text-danger">*</span></label>
                                         <select name="children" id="children" class="form-select py-1">
-                                            <option value="1">1</option>
+                                            {% for i in 1|to:10 %}
+                                                <option value="{{ i }}">{{ i }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <div class="col-sm-12 mb-3">
@@ -126,13 +132,14 @@
                 
                         <!-- Round Trip Form -->
                         <div id="form2" class="form-container" style="display:none;">
-                            <form action="{% url "search-from-home" %}" method="post" class="user-form">
+                            <form action="{% url 'search-from-home' %}" method="post" class="user-form">
                                 {% csrf_token %}
                                 <div class="row row-gap-2">
                                     <!-- Form fields as before -->
+                                    <input type="hidden" name="travel-type" value="round-trip" required> 
                                     <div class="col-sm-6 mb-2">
                                         <label for="terminal-1 text-white">Traveling From <span class="text-danger">*</span></label>
-                                        <select name="terminal-1" id="terminal-1" class="form-select py-1">
+                                        <select name="terminal-1" id="terminal-1" class="form-select py-1" required>
                                             {% for terminal in terminal1 %}
                                             <option value="{{terminal.state.id}}">{{terminal.state.name}}({{terminal.area}})</option>
                                             {% endfor %}
@@ -140,7 +147,7 @@
                                     </div>
                                     <div class="col-sm-6 mb-2">
                                         <label for="terminal-2 text-white">Traveling To<span class="text-danger">*</span></label>
-                                        <select name="terminal-2" id="terminal-2" class="form-select py-1">
+                                        <select name="terminal-2" id="terminal-2" class="form-select py-1" required>
                                             {% for terminal in terminal2 %}
                                             <option value="{{terminal.state.id}}">{{terminal.state.name}}({{terminal.area}})</option>
                                             {% endfor %}
@@ -148,23 +155,27 @@
                                     </div>
                                     <div class="col-sm-6 mb-2">
                                         <label for="adults text-white">Adult No.:<span class="text-danger">*</span></label>
-                                        <select name="adults" id="adults" class="form-select py-1">
-                                            <option value="1">1</option>
+                                        <select name="adults" id="adults" class="form-select py-1"required>
+                                            {% for i in 1|to:16 %}
+                                                <option value="{{ i }}">{{ i }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <div class="col-sm-6 mb-2">
                                         <label for="children text-white">Children No.:<span class="text-danger">*</span></label>
-                                        <select name="children" id="children" class="form-select py-1">
-                                            <option value="1">1</option>
+                                        <select name="children" id="children" class="form-select py-1" required>
+                                            {% for i in 1|to:10 %}
+                                                <option value="{{ i }}">{{ i }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <div class="col-sm-12 mb-3">
                                         <label for="travelDate text-white">Traveling Date<span class="text-danger">*</span></label>
-                                        <input type="date" name="travelDate" id="travelDate" class="form-control p-1">
+                                        <input type="date" name="travelDate" id="travelDate" class="form-control p-1" required>
                                     </div>
                                     <div class="col-sm-12 mb-3">
                                         <label for="returningDate text-white">Returning Date<span class="text-danger">*</span></label>
-                                        <input type="date" name="returningDate" id="returningDate" class="form-control p-1">
+                                        <input type="date" name="returningDate" id="returningDate" class="form-control p-1" required>
                                     </div>
                                     <div class="col-sm-12 mb-2">
                                         <input type="submit" value="Search Vehicle" class="btn colorbtn col-12 text-white btn-sm p-2">
