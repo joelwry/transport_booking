@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -33,9 +33,12 @@ def index(request):
     return render(request, 'index.html', {'terminal1' :terminal1, 'terminal2': terminal2})
 
 
+
+
 @require_POST
 @csrf_protect
 def searchResult(request):
+    # Extract POST data
     term1 = request.POST.get('terminal-1')
     term2 = request.POST.get('terminal-2')
     adults = request.POST.get('adults')
@@ -44,66 +47,69 @@ def searchResult(request):
     returning_date_str = request.POST.get('returningDate')
     travel_type = request.POST.get('travel-type')
 
-    error = None
-    travel_date = None
-    returning_date = None
+    # Early return if required fields are missing
+    if not all([term1, term2, travel_date_str, adults, children]):
+        return render(request, 'result-search.html', {'error': 'All fields are required!'})
 
-    if not term1 or not term2 or not travel_date_str or not adults or not children:
-        error = 'All fileds are required!'
-    else:
-        try:
-            travel_date = datetime.strptime(travel_date_str, '%Y-%m-%d').date()
-            if travel_type == 'round-trip' and returning_date_str:
-                returning_date = datetime.strptime(returning_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            travel_date = None
-            if travel_type == 'round-trip':
-                returning_date = None
+    # Parse dates
+    try:
+        travel_date = datetime.strptime(travel_date_str, '%Y-%m-%d').date()
+        returning_date = datetime.strptime(returning_date_str, '%Y-%m-%d').date() if travel_type == 'round-trip' else None
+    except ValueError:
+        return render(request, 'result-search.html', {'error': 'Invalid date format!'})
 
-    vehicles = VehicleSchedule.objects.none()
-    if not error and travel_date:
-        vehicles = VehicleSchedule.objects.filter(
-            pickup_state=term1,
-            destination_state=term2,
-            travel_datetime__date=travel_date
+    # Fetch vehicles with a single query
+    vehicles = VehicleSchedule.objects.filter(
+        pickup_state=term1,
+        destination_state=term2,
+        travel_datetime__date=travel_date
+    ).select_related('vehicle')
+
+    # Handle case when no vehicles are found
+    if not vehicles.exists():
+        pickup_from = get_object_or_404(Terminals, id = term1)
+        destination_at = get_object_or_404(Terminals, id = term2)
+        context = {
+        'travel_type': travel_type,
+        'pickup_from': f'{pickup_from.state}({pickup_from.area})',
+        'destination_at': f'{destination_at.state}({destination_at.area})',
+        'travel_date': travel_date_str,
+        'adult': adults,
+        'children': children
+        }
+        return render(request, 'result-search.html', context)
+
+    # Extract terminal information
+    first_vehicle = vehicles.first()
+    pickup_terminal = first_vehicle.vehicle.terminal1
+    destination_terminal = first_vehicle.vehicle.terminal2
+    pickup_from = f'{pickup_terminal.state.name}({pickup_terminal.area})'
+    destination_at = f'{destination_terminal.state.name}({destination_terminal.area})'
+
+    # Handle round-trip search
+    round_trip_vehicles = None
+    if travel_type == 'round-trip' and returning_date:
+        round_trip_vehicles = VehicleSchedule.objects.filter(
+            pickup_state=term2,
+            destination_state=term1,
+            travel_datetime__date=returning_date,
+            vehicle__in=vehicles.values_list('vehicle', flat=True)
         ).select_related('vehicle')
 
-        pickup_terminal = vehicles[0].vehicle.terminal1
-        destination_terminal = vehicles[0].vehicle.terminal2
-        pickup_from = f'{pickup_terminal.state.name}({ pickup_terminal.area })'
-        destination_at = f'{destination_terminal.state.name}({ destination_terminal.area })'
-
-        if travel_type == 'round-trip' and returning_date:
-            round_trip_vehicles = VehicleSchedule.objects.filter(
-                pickup_state=term2,
-                destination_state=term1,
-                travel_datetime__date=returning_date,
-                vehicle__in=[v.vehicle for v in vehicles]
-            ).select_related('vehicle')
-        else:
-            round_trip_vehicles = None
-    else:
-        vehicles = None
-        round_trip_vehicles = None
-        pickup_from = None
-        destination_at = None
-    
-    travel_date = travel_date_str if travel_date_str else 'No Date Specified'
+    # Prepare context for rendering
     context = {
         'vehicles': vehicles,
         'round_trip_vehicles': round_trip_vehicles,
         'travel_type': travel_type,
-        'error': error,
-        'pickup_from':pickup_from,
-        'destination_at':destination_at,
-        'travel_date':travel_date,
-        'adult':adults,
-        "children":children
+        'pickup_from': pickup_from,
+        'destination_at': destination_at,
+        'travel_date': travel_date_str,
+        'adult': adults,
+        'children': children
     }
 
-    print(context['round_trip_vehicles'])
     return render(request, 'result-search.html', context)
-    
+
 
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')

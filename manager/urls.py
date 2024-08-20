@@ -21,7 +21,7 @@ urlpatterns = [
     path("add-company/", views.addNewCompany, name='newcompany'),
 
     # company details view
-    path("company-detail/<int:company_id>/<slug:slug>", views.companyDetail, name="company-detail"),
+    path("company-detail/<int:company_id>/", views.companyDetail, name="company-detail"),
     
     # company delete view
     path("deletecompany/<int:company_id>", views.deleteCompany, name="detelecompany"),
@@ -30,7 +30,7 @@ urlpatterns = [
     # VEHICLE VIEW
 
     # add new vehicle
-    path("add-vehicle/<int:id>/<slug:slug>/", views.AddVehicle, name='newvehicle'),
+    path("add-vehicle/<int:id>/", views.AddVehicle, name='newvehicle'),
 
     # Delete vehicle
     path("delete-vehicle/<int:id>/", views.DeleteVehicle, name='deletevehicle'),

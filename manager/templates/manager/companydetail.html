@@ -49,7 +49,7 @@
                       
                 </div>
                 <div class="row row-gap-2 history-row">
-                    <table class="table text-gray table-hover table-responsive">
+                    <table id="myTable" class="table text-gray table-hover table-responsive">
                         <thead>
                             <tr>
                                 <th>S/N</th>
@@ -220,7 +220,7 @@ $('#addNewVehicleForm').on('submit', function(e){
     var toast = new bootstrap.Toast(toastEl);
 
     $.ajax({
-        url : '{% url "manager:newvehicle" company.id company.slug %}',
+        url : '{% url "manager:newvehicle" company.id %}',
         type : 'POST',
         data: $(this).serialize() ,
         success: function(response, textStatus, jqXHR){

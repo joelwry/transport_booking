@@ -30,7 +30,7 @@
                     <span class="fw-bold">Vehicles : {{company.vehicle_set.all.count}}</span>
                 </div>
                 <div class="col-3 text-end column-gap-2 gap-y-2 gap-2">
-                    <a href="{% url "manager:company-detail" company.id company.slug %}" 
+                    <a href="{% url "manager:company-detail" company.id %}" 
                         class=" btn btn-primary btn-sm rounded-pill mb-1"><span><i
                                 class="bi bi-eye"></i></span> </a>
                     <button href="#" target="_blank" rel="noopener noreferrer" id='deletCompany-action'

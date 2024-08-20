@@ -1,6 +1,6 @@
 from django import forms
 from django.core import exceptions
-from booking.models import Vehicle, TransportationCompany, Terminals, State
+from booking.models import Vehicle, TransportationCompany, Terminals, State, VehicleSchedule
 
 
 
@@ -22,10 +22,11 @@ class addTerminal(forms.ModelForm):
       model = Terminals
       fields = ['state', 'area', 'address']
 
-
 class addState(forms.ModelForm):
    class Meta:
       model = State
       fields = '__all__'
-
      
+class CreateSchedule(forms.ModelForm):
+   class Meta:
+      fields = '__all__'

@@ -10,7 +10,7 @@ from django.http import JsonResponse,HttpRequest, HttpResponse
 from django.utils import timezone
 from django.db.models import Count,Q
 
-from .forms import addNewVehicle, addNewCompanyForm, addTerminal, addState
+from .forms import addNewVehicle, addNewCompanyForm, addTerminal, addState, CreateSchedule
 
 
 # Create your views here.
@@ -129,9 +129,9 @@ def deleteCompany(request, company_id):
 
 
 @staff_member_required
-def companyDetail(request, company_id, slug ):
+def companyDetail(request, company_id ):
     terminalsall = Terminals.objects.all()
-    company = get_object_or_404(TransportationCompany, id = company_id, slug = slug)
+    company = get_object_or_404(TransportationCompany, id = company_id)
     return render(request, 'manager/companydetail.html', {'company': company, 'terminals':terminalsall})
 
 def company_analytics(request):
@@ -164,9 +164,9 @@ def company_analytics(request):
 
 # ADD NEW VEHICLE
 @require_POST
-def AddVehicle(request, id , slug):
+def AddVehicle(request, id ):
     if request.user.is_staff:
-        company = get_object_or_404(TransportationCompany, pk = id, slug = slug)   
+        company = get_object_or_404(TransportationCompany, pk = id)   
         form = addNewVehicle(request.POST)
         if form.is_valid:
             vehicle_form = form.save(commit=False)
@@ -232,6 +232,7 @@ def addTerminaLView(request):
 
 
 # STATES VIEW
+@staff_member_required(login_url='manager:managerlogin')
 def StateView(request):
     if request.method == 'POST':
         form = addState(request.POST)
@@ -272,6 +273,17 @@ class BookingListView(ListView):
     template_name = "manager/bookings.html"
     context_object_name = 'bookings'
     ordering = '-booking_date'
+
+
+# SCHEDULES 
+def addSchedule(request):
+    form = CreateSchedule(request.POST)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'success' : True, 'message' : 'schedule created successgully'}, status = 200)
+    else:
+        return JsonResponse({'success' : False, 'message' : form.errors.as_json(escape_html=True)}, status = 400)
+
 
 # BOOKING DETAILS
 def bookingDetailView(request, bookcode):
