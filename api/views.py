@@ -245,11 +245,17 @@ class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
 class GuestBookingViewSet(viewsets.ModelViewSet):
     queryset = GuestBooking.objects.all()
     serializer_class = GuestBookingSerializer
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     @action(detail=True, methods=['post'])
     def book_seat(self, request, pk=None):
         schedule = get_object_or_404(VehicleSchedule, pk=pk)
+        schedule = VehicleSchedule.objects.filter(pk=pk).first()
+        if not schedule :
+            return Response(
+                {'message': 'The Vehicle schedule specified does not exist ..','error':True},
+                status=status.HTTP_404_NOT_FOUND
+            )
         seats = request.data.get('seats', [])
         guest_data = request.data
 
@@ -259,76 +265,171 @@ class GuestBookingViewSet(viewsets.ModelViewSet):
 
         if passenger_count > len(seats):
             return Response(
-                {'error': 'Passenger boarding this vehicle is more than the seats booked'},
+                {'message': 'Passenger boarding this vehicle is more than the seats booked','error':True},
                 status=status.HTTP_406_NOT_ACCEPTABLE
             )
 
         # Check seat availability
         available_seats = schedule.available_seats()
         if not all(seat in available_seats for seat in seats):
-            return Response({'error': 'One or more seats are already booked'}, status=status.HTTP_410_GONE)
+            return Response({'message': 'One or more seats are already booked','error':True}, status=status.HTTP_410_GONE)
 
         trip_type = guest_data.get('trip_type', 'ONE WAY')
         amount_to_pay = schedule.vehicle.price * len(seats) if trip_type == "ONE WAY" else 2 * schedule.vehicle.price * len(seats)
 
         # Create GuestBooking
-        guest_booking = GuestBooking.objects.create(
-            full_name=f"{guest_data.get('title', '')} {guest_data.get('surname', '')} {guest_data.get('firstname', '')}",
-            email=guest_data.get('email'),
-            phone_number=guest_data.get('phone'),
-            nok_full_name=f"{guest_data.get('nok-title', '')} {guest_data.get('nok-surname', '')}",
-            nok_phone_number=guest_data.get('nok-phone'),
-            vehicle=schedule.vehicle,
-            trip_type=trip_type,
-            status='PENDING',
-            pickup_state=schedule.pickup_state,
-            destination_state=schedule.destination_state,
-            number_of_seats=len(seats),
-            number_of_adults=adult_count,
-            number_of_children_below_10=children_count,
-            total_cost=amount_to_pay,
-            travel_date=schedule.travel_datetime,
-            schedule=schedule,
-            booked_seats=seats
-        )
+        try :
+            guest_booking = GuestBooking(
+                full_name=f"{guest_data.get('title', '')} {guest_data.get('surname', '')} {guest_data.get('firstname', '')}",
+                email=guest_data.get('email'),
+                phone_number=guest_data.get('phone'),
+                nok_full_name=f"{guest_data.get('nok-title', '')} {guest_data.get('nok-surname', '')}",
+                nok_phone_number=guest_data.get('nok-phone'),
+                vehicle=schedule.vehicle,
+                trip_type=trip_type,
+                status='PENDING',
+                pickup_state=schedule.pickup_state,
+                destination_state=schedule.destination_state,
+                number_of_seats=len(seats),
+                number_of_adults=adult_count,
+                number_of_children_below_10=children_count,
+                total_cost=amount_to_pay,
+                travel_date=schedule.travel_datetime,
+                schedule=schedule,
+                booked_seats=seats
+            )
 
-        # Redirect to payment gateway
-        payment_detail = initiate_payment(guest_booking.booking_code, guest_booking.total_cost, guest_booking.email)
-        if payment_detail['success']:
-            payment_url = payment_detail['payment_url']
-            access_code = payment_detail['access_code']
+            # Redirect to payment gateway
+            payment_detail = initiate_payment(guest_booking.booking_code, guest_booking.total_cost, guest_booking.email)
+            if payment_detail['success']:
+                guest_booking.save()
+                payment_url = payment_detail['payment_url']
+                access_code = payment_detail['access_code']
+                return Response({
+                    "error":False,
+                    'payment_url': payment_url,
+                    'booking_code': guest_booking.booking_code,
+                    'access_code': access_code,
+                    'total_amount': guest_booking.total_cost
+                }, status=status.HTTP_201_CREATED)
+            else:
+                return Response({
+                    'error':True,
+                    'message': payment_detail['error']
+                }, status=status.HTTP_402_PAYMENT_REQUIRED)
+            
+        except Exception as e :
             return Response({
-                'payment_url': payment_url,
-                'booking_code': guest_booking.booking_code,
-                'access_code': access_code,
-                'total_amount': guest_booking.total_cost
-            }, status=status.HTTP_201_CREATED)
-        else:
-            guest_booking.delete()
-            return Response({
-                'message': payment_detail['error']
-            }, status=status.HTTP_402_PAYMENT_REQUIRED)
+                'message': 'Seems like you do not have not established a connection to our payment host.. Do ensure you have a stable internet connection! ',
+                'error': True
+            }, status= status.HTTP_408_REQUEST_TIMEOUT)
 
-class GuestPaymentViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Payment.objects.all()
-    serializer_class = GuestPaymentSerializer
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def verifyPaymentView(request, reference):
+    user = request.user
 
-    @action(detail=True, methods=['post'])
-    def complete_payment(self, request, pk=None):
-        payment = get_object_or_404(GuestPayment, pk=pk)
-        payment_status = verify_payment(payment)
+    # Verify the payment with Paystack
+    payment_verification = verify_payment(reference)
+    
+    if not payment_verification['status']:
+        return Response({'status': False, 'message': payment_verification['error']}, status=400)
+
+    booking_code = payment_verification['reference']
+    try:
+        booking = Booking.objects.get(booking_code=booking_code, customer__user=user)
         
-        if payment_status == 'COMPLETED':
-            payment.status = 'COMPLETED'
-            booking = payment.booking
-            booking.status = 'CONFIRMED'
-            booking.confirmed = True
-            booking.schedule.booked_seats.extend(booking.booked_seats)
-            booking.schedule.save()
-            booking.save()
-        else:
-            payment.status = 'FAILED'
+        if booking.status != 'PENDING':
+            return Response({'status': False, 'message': 'Booking is not pending.'}, status=400)
+        
+        # Additional validations (e.g., amount check)
+        required_payment = booking.total_cost * 100
+        payment_made = payment_verification['amount']
+        if required_payment < payment_made :
+            return Response({'status': False, 'message': f'Incorrect payment amount.. A payment of NGN{booking.total_cost} was required but a payment of {payment_made/100} was made which is NGN{(payment_made/100) - booking.total_cost} less than the specified amount'}, status=400)
+        
+        # Update booking status and reserved seats
+        booking.status = 'CONFIRMED'
+        booking.payment_id = payment_verification['id']
+        booking.confirmed = True
+        booking.save()
 
-        payment.save()
-        return Response(GuestPaymentSerializer(payment).data)
- 
+        payment = Payment.objects.filter(booking = booking).first()
+        if payment == None :
+            Payment.objects.create(booking=booking, amount= booking.total_cost,status='COMPLETED')
+        elif payment.status != 'COMPLETED':
+            payment.status = 'COMPLETED'
+            payment.amount = booking.total_cost
+            payment.save()
+
+        # Update VehicleSchedule for reserved seats
+        schedule = booking.schedule
+        seats = booking.booked_seats
+        schedule.booked_seats.extend(seats)
+        # still need validation for seat if already booked by someone else etc
+        # for seat in booking.booked_seats:
+        #     schedule.reserve_seat(seat)
+        schedule.save()
+
+
+        return Response({'status': True, 'message': 'Payment verified and booking confirmed', 'vehicle_schedule':schedule.id, 'booking':"booking.id"})
+    
+    except Booking.DoesNotExist:
+        return Response({'status': False, 'message': 'Booking does not exist or does not belong to the user.'}, status=404)
+
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def verifyGuestPaymentView(request, reference):
+    phone_number = request.GET['phone_number']
+    email = request.GET['email']
+
+    # Verify the payment with Paystack
+    payment_verification = verify_payment(reference)
+    
+    if not payment_verification['status']:
+        return Response({'status': False, 'message': payment_verification['error']}, status=400)
+
+    booking_code = payment_verification['reference']
+    try:
+        booking = GuestBooking.objects.get(booking_code=booking_code, email = email, phone_number = phone_number)
+        
+        if booking.status != 'PENDING':
+            return Response({'status': False, 'message': 'Booking is not pending.'}, status=400)
+        
+        # Additional validations (e.g., amount check)
+        required_payment = booking.total_cost * 100
+        payment_made = payment_verification['amount']
+        if required_payment < payment_made :
+            return Response({'status': False, 'message': f'Incorrect payment amount.. A payment of NGN{booking.total_cost} was required but a payment of {payment_made/100} was made which is NGN{(payment_made/100) - booking.total_cost} less than the specified amount'}, status=400)
+        
+        # Update booking status and reserved seats
+        booking.status = 'CONFIRMED'
+        booking.payment_id = payment_verification['id']
+        booking.confirmed = True
+        booking.save()
+
+        payment = Payment.objects.filter(booking = booking).first()
+        if payment == None :
+            GuestPayment.objects.create(booking=booking, amount= booking.total_cost,status='COMPLETED')
+        elif payment.status != 'COMPLETED':
+            payment.status = 'COMPLETED'
+            payment.amount = booking.total_cost
+            payment.save()
+
+        # Update VehicleSchedule for reserved seats
+        schedule = booking.schedule
+        seats = booking.booked_seats
+        schedule.booked_seats.extend(seats)
+        # still need validation for seat if already booked by someone else etc
+        # for seat in booking.booked_seats:
+        #     schedule.reserve_seat(seat)
+        schedule.save()
+
+
+        return Response({'status': True, 'message': 'Payment verified and booking confirmed', 'vehicle_schedule':schedule.id, 'booking':"booking.id"})
+    
+    except GuestBooking.DoesNotExist:
+        return Response({'status': False, 'message': 'Booking does not exist or does not belong to the user.'}, status=404)
+

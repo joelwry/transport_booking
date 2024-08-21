@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     TransportationCompany, Vehicle, State,
-    Traveller, Message, Booking, Payment, Staff,Terminals, VehicleSchedule
+    Traveller, Message, Booking, Payment, Staff,Terminals, VehicleSchedule, GuestBooking, GuestPayment
 )
 from django import forms
 from django.core.exceptions import ValidationError
@@ -80,3 +80,5 @@ class StaffAdmin(admin.ModelAdmin):
     list_filter = ('is_super_admin',)
     ordering = ('user',)
 
+admin.site.register(GuestBooking)
+admin.site.register(GuestPayment)

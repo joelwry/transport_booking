@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.routers import DefaultRouter
 from .views import (
     TransportationCompanyViewSet, StateViewSet, TerminalsViewSet, VehicleScheduleViewSet, VehicleViewSet, transportation_company_detail,transportation_company_list,state_detail,state_list,
-    TravellerViewSet, MessageViewSet, BookingViewSet, PaymentViewSet, GuestBookingViewSet
+    TravellerViewSet, MessageViewSet, BookingViewSet, PaymentViewSet, GuestBookingViewSet, verifyGuestPaymentView, verifyPaymentView
 )
 
 router = DefaultRouter()
@@ -24,4 +24,6 @@ urlpatterns = [
     path('transportation-companies/<int:pk>/', transportation_company_detail),
     path('states/', state_list),
     path('states/<int:pk>/',state_detail),
+    path("verify-payment/<str:reference>/",verifyPaymentView,name='verify-booking-payment'),
+    path("verify-payment/<str:reference>/guest",verifyGuestPaymentView,name='verify-guest-booking-payment')
 ]

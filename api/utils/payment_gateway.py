@@ -15,8 +15,8 @@ def process_payment(booking):
     return payment_url
 
 def initiate_payment(booking_code : str, amount_to_pay : float,user_email):
-    print(type(float(amount_to_pay)))
-    print(amount_to_pay)
+    
+    print(f'Amount to pay : {amount_to_pay}\nEmail : {user_email}\nBooking Code : {booking_code}')
     amount = float(amount_to_pay) * 100  # Paystack expects the amount in kobo
     
     response = paystack_object.transaction.initialize(
@@ -33,7 +33,7 @@ def initiate_payment(booking_code : str, amount_to_pay : float,user_email):
     else:
         print('Error initiating')
         print(response)
-        return {'success' : False, 'error': 'Payment initiation failed.'}
+        return {'success' : False, 'error': f'{response["message"]}. {response["meta"]["nextStep"]}'}
 
 def verify_payment(reference):
     response = paystack_object.transaction.verify(reference)
