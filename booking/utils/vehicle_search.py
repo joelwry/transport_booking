@@ -2,6 +2,7 @@
 from booking.forms import AdvancedSearchForm
 from booking.models import State, TransportationCompany, Vehicle,Terminals, VehicleSchedule
 from datetime import datetime
+from django.db.models import Q
 
 def indexPageSearchVehiclesSchedule(terminal1_data,terminal2_data,travel_date):
     schedules = None
