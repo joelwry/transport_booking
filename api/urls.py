@@ -1,6 +1,5 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework.routers import DefaultRouter
 from .views import (
     TransportationCompanyViewSet, StateViewSet, TerminalsViewSet, VehicleScheduleViewSet, VehicleViewSet, transportation_company_detail,transportation_company_list,state_detail,state_list,
     TravellerViewSet, MessageViewSet, BookingViewSet, PaymentViewSet, GuestBookingViewSet, verifyGuestPaymentView, verifyPaymentView
