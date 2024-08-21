@@ -1,5 +1,7 @@
-{% extends "base_templates/header.html" %}
+{% extends "base_templates/header_generic.html" %}
 {% load static %}
+
+{% block title %} Guest Book Transport schedule{% endblock %}
 
 {% block home-banner %}{% endblock home-banner %}
 
@@ -7,192 +9,298 @@
 
 <div class="main   main-color">
 
-    <div class="row">
-      <div class="col-11 m-auto py-4 px-4 ">
+  <div class="row">
+    <div class="col-11 m-auto py-4 px-4 ">
 
-        <div class="row row-gap-3">
-          <div class="col-xl-3 col-md-4">
-            <div class="row mb-2">
-                <div class="col-12 text-center">
-                 <a href="#" class="btn border-0"> <span class="fs-5"><i class="bi bi-arrow-left me-2"></i>go back</span></a>
-                </div>
-              </div>
-            <div class="card shadow  border-0 rounded-top-2 bgcolor p-0">
-              <div class="card-body ">
-                <div class="row">
-                  <div class="col-12 py-2">
-                    <h4 class="text-white">Trip Summary</h4>
-                  </div>
-                  <hr>
-                </div>
-                <!-- details here -->
-                <div class="row">
-                  <h6>{{ company_name }}</h6>
-                  <p>
-                    {{ pickup_from}} to {{ destination_at }} <br>
-                    {{ travel_date }} <br>
-                    
-                  </p>
-                  <p> <span style="color:darkslategray; font-style: italic;">Travel Type : </span> {{ travel_type }} </p>
-                </div>
-
-                <div class="row">
-                  <div class="col-12 py-2">
-                    <h4 class="text-white">Price</h4>
-                  </div>
-                  <hr>
-                  <!-- price details -->
-                  <div class="row">
-                    <div class="col-12">
-                      <table class="fs-6 col-12 ">
-                        <tr>
-                          <td><span>Departure</span></td>
-                          <td> <span class="text-end">NGN {{ unit_price }}</span></td>
-                        </tr>
-
-                        <tr>
-                          <td><span>Returning</span></td>
-                          <td> <span class="text-end">NGN {{ unit_price }}</span></td>
-                        </tr>
-
-                        <tr>
-                          <td><span>Adults</span></td>
-                          <td> <span class="text-end">x {{ adult }}</span></td>
-                        </tr>
-
-                        <tr>
-                          <td><span>Children</span></td>
-                          <td> <span class="text-end">x {{ children }}</span></td>
-                        </tr>
-
-                      </table>
-                    </div>
-                  </div>
-
-                </div>
-                <hr>
-                <!-- total -->
-                <div class="row">
-                  <div class="col-12 pb-3 ">
-                    <table class="col-12">
-                      <tr>
-                        <td><span class="h4 text-white">Total</span></td>
-                        <td> <span class="h5">NGN {{  total_amount }}</span></td>
-                      </tr>
-                    </table>
-
-                  </div>
-                </div>
-
-              </div>
+      <div class="row row-gap-3">
+        <div class="col-xl-3 col-md-4">
+          <div class="row mb-2">
+            <div class="col-12 text-center">
+              <a href="#" class="btn border-0"> <span class="fs-5"><i class="bi bi-arrow-left me-2"></i>go
+                  back</span></a>
             </div>
           </div>
+          <div class="card shadow  border-0 rounded-top-2 bgcolor p-0">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-12 py-2">
+                  <h4 class="text-white">Trip Summary</h4>
+                </div>
+                <hr>
+              </div>
+              <!-- details here -->
+              <div class="row">
+                <h6>{{ company_name }}</h6>
+                <p>
+                  {{ pickup_from}} to {{ destination_at }} <br>
+                  {{ travel_date }} <br>
 
-          <!-- the form for them to fill -->
-          <div class="col-xl-9 col-md-8 ">
-            <div class="card    border-1">
-              <div class="card-header text-white bgcolor  ">
-                <div class="row align-items-end">
+                </p>
+                <p> <span style="color:darkslategray; font-style: italic;">Travel Type : </span> {{ travel_type }} </p>
+              </div>
+
+              <div class="row">
+                <div class="col-12 py-2">
+                  <h4 class="text-white">Price</h4>
+                </div>
+                <hr>
+                <!-- price details -->
+                <div class="row">
                   <div class="col-12">
-                    <p class="fs-5 m-0 fw-bold">Personal Details</p>
-                    <span class="text-dark">Enter your personal detail as it is in Government Documents</span>
-                   
+                    <table class="fs-6 col-12 ">
+                      <tr>
+                        <td><span>Departure</span></td>
+                        <td> <span class="text-end">NGN {{ unit_price }}</span></td>
+                      </tr>
+
+                      <tr>
+                        <td><span>Returning</span></td>
+                        <td> <span class="text-end">NGN {{ unit_price }}</span></td>
+                      </tr>
+
+                      <tr>
+                        <td><span>Adults</span></td>
+                        <td> <span class="text-end">x {{ adult }}</span></td>
+                      </tr>
+
+                      <tr>
+                        <td><span>Children</span></td>
+                        <td> <span class="text-end">x {{ children }}</span></td>
+                      </tr>
+
+                    </table>
                   </div>
                 </div>
+
               </div>
-              <div class="card-body p-4">
+              <hr>
+              <!-- total -->
+              <div class="row">
+                <div class="col-12 pb-3 ">
+                  <table class="col-12">
+                    <tr>
+                      <td><span class="h4 text-white">Total</span></td>
+                      <td> <span class="h5">NGN {{ total_amount }}</span></td>
+                    </tr>
+                  </table>
 
-                <form action="#" method="post">
-                  <div class="col-12">
-                    <div class="row row-gap-3">
-                      <div class="col-sm-2 mb-3">
-                        <label for="title">Title</label>
-                        <select name="title" id="title" class="p-2 form-select rounded-0">
-                          <option value="Mr">Mr</option>
-                          <option value="Mr">Mrs</option>
-                          <option value="Mr">Miss</option>
-                        </select>
-                      </div>
-
-                      <div class="col-sm-5 mb-3">
-                        <label for="surname">Surname:</label>
-                        <input type="text" name="surname" id="" class=" rounded-0 p-2 form-control">
-                      </div>
-
-
-                      <div class="col-sm-5 mb-3">
-                        <label for="firstname">First Name:</label>
-                        <input type="text" name="firstname" id="" class="rounded-0 p-2 form-control">
-                      </div>
-
-                      <div class="col-sm-4 mb-3">
-                        <label for="DOB">Date of Birth:</label>
-                        <input type="date" name="DOB" id="" class="rounded-0 p-2 form-control">
-                      </div>
-
-                      <div class="col-sm-4 mb-3">
-                        <label for="email">E-mail Address:</label>
-                        <input type="email" name="email" id="" class="rounded-0 p-2 form-control">
-                      </div>
-
-                      <div class="col-sm-4 mb-3">
-                        <label for="phone">Phone Number:</label>
-                        <input type="phone" name="phone" id="" class="rounded-0 p-2 form-control">
-                      </div>
-
-                      <!-- next of kin details  -->
-
-                      <div class="col-12">
-                        <p class="h5">Next of Kin Details</p>
-                      </div>
-
-                      <div class="col-sm-2 mb-3">
-                        <label for="nok-title">Title</label>
-                        <select name="nok-title" id="nok-title" class="rounded-0 p-2 form-select ">
-                          <option value="Mr">Mr</option>
-                          <option value="Mr">Mrs</option>
-                          <option value="Mr">Miss</option>
-                        </select>
-                      </div>
-
-                      <div class="col-sm-5 mb-3">
-                        <label for="nok-surname">Srname:</label>
-                        <input type="text" name="nok-surname" id="" class="rounded-0 p-2 form-control">
-                      </div>
-
-                      <div class="col-sm-5 mb-3">
-                        <label for="nok-surname">Srname:</label>
-                        <input type="text" name="nok-surname" id="" class="rounded-0 p-2 form-control">
-                      </div>
-                      
-                      <div class="col-sm-4 mb-3">
-                        <label for="phone">Phone Number:</label>
-                        <input type="phone" name="phone" id="" class="rounded-0 p-2 form-control">
-                      </div>
-
-                      <div class="col-12">
-                        <input type="checkbox" name="terms-condition" class="form-check-input p-2" id="terms-condition">
-                        <label for="terms-condition">I Agree to Terms and Condition</label>
-                      </div>
-                      <div class="col-12">
-                        <button type="button" class="btn colorbtn p-2 text-white rounded-0">Proceed to Payment</button>
-                      </div>
-
-
-                    </div>
-                  </div>
-                </form>
+                </div>
               </div>
+
             </div>
           </div>
         </div>
 
+        <!-- the form for them to fill -->
+        <div class="col-xl-9 col-md-8 ">
+          <div class="card    border-1">
+            <div class="card-header text-white bgcolor  ">
+              <div class="row align-items-end">
+                <div class="col-12">
+                  <p class="fs-5 m-0 fw-bold">Personal Details</p>
+                  <span class="text-dark">Enter your personal detail as it is in Government Documents</span>
+
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-4">
+
+              <form method="post" id="guest-booking-form">
+                {%  csrf_token %}
+                <div class="col-12">
+                  <div class="row row-gap-3">
+                    <div class="col-sm-2 mb-3">
+                      <label for="title">Title</label>
+                      <select name="title" id="title" class="p-2 form-select rounded-0" required>
+                        <option value="Mr">Mr</option>
+                        <option value="Mr">Mrs</option>
+                        <option value="Mr">Miss</option>
+                      </select>
+                    </div>
+
+                    <div class="col-sm-5 mb-3">
+                      <label for="surname">Surname:</label>
+                      <input type="text" name="surname" id="" class=" rounded-0 p-2 form-control" required>
+                    </div>
 
 
+                    <div class="col-sm-5 mb-3">
+                      <label for="firstname">First Name:</label>
+                      <input type="text" name="firstname" id="" class="rounded-0 p-2 form-control" required>
+                    </div>
+
+                    <div class="col-sm-4 mb-3">
+                      <label for="DOB">Date of Birth:</label>
+                      <input type="date" name="DOB" id="" class="rounded-0 p-2 form-control">
+                    </div>
+
+                    <div class="col-sm-4 mb-3">
+                      <label for="email">E-mail Address:</label>
+                      <input type="email" name="email" id="" class="rounded-0 p-2 form-control" required>
+                    </div>
+
+                    <div class="col-sm-4 mb-3">
+                      <label for="phone">Phone Number:</label>
+                      <input type="phone" name="phone" id="" class="rounded-0 p-2 form-control" required>
+                    </div>
+
+                    <!-- next of kin details  -->
+
+                    <div class="col-12">
+                      <p class="h5">Next of Kin Details</p>
+                    </div>
+
+                    <div class="col-sm-2 mb-3">
+                      <label for="nok-title">Title</label>
+                      <select name="nok-title" id="nok-title" class="rounded-0 p-2 form-select" required>
+                        <option value="Mr">Mr</option>
+                        <option value="Mr">Mrs</option>
+                        <option value="Mr">Miss</option>
+                      </select>
+                    </div>
+
+                    <div class="col-sm-5 mb-3">
+                      <label for="nok-surname">Srname:</label>
+                      <input type="text" name="nok-surname" id="" class="rounded-0 p-2 form-control" required>
+                    </div>
+
+                    <div class="col-sm-5 mb-3">
+                      <label for="nok-surname">Firstname:</label>
+                      <input type="text" name="nok-firstname" id="" class="rounded-0 p-2 form-control" required>
+                    </div>
+
+                    <div class="col-sm-4 mb-3">
+                      <label for="phone">Phone Number:</label>
+                      <input type="phone" name="nok-phone" id="" class="rounded-0 p-2 form-control">
+                    </div>
+
+                    <div class="col-12">
+                      <input type="checkbox" name="terms-condition" class="form-check-input p-2" id="terms-condition" required>
+                      <label for="terms-condition">I Agree to Terms and Condition</label>
+                    </div>
+                    <div class="col-12">
+                      <button type="submit" class="btn colorbtn p-2 text-white rounded-0">Proceed to Payment</button>
+                    </div>
+
+
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
+
+
+
     </div>
   </div>
+</div>
 
+{% endblock page-contents %}
 
+{% block scripts %}
+  <script>
+    let accessible_data;
+    document.addEventListener('DOMContentLoaded', () => {
+      const guest_form = document.querySelector("#guest-booking-form");
 
-    {% endblock page-contents %}
+      async function bookSeat(event) {
+        event.preventDefault();
+        
+        let SELECTED_SEATS = JSON.parse(' {{ seats|safe }} ');
+        SELECTED_SEATS = SELECTED_SEATS.map(seat => parseInt(seat))
+        const tripType = " {{ travel_type }}"
+        const scheduleId = "{{ scheduleId }}";
+        if(SELECTED_SEATS.length < 1){
+          return alert('You haven"t booked your seat') ;
+          // return showToast(message = 'You haven"t booked a seat', success = false) ;
+        }
+        const adults = parseInt('{{ adult }}')
+        const children = parseInt('{{ children }}');
+        let actual_children_count = children;
+        if(children == 2){
+            actual_children_count = 1;
+        }else if(children == 1){
+            actual_children_count = 0;
+        }
+
+        if ( adults + actual_children_count > SELECTED_SEATS.length){
+            //return showToast(message = 'Passenger boarding this vehicle is more than the seats booked\nNote 1 Child below 10 years of age can be lapped by guardina, while 2 children below 10 years of age equals 1 seat .. any other above 2 will have to book complete seat', success = false) ;
+            // return alert("Passenger boarding this vehicle is more than the seats booked\nNote 1 Child below 10 years of age can be lapped by guardina, while 2 children below 10 years of age equals 1 seat .. any other above 2 will have to book complete seat");
+        }
+        let trip;
+        if( tripType == "one-way" ){
+            trip = "ONE WAY";
+        }else{
+            trip = "ROUND TRIP";
+        }
+        
+        const title = guest_form['title'].value;
+        const phone_number = guest_form["phone"].value;
+        const surname = guest_form["surname"].value;
+        const email = guest_form["email"].value;
+        const firstname = guest_form["firstname"].value;
+        const nok_surname= guest_form["nok-surname"].value;
+        const nok_firstname= guest_form["nok-firstname"].value;
+        const nok_phone= guest_form["nok-phone"].value;
+        const nok_title = guest_form['nok-title'].value;
+        //title , surname, firstname
+        //- nok-title, nok-phone, nok-surname
+        const data = {
+          "seats" : SELECTED_SEATS,
+          "trip_type":trip,
+          "number_of_adults": adults,
+          "number_of_children_below_10": children,
+          "email" :email,
+          "phone":phone_number,
+          "nok-title":nok_title,
+          "nok-phone":nok_phone,
+          "nok-firstname":nok_firstname,
+          "nok-surname":nok_surname,
+          title,surname,firstname,
+        };
+        
+        accessible_data = data;
+        console.log(data);
+        try {
+            const response = await fetch(`/api/guest-bookings/${scheduleId}/book_seat/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Booking successful!', sucess= true);
+                // alert('booking successfull')
+                const data = await response.json()
+                console.log(data);
+                //showToast("REDIRECTING YOU TO PAYMENT",sucess=true)
+                alert('redirecting you to payment')
+                setTimeout(()=>{
+                    const internal_payment_link = data['internal_payment_url']
+                window.location.replace(internal_payment_link);
+                }, 3000)
+                
+            } else {
+                //showToast('Booking failed!', success=false);
+                const data = await response.json()
+                alert(data['message'])
+                console.log(data);
+            }
+        } catch (error) {
+            console.error('Error booking seat:', error);
+            //showToast('Error booking seat!', sucess=false);
+              alert("error booking seat.. internal")
+
+        }
+      }
+      
+      guest_form.addEventListener("submit",bookSeat)
+    })
+  </script>
+
+{% endblock %}

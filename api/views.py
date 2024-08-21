@@ -257,6 +257,8 @@ class GuestBookingViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
         seats = request.data.get('seats', [])
+        print(type(seats))
+        print(seats)
         guest_data = request.data
 
         adult_count = guest_data.get('number_of_adults', 1)

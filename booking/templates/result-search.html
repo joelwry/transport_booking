@@ -299,12 +299,9 @@
                                 <div class="col-12 pt-2">
                                     <div class="row align-items-center">
                                         <div class="col-8">
-                                            <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date
-                                                |date:"M d"}}</p>
-                                            <p class="traveller-price">Time : {{vehicle.travel_datetime.time
-                                                |time:"H:i"}}</p>
-                                            <p class="available_seat_count">Available Seat : {{
-                                                vehicle.number_of_available_seats }}</p>
+                                            <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date|date:"M d"}}</p>
+                                            <p class="traveller-price">Time : {{vehicle.travel_datetime.time|time:"H:i"}}</p>
+                                            <p class="available_seat_count">Available Seat : {{ vehicle.number_of_available_seats }}</p>
 
                                         </div>
                                         <div class="col-4">

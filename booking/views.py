@@ -68,20 +68,28 @@ def searchResult(request):
             travel_datetime__date=travel_date
         ).select_related('vehicle')
 
-        pickup_terminal = vehicles[0].vehicle.terminal1
-        destination_terminal = vehicles[0].vehicle.terminal2
-        pickup_from = f'{pickup_terminal.state.name}({ pickup_terminal.area })'
-        destination_at = f'{destination_terminal.state.name}({ destination_terminal.area })'
+        if len(vehicles) > 0 :
+            pickup_terminal = vehicles[0].vehicle.terminal1
+            destination_terminal = vehicles[0].vehicle.terminal2
+            pickup_from = f'{pickup_terminal.state.name}({ pickup_terminal.area })'
+            destination_at = f'{destination_terminal.state.name}({ destination_terminal.area })'
 
-        if travel_type == 'round-trip' and returning_date:
-            round_trip_vehicles = VehicleSchedule.objects.filter(
-                pickup_state=term2,
-                destination_state=term1,
-                travel_datetime__date=returning_date,
-                vehicle__in=[v.vehicle for v in vehicles]
-            ).select_related('vehicle')
-        else:
-            round_trip_vehicles = None
+            if travel_type == 'round-trip' and returning_date:
+                round_trip_vehicles = VehicleSchedule.objects.filter(
+                    pickup_state=term2,
+                    destination_state=term1,
+                    travel_datetime__date=returning_date,
+                    vehicle__in=[v.vehicle for v in vehicles]
+                ).select_related('vehicle')
+            
+            else:
+                round_trip_vehicles = None
+        else :
+            vehicles = None
+            round_trip_vehicles = None 
+            pickup_from = None
+            destination_at = None
+            error = True
     else:
         vehicles = None
         round_trip_vehicles = None

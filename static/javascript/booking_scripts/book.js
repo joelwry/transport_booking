@@ -260,11 +260,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 // alert('booking successfull')
                 const data = await response.json()
                 console.log(data);
+                showToast("REDIRECTING YOU TO PAYMENT",sucess=true)
+                setTimeout(()=>{
+                    const internal_payment_link = data['internal_payment_url']
+                window.location.replace(internal_payment_link);
+                }, 3000)
+                
             } else {
                 showToast('Booking failed!', success=false);
                 // alert('failed booking your ')
-
-               
                 const data = await response.json()
                 console.log(data);
             }
