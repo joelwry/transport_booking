@@ -34,6 +34,9 @@ urlpatterns = [
 
     # Delete vehicle
     path("delete-vehicle/<int:id>/", views.DeleteVehicle, name='deletevehicle'),
+    
+    # vehicle Details
+    path("vehicledetail/<int:id>/", views.VehicleDetails, name='vehicleDetail'),
 
 
     # STATE VIEW

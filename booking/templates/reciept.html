@@ -1,0 +1,181 @@
+{% extends "base_templates/header.html" %}
+{% load static %}
+{% load range_filter %}
+{% load seat_filter %}
+
+{% block home-banner %}{% endblock home-banner %}
+
+{% block page-contents %}
+
+<div class="container py-2">
+
+    <div class="col-xl-6 m-auto col-sm-10 ">
+      <div class="row">
+        <div class="col-12">
+
+          <div class="row mb-3  Download">
+            <div class=" text-end">
+              <button class="btn btn-sm btn-primary" onclick="window.print()">Download</button>
+            </div>
+          </div>
+
+          <div class="row ticket p-2 ">
+
+            <div class="col-12 mb-0">
+
+
+              <span class="fw-bold"> <img src="./logo.png" alt="" width="32px">NaijaRide</span> <br>
+              <span><small>Address : 121 Lekki Phase 1, Lagos Nigeria.</small></span><br>
+              <span><small>Email :Support@naijaride.com</small></span> |
+              <span><small>phone :+23491834566</small></span>
+
+              <hr class="mb-0">
+
+            </div>
+
+            <!-- the tickes starts here-->
+            <div class="col-12">
+              <div class="card rounded-0   border-0" style="background-color: transparent;">
+
+                <div class="card-body">
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-8">
+                      <table class="col-12  table-bordered table-responsive ">
+                        <tr class="text-center">
+                          <td colspan="2" class="p-1"><span class="fw-bold  h5">Trip Detail</span></td>
+                        </tr>
+                        <tr>
+                          <td class="fw-bold p-1 ">Traveling From</td>
+                          <td><span>Delta (Abraka)</span></td>
+                        </tr>
+
+                        <tr>
+                          <td class="fw-bold p-1 ">Traveling To</td>
+                          <td><span>Lagos (Iyana Ipaja)</span></td>
+                        </tr>
+
+                        <tr>
+                          <td class="fw-bold p-1 ">Traveling Date</td>
+                          <td><span>Aug 22 2024</span></td>
+                        </tr>
+
+                        <tr>
+                          <td class="fw-bold p-1 ">Returning Date</td>
+                          <td><span>Aug 18 2024</span></td>
+                        </tr>
+                      </table>
+                    </div>
+
+                    <div class="col-4 text-center">
+                      <p>Booking Code</p>
+                      <p class="h5 fw-bold">BKR2134578</p>
+                    </div>
+
+                  </div>
+
+                  <div class="row row-gap-3">
+
+                    <div class="col-12">
+                      <table class="col-12 table-bordered table-responsive ">
+                        <tr>
+                          <td class="p-1" colspan="2">
+                            <p class="fw-bold  text-center h5">Customer Details</p>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td class="p-1"><span class="fw-bold ">Full-Name</span></td>
+                          <td><span>ADAMU BANKOLE TAIWO</span></td>
+                        </tr>
+
+                        <tr>
+                          <td class="p-1"><span class="fw-bold ">Email</span></td>
+                          <td><span>adamubankoletaiwo@gmail.com</span></td>
+                        </tr>
+
+                        <tr>
+                          <td class="p-1"><span class="fw-bold ">Phone Number</span></td>
+                          <td><span>09072900602</span></td>
+                        </tr>
+
+
+
+                      </table>
+                    </div>
+
+
+                    <!-- next of kin detail table -->
+
+                    <div class="col-12">
+
+                      <table class="col-12 table-bordered table-responsive ">
+                        <tr>
+                          <td class="p-1" colspan="2">
+                            <p class="fw-bold text-center h5">Next of Kin Details</p>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td class="p-1"><span class="fw-bold">Full-Name</span></td>
+                          <td><span>Bamidele Ayodele TAIWO</span></td>
+                        </tr>
+
+                        <tr>
+                          <td class="p-1"><span class="fw-bold">Email</span></td>
+                          <td><span>bamideleayodeletaiwo@gmail.com</span></td>
+                        </tr>
+
+                        <tr>
+                          <td class="p-1"><span class="fw-bold">Phone Number</span></td>
+                          <td><span>09055971750</span></td>
+                        </tr>
+                      </table>
+                    </div>
+
+                    <!-- fare price detail -->
+                    <div class="col-12 ">
+                      <table class="col-12 table-bordered table-responsive ">
+                        <tr class="text-center">
+                          <td class="p-1" colspan="4"><span class="h5 fw-bold ">Fare Price Detail</span></td>
+                        </tr>
+
+                        <tr class="text-center">
+                          <td class="p-1"><span class="fw-bold ">Departure</span></td>
+                          <td><span class="fw-bold ">Return</span></td>
+                          <td><span class="fw-bold ">Adults</span></td>
+                          <td><span class="fw-bold ">Children</span></td>
+                        </tr>
+
+                        <tr class="text-center">
+                          <td class="p-1"><span>$28000.00</span></td>
+                          <td class="p-1"><span>0.000</span></td>
+                          <td class="p-1"><span>1</span></td>
+                          <td class="p-1"><span>0</span></td>
+                        </tr>
+
+                        <!-- total price shown here -->
+
+                        <tr class="text-center border-0">
+                          <td colspan="2" class="h5 p-1 fw-bold border-0"></td>
+                          <td class="h5 fw-bold border-1 p-1">
+                            <p>Total</p>
+                          </td>
+                          <td class="h5 fw-bold border-1 p-1  ">
+                            <p>$28000.00</p>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock page-contents %}
