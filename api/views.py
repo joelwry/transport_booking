@@ -6,9 +6,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-from booking.models import TransportationCompany, State, Terminals, Vehicle, Traveller, Message, Booking, Payment, VehicleSchedule
+from booking.models import GuestBooking, GuestPayment, TransportationCompany, State, Terminals, Vehicle, Traveller, Message, Booking, Payment, VehicleSchedule
 from .serializers import (
-    TransportationCompanySerializer, StateSerializer, TerminalsSerializer, VehicleScheduleSerializer, VehicleSerializer,
+    GuestBookingSerializer, GuestPaymentSerializer, TransportationCompanySerializer, StateSerializer, TerminalsSerializer, VehicleScheduleSerializer, VehicleSerializer,
     TravellerSerializer, MessageSerializer, BookingSerializer, PaymentSerializer
 )
 from rest_framework.decorators import action
@@ -128,8 +128,6 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
 
-    
-
     @action(detail=True, methods=['post'])
     def book_seat(self, request, pk=None):
         schedule = get_object_or_404(VehicleSchedule, pk=pk)
@@ -243,3 +241,94 @@ class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
 
         payment.save()
         return Response(PaymentSerializer(payment).data)
+    
+class GuestBookingViewSet(viewsets.ModelViewSet):
+    queryset = GuestBooking.objects.all()
+    serializer_class = GuestBookingSerializer
+    permission_classes = []
+
+    @action(detail=True, methods=['post'])
+    def book_seat(self, request, pk=None):
+        schedule = get_object_or_404(VehicleSchedule, pk=pk)
+        seats = request.data.get('seats', [])
+        guest_data = request.data
+
+        adult_count = guest_data.get('number_of_adults', 1)
+        children_count = guest_data.get('number_of_children_below_10', 0)
+        passenger_count = passengerCount(adult_count, children_count)
+
+        if passenger_count > len(seats):
+            return Response(
+                {'error': 'Passenger boarding this vehicle is more than the seats booked'},
+                status=status.HTTP_406_NOT_ACCEPTABLE
+            )
+
+        # Check seat availability
+        available_seats = schedule.available_seats()
+        if not all(seat in available_seats for seat in seats):
+            return Response({'error': 'One or more seats are already booked'}, status=status.HTTP_410_GONE)
+
+        trip_type = guest_data.get('trip_type', 'ONE WAY')
+        amount_to_pay = schedule.vehicle.price * len(seats) if trip_type == "ONE WAY" else 2 * schedule.vehicle.price * len(seats)
+
+        # Create GuestBooking
+        guest_booking = GuestBooking.objects.create(
+            full_name=f"{guest_data.get('title', '')} {guest_data.get('surname', '')} {guest_data.get('firstname', '')}",
+            email=guest_data.get('email'),
+            phone_number=guest_data.get('phone'),
+            nok_full_name=f"{guest_data.get('nok-title', '')} {guest_data.get('nok-surname', '')}",
+            nok_phone_number=guest_data.get('nok-phone'),
+            vehicle=schedule.vehicle,
+            trip_type=trip_type,
+            status='PENDING',
+            pickup_state=schedule.pickup_state,
+            destination_state=schedule.destination_state,
+            number_of_seats=len(seats),
+            number_of_adults=adult_count,
+            number_of_children_below_10=children_count,
+            total_cost=amount_to_pay,
+            travel_date=schedule.travel_datetime,
+            schedule=schedule,
+            booked_seats=seats
+        )
+
+        # Redirect to payment gateway
+        payment_detail = initiate_payment(guest_booking.booking_code, guest_booking.total_cost, guest_booking.email)
+        if payment_detail['success']:
+            payment_url = payment_detail['payment_url']
+            access_code = payment_detail['access_code']
+            return Response({
+                'payment_url': payment_url,
+                'booking_code': guest_booking.booking_code,
+                'access_code': access_code,
+                'total_amount': guest_booking.total_cost
+            }, status=status.HTTP_201_CREATED)
+        else:
+            guest_booking.delete()
+            return Response({
+                'message': payment_detail['error']
+            }, status=status.HTTP_402_PAYMENT_REQUIRED)
+
+class GuestPaymentViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = GuestPaymentSerializer
+
+    @action(detail=True, methods=['post'])
+    def complete_payment(self, request, pk=None):
+        payment = get_object_or_404(GuestPayment, pk=pk)
+        payment_status = verify_payment(payment)
+        
+        if payment_status == 'COMPLETED':
+            payment.status = 'COMPLETED'
+            booking = payment.booking
+            booking.status = 'CONFIRMED'
+            booking.confirmed = True
+            booking.schedule.booked_seats.extend(booking.booked_seats)
+            booking.schedule.save()
+            booking.save()
+        else:
+            payment.status = 'FAILED'
+
+        payment.save()
+        return Response(GuestPaymentSerializer(payment).data)
+ 

@@ -118,7 +118,8 @@
                                                 class="text-danger">*</span></label>
                                         <select name="terminal-1" id="terminal-1" class="form-select py-1">
                                             {% for terminal in terminal1 %}
-                                            <option value="{{terminal.state.id}}">{{terminal.state.name}}({{terminal.area}})</option>
+                                            <option value="{{terminal.state.id}}">
+                                                {{terminal.state.name}}({{terminal.area}})</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -127,7 +128,8 @@
                                                 class="text-danger">*</span></label>
                                         <select name="terminal-2" id="terminal-2" class="form-select py-1">
                                             {% for terminal in terminal2 %}
-                                            <option value="{{terminal.state.id}}">{{terminal.state.name}}({{terminal.area}})</option>
+                                            <option value="{{terminal.state.id}}">
+                                                {{terminal.state.name}}({{terminal.area}})</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -183,19 +185,21 @@
                                 <div class="col-12 pt-2">
                                     <div class="row align-items-center">
                                         <div class="col-8">
-                                            <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date |date:"M d"}}</p>
-                                            <p class="traveller-price">Time : {{vehicle.travel_datetime.time |time:"H:i"}}</p>
+                                            <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date|date:"M d"}}</p>
+                                            <p class="traveller-price">Time : {{vehicle.travel_datetime.time|time:"H:i"}}</p>
                                             <p class="available_seat_count">Available Seat : {{ vehicle.number_of_available_seats }}</p>
-                                            
+
                                         </div>
                                         <div class="col-4">
 
                                             <p class="traveller-price"><span
-                                                    class="fw-bold primary-color h6">${{vehicle.vehicle.price|floatformat:"-3"}}</span></p>
+                                                    class="fw-bold primary-color h6">${{vehicle.vehicle.price|floatformat:"-3"}}</span>
+                                            </p>
                                             <button class="btn btn-sm rounded-0 text-white colorbtn p-2  book-btn"
-                                                data-bs-target="#seats{{vehicle.id}}" data-bs-toggle="collapse">View Seats</button>
+                                                data-bs-target="#seats{{vehicle.id}}" data-bs-toggle="collapse">View
+                                                Seats</button>
                                         </div>
-                                        
+
                                         <div class="collapse " id="seats{{vehicle.id}}">
                                             <hr>
                                             <div class="col-sm-9 mb-3">
@@ -227,9 +231,11 @@
                                                         <div class="card-body px-1 py-1">
                                                             <div class="row row-gap-1">
                                                                 {% for booked in vehicle.booked_seats %}
-                                                                <div class=" col-1 text-center m-1 bg-danger text-white px-2 py-1 rounded-3"> {{ booked }}</div>
+                                                                <div
+                                                                    class=" col-2 text-center m-1 bg-danger text-white px-2 py-1 rounded-3">
+                                                                    {{ booked }}</div>
                                                                 {% endfor %}
-                                                                
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -241,7 +247,9 @@
                                                         <div class="card-body px-1 py-1">
                                                             <div class="row row-gap-1">
                                                                 {% for available in vehicle.available_seats %}
-                                                                <div class=" col-1 text-center m-1 bg-dark text-white px-2 py-1 rounded-3"> {{ available }}</div>
+                                                                <div
+                                                                    class=" col-2 text-center m-1 bg-dark text-white px-2 py-1 rounded-3" data-vehicle-schedule="{{ vehicle.id }}" style="cursor: pointer;">
+                                                                    {{ available }}</div>
                                                                 {% endfor %}
                                                             </div>
                                                         </div>
@@ -251,7 +259,7 @@
 
                                                 </div>
                                                 <div class="col-sm-10 m-auto mt-3 text-end px-4">
-                                                    <a href="#" class="btn btn-sm btn-success">Continue</a>
+                                                    <a href="#" class="btn btn-sm btn-success" data-vehicle-schedule="{{ vehicle.id }}">Continue</a>
                                                 </div>
 
 
@@ -266,59 +274,184 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
                 {% empty %}
-                    <p>No Vehicle Found</p>
+                <p>No Vehicle Found</p>
                 {% endfor %}
             </div>
         </div>
 
         {% if travel_type == 'round-trip' %}
-            <h4 align="center">Round Trip Result</h4>
-            <div class="col-xl-11 py-4 m-auto ">
-                <div class="row p-2 row-gap-3">
-                    {% for vehicle in round_trip_vehicles %}
-                    <div class="col-xl-6 col-lg-6 col-md-12">
-                        <div class="card rounded-0 border-0  pb-0 shadow">
-                            <div class="card-body">
-                                <div class="row pb-0">
-                                    <div class="col-12">
-                                        <img src="{{vehicle.vehicle.company.image.url}}" class="rounded-pill" width="32px"
-                                            alt="">
-                                        <span class="px-1 fw-bold">{{vehicle.vehicle.company.name}}</span>
-                                    </div>
-                                    <div class="col-12 pt-2">
-                                        <div class="row align-items-center">
-                                            <div class="col-8">
-                                                <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date |date:"M d"}}</p>
-                                                <p class="traveller-price">Time : {{vehicle.travel_datetime.time |time:"H:i"}}</p>
-                                                <p class="available_seat_count">Available Seat : {{ vehicle.number_of_available_seats }}</p>
-                                                
-                                            </div>
-                                            <div class="col-4">
-    
-                                                <p class="traveller-price"><span
-                                                        class="fw-bold primary-color h6">${{vehicle.vehicle.price|floatformat:"-3"}}</span></p>
-                                                
-                                            </div>
-                                            
-                                        </div>
-    
-                                    </div>
-    
+        <h4 align="center">Round Trip Result</h4>
+        <div class="col-xl-11 py-4 m-auto ">
+            <div class="row p-2 row-gap-3">
+                {% for vehicle in round_trip_vehicles %}
+                <div class="col-xl-6 col-lg-6 col-md-12">
+                    <div class="card rounded-0 border-0  pb-0 shadow">
+                        <div class="card-body">
+                            <div class="row pb-0">
+                                <div class="col-12">
+                                    <img src="{{vehicle.vehicle.company.image.url}}" class="rounded-pill" width="32px"
+                                        alt="">
+                                    <span class="px-1 fw-bold">{{vehicle.vehicle.company.name}}</span>
                                 </div>
+                                <div class="col-12 pt-2">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date
+                                                |date:"M d"}}</p>
+                                            <p class="traveller-price">Time : {{vehicle.travel_datetime.time
+                                                |time:"H:i"}}</p>
+                                            <p class="available_seat_count">Available Seat : {{
+                                                vehicle.number_of_available_seats }}</p>
+
+                                        </div>
+                                        <div class="col-4">
+
+                                            <p class="traveller-price"><span
+                                                    class="fw-bold primary-color h6">${{vehicle.vehicle.price|floatformat:"-3"}}</span>
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
                             </div>
                         </div>
-                        
                     </div>
-                    {% empty %}
-                        <p>No Vehicle For this return Date</p>
-                    {% endfor %}
+
                 </div>
+                {% empty %}
+                <p>No Vehicle For this return Date</p>
+                {% endfor %}
             </div>
+        </div>
         {% endif %}
 
     </div>
 
-    {% endblock page-contents %}
+    <div id="ToastElement" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex toaser">
+            <div class="toast-body" id="bodytoast">
+             
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+    </div>
+</div>
+{% endblock page-contents %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const maxSeats = Number('{{ adult }}') + Number('{{ children }}'); 
+    // Total number of seats the user can select
+    let seatsSelection = {}
+    
+
+    // Function to update seat selection
+    const updateSeatSelection = (seat, vehicleScheduleId) => {
+        if (seat.classList.contains('bg-dark')) {
+            if(!seatsSelection[vehicleScheduleId]){
+                seatsSelection[vehicleScheduleId] = [seat.textContent.trim()]
+                seat.classList.remove('bg-dark');
+                seat.classList.add('bg-success');
+            }
+            else if (seatsSelection[vehicleScheduleId] && seatsSelection[vehicleScheduleId].length < maxSeats) {
+                seat.classList.remove('bg-dark');
+                seat.classList.add('bg-success');
+                if (seatsSelection[vehicleScheduleId]){
+                    seatsSelection[vehicleScheduleId].push(seat.textContent.trim())
+                }
+            }else {
+                alert('You cannot select more seats than allowed.');
+                //showToast('You can not select more seats than allowed',false)
+            }
+        } else if (seat.classList.contains('bg-success')) {
+            seat.classList.remove('bg-success');
+            seat.classList.add('bg-dark');
+            seatsSelection[vehicleScheduleId] = seatsSelection[vehicleScheduleId].filter(s => !(s === seat.textContent.trim()));
+        }
+    };
+
+    // Attach click event to each seat
+    document.querySelectorAll('.bg-dark').forEach(seat => {
+        seat.addEventListener('click', function () {
+            const vehicleScheduleId = this.dataset.vehicleSchedule;   
+            updateSeatSelection(this, vehicleScheduleId);
+            console.log(seatsSelection[vehicleScheduleId])
+        });
+    });
+
+    // Handle Continue button click
+    document.querySelectorAll('.btn-success').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            const vehicleScheduleId = event.target.dataset.vehicleSchedule;
+            // if seatselect is still 
+            if(seatsSelection[vehicleScheduleId] == undefined){
+                alert('Please select at least one seat.');
+                return;
+            }  
+            if (seatsSelection[vehicleScheduleId].length === 0) {
+                alert('Your seats are empty...Please select at least one seat.');
+                return;
+            } else if(seatsSelection[vehicleScheduleId].length > maxSeats){
+                alert('You selected more seat than required!');
+                return;
+            }else {
+                // data to be sent alongside our post n converting selectedSeats to JSON
+                const data = {
+                    seats: JSON.stringify(seatsSelection[vehicleScheduleId]),
+                    adult: '{{ adult }}',
+                    children: '{{ children }}',
+                    scheduleId: vehicleScheduleId, 
+                    travel_date: "{{ travel_date }}",
+                    pickup_from: "{{ pickup_from }}",
+                    destination_at: "{{ destination_at }}",
+                    travel_type : "{{ travel_type }}"
+                };
+
+                var form = document.createElement('form');
+                form.method = 'post'
+                form.action = "{% url 'guest-booking-form' %}";
+                let form_inputs = `<input type='hidden' name='csrfmiddlewaretoken' value="{{ csrf_token }}">
+                <input type='text' name='seats' value=${data.seats}>
+                <input type='text' name='adult' value=${data.adult}>
+                <input type='text' name='children' value=${data.children}>
+                <input type='text' name='scheduleId' value=${data.scheduleId}>
+                <input type='text' name='travel_date' value=${data.travel_date}>
+                <input type='text' name='pickup_from' value=${data.pickup_from}>
+                <input type='text' name='destination_at' value=${data.destination_at}>
+                <input type='text' name='travel_type' value=${data.travel_type}>`
+                
+                form.innerHTML = form_inputs;
+                document.body.appendChild(form);
+                form.submit()
+
+            }
+        });
+    });
+
+    function showToast(message,success) {
+        // const toast = document.createElement('div');
+        const toastEl = $('#ToastElement');
+        const toast = new bootstrap.Toast(toastEl); 
+       
+        if(success){
+            toastEl.find('#bodytoast').text(message);
+            toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
+        }else{
+            toastEl.find('#bodytoast').text(message);
+            toastEl.find('.toaser').addClass('bg-danger text-white');
+        }
+        toast.show();
+        
+    }
+});
+
+</script>
+{% endblock %}

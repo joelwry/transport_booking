@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .utils.generators import generateBookingId
+from .utils.generators import generateBookingId, generateGuestBookingId
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from datetime import timedelta
@@ -194,3 +194,61 @@ class Payment(models.Model):
 class Staff(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_super_admin = models.BooleanField(default=False)
+
+class GuestBooking(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('CONFIRMED', 'Confirmed'),
+        ('CANCELLED', 'Cancelled'),
+    ]
+    TRIP_TYPE = [
+        ("ONE WAY", "one way ticket"),
+        ("TWO WAY", "two way ticket")
+    ]
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=15)
+    nok_full_name = models.CharField(max_length=255, null=True, blank=True)  # Next of kin
+    nok_phone_number = models.CharField(max_length=15, null=True, blank=True)  # Next of kin
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    trip_type = models.CharField(max_length=25, choices=TRIP_TYPE, default=TRIP_TYPE[0][0])
+    booking_code = models.CharField(max_length=25, unique=True, default=generateGuestBookingId)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    pickup_state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, related_name='guest_pickup_state', blank=True)
+    destination_state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, related_name='guest_destination_state', blank=True)
+    number_of_seats = models.PositiveIntegerField(default=1)
+    number_of_children_below_10 = models.PositiveIntegerField(default=0)
+    number_of_adults = models.PositiveIntegerField(default=1)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    travel_date = models.DateTimeField(default=default_travel_date)
+    return_date = models.DateTimeField(null=True, blank=True)
+    booking_date = models.DateTimeField(auto_now_add=True)
+    payment_id = models.CharField(max_length=100, null=True, blank=True)
+    ticket_sent = models.BooleanField(default=False)
+    schedule = models.ForeignKey(VehicleSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    booked_seats = models.JSONField(default=list)  # keeps track of seat booked by the guest user
+
+    def clean(self):
+        children_count = self.number_of_children_below_10 if self.number_of_children_below_10 > 2 else 1 if self.number_of_children_below_10 == 2 else 0
+        total_seats = self.number_of_adults + children_count
+        available_seats = self.schedule.available_seats()
+        if total_seats > len(available_seats):
+            raise ValidationError('Not enough available seats for this booking.')
+
+        for seat in self.booked_seats:
+            if seat not in available_seats:
+                raise ValidationError(f'Seat {seat} is not available.')
+
+    def __str__(self):
+        return f"Guest Booking for {self.schedule} with {self.number_of_adults} adults and {self.number_of_children_below_10} children"
+
+class GuestPayment(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('COMPLETED', 'Completed'),
+        ('FAILED', 'Failed'),
+    ]
+    booking = models.ForeignKey(GuestBooking, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
+    payment_date = models.DateTimeField(auto_now_add=True)

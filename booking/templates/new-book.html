@@ -27,12 +27,13 @@
                 </div>
                 <!-- details here -->
                 <div class="row">
-                  <h6>Peace Mass</h6>
+                  <h6>{{ company_name }}</h6>
                   <p>
-                    Lagos to Enugu <br>
-                    Aug 18 2024 <br>
-                    6:00AM
+                    {{ pickup_from}} to {{ destination_at }} <br>
+                    {{ travel_date }} <br>
+                    
                   </p>
+                  <p> <span style="color:darkslategray; font-style: italic;">Travel Type : </span> {{ travel_type }} </p>
                 </div>
 
                 <div class="row">
@@ -46,22 +47,22 @@
                       <table class="fs-6 col-12 ">
                         <tr>
                           <td><span>Departure</span></td>
-                          <td> <span class="text-end">$28000</span></td>
+                          <td> <span class="text-end">NGN {{ unit_price }}</span></td>
                         </tr>
 
                         <tr>
                           <td><span>Returning</span></td>
-                          <td> <span class="text-end">$30000</span></td>
+                          <td> <span class="text-end">NGN {{ unit_price }}</span></td>
                         </tr>
 
                         <tr>
                           <td><span>Adults</span></td>
-                          <td> <span class="text-end">x 1</span></td>
+                          <td> <span class="text-end">x {{ adult }}</span></td>
                         </tr>
 
                         <tr>
                           <td><span>Children</span></td>
-                          <td> <span class="text-end">x 0</span></td>
+                          <td> <span class="text-end">x {{ children }}</span></td>
                         </tr>
 
                       </table>
@@ -76,7 +77,7 @@
                     <table class="col-12">
                       <tr>
                         <td><span class="h4 text-white">Total</span></td>
-                        <td> <span class="h5">$ 58000</span></td>
+                        <td> <span class="h5">NGN {{  total_amount }}</span></td>
                       </tr>
                     </table>
 

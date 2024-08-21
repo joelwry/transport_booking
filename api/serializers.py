@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from booking.models import Booking, Traveller, TransportationCompany, Vehicle,  State, Payment, Message,Terminals, VehicleSchedule
+from booking.models import Booking, GuestBooking, GuestPayment, Traveller, TransportationCompany, Vehicle,  State, Payment, Message,Terminals, VehicleSchedule
 
 class TransportationCompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -90,3 +90,13 @@ class VehicleScheduleSerializer(serializers.ModelSerializer):
 
     def get_destination_state_name(self, obj):
         return obj.destination_state.name 
+    
+class GuestBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuestBooking
+        fields = '__all__'
+
+class GuestPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuestPayment
+        fields = '__all__'

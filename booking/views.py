@@ -103,7 +103,35 @@ def searchResult(request):
 
     print(context['round_trip_vehicles'])
     return render(request, 'result-search.html', context)
-    
+
+# page that leads unauthenticated user to enter their details 
+@require_POST
+@csrf_protect   
+def proceedToGuestBooking(request):
+    vehicleScheduleId = int(request.POST['scheduleId'])
+    schedule = VehicleSchedule.objects.filter(id= vehicleScheduleId).first()
+    travel_type = request.POST['travel_type']
+    total_passenger = int(request.POST['children']) + int(request.POST['adult'])
+    unit_price = schedule.vehicle.price 
+    if(travel_type.lower() == 'round-trip'):
+        total_amount = (unit_price * 2) * total_passenger
+    else : 
+        total_amount = unit_price  * total_passenger
+    context = {
+        'adult': int(request.POST['adult']),
+        'children': int(request.POST['children']),
+        'travel_type': travel_type,
+        'seats': request.POST['seats'],
+        'pickup_from':schedule.pickup_state.name,
+        'destination_at':schedule.destination_state.name ,
+        'travel_date': schedule.travel_datetime,
+        'total_amount' : total_amount,
+        'unit_price': unit_price,
+        'company_name': schedule.vehicle.company.name,
+        'scheduleId':vehicleScheduleId
+    }
+    print(context)
+    return render(request, 'new-book.html', context)
 
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
@@ -231,7 +259,7 @@ def logout_view(request):
     return redirect('index')
 
 @login_required
-def book(request):
+def book(request,vehicleId):
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
@@ -242,7 +270,7 @@ def book(request):
             return redirect('payment', booking_id=booking.id)
     else:
         form = BookingForm()
-    return render(request, 'booking/booking.html', {'form': form})
+    return render(request, 'new-book.html', {'form': form})
 
 @login_required
 def makePayment(request, booking_id):
