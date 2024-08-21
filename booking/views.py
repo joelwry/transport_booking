@@ -2,10 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_protect
-from booking.utils.vehicle_search import indexPageSearchVehiclesSchedule
-from .models import Traveller, Booking, Vehicle, State, TransportationCompany,Terminals, VehicleSchedule
+from .utils.vehicle_search import indexPageSearchVehiclesSchedule
+from .models import Terminals, Traveller, Booking, Vehicle, State, TransportationCompany, VehicleSchedule
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
@@ -13,11 +11,12 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import HttpRequest, HttpResponseRedirect
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 
 # will be used to track user login attempt
 MAX_ATTEMPTS = 5
 LOCKOUT_TIME = 5  # in minutes
-
 
 # this should be for landing page
 def index(request):
@@ -281,7 +280,7 @@ def book(request,vehicleId):
     return render(request, 'new-book.html', {'form': form})
 
 @login_required
-def makePayment(request, booking_id):
+def payment(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
     if request.method == 'POST':
         amount = request.POST['amount']
@@ -293,7 +292,7 @@ def makePayment(request, booking_id):
             booking.save()
             send_booking_email(booking)
             return redirect('booking_success', booking_id=booking.id)
-    return render(request, 'booking/make_payment.html', {'booking': booking})
+    return render(request, 'booking/payment.html', {'booking': booking})
 
 @login_required
 def booking_success(request, booking_id):
@@ -388,3 +387,6 @@ def forgotPassword(request):
 # Implement the logic to calculate the total cost of booking
 def calculate_total_cost(booking):
     return booking.number_of_seats * booking.route.vehicle.price 
+
+def recieptPage(request):
+    return render(request,'reciept.html', {})

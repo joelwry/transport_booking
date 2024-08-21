@@ -16,5 +16,6 @@ urlpatterns = [
     path('search_form/', views.search_form, name='search_form'),
     path('book-now/', views.advanced_search_vehicles, name='advanced_search_vehicles'),
     path("searchHome/", views.searchResult, name="search-from-home"),
-    path("guest-booking/",views.proceedToGuestBooking, name='guest-booking-form')
+    path("guest-booking/",views.proceedToGuestBooking, name='guest-booking-form'),
+    path("reciept",views.recieptPage, name='reciept-page')
 ]
