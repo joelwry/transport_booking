@@ -7,22 +7,22 @@
 
 {% block page-contents %}
 
-<div class="main   main-color">
+<div class="container-fluid  main-color">
 
-    <div class="row">
-        <div class="col-xl-12 bgcolor ">
+    <div class="row  p-0">
+        <div class="col-12 bgcolor m-0 p-0">
             <!-- Filter button only visible on smaller screens -->
-            <div class="row   px-3 align-items-center p-2">
-                <div class="col-md-9">
-                    <div class="row">
-                        <div class="col-md-5">
+            <div class="row  p-2  align-items-center">
+                <div class="col-md-10">
+                    <div class="row ">
+                        <div class="col-md-6 ">
                             <span class="h6"><span><i class="bi bi-geo-alt"></i></span> {{ pickup_from }}<span><i
                                         class="bi bi-arrow-right"></i></span> {{ destination_at }}</span class="h6">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2 ">
                             <span class="h6"><i class="bi bi-calendar"></i> {{ travel_date }}</span>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 ">
                             <span class="h6 me-2">{{ travel_type }}</span>
                             <span class="h6"> Adults ({{ adult }})</span>
                             <span class="h6"> Children ({{ children }})</span>
@@ -31,18 +31,18 @@
 
 
                 </div>
-                <div class="col-md-3 text-end px-4">
+                <div class="col-md-2 text-end px-3 p-0">
                     <div class="top-filter col-12 ">
-                        <button type="button" class="bg-dark text-white btn btn-sm  rounded-0" data-bs-toggle="collapse"
-                            data-bs-target="#filterContainer" aria-expanded="false" aria-controls="filterContainer">
-                            Filter
+                        <button type="button" class=" text-white btn btn-sm  rounded-0" data-bs-toggle="collapse"
+                            data-bs-target="#filterContainer" aria-expanded="false" aria-controls="filterContainer" style='background-color:black;'>
+                            Filter Here
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Filter container, always visible on xl and above, collapsible on lg and below -->
-            <div class="collapse bg-dark shadow-sm px-3 py-2 primary-color" id="filterContainer">
+            <div class="collapse shadow-sm filter-form-bg  py-2 px-4  text-white" id="filterContainer">
                 <div class="col-lg-12 order-last rounded-2" data-aos="zoom-out" data-aos-delay="100">
                     <div class="col-sm-3 mb-2">
                         <input type="radio" id="one-way" class="form-check-input p-2" name="trip-type" value="one-way"
@@ -169,8 +169,10 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-xl-11 py-4 m-auto ">
+
+        <div class="col-12 py-4 ">
             <div class="row p-2 row-gap-3">
                 {% for vehicle in vehicles %}
                 <div class="col-xl-6 col-lg-6 col-md-12">
@@ -328,7 +330,7 @@
         </div>
         {% endif %}
 
-    </div>
+    
 
     <div id="ToastElement" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex toaser">
@@ -337,6 +339,7 @@
             </div>
             <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
+    </div>
     </div>
 </div>
 {% endblock page-contents %}
@@ -364,8 +367,7 @@
                     seatsSelection[vehicleScheduleId].push(seat.textContent.trim())
                 }
             }else {
-                alert('You cannot select more seats than allowed.');
-                //showToast('You can not select more seats than allowed',false)
+                showToast('You can not select more seats than allowed',false)
             }
         } else if (seat.classList.contains('bg-success')) {
             seat.classList.remove('bg-success');
@@ -390,15 +392,15 @@
             const vehicleScheduleId = event.target.dataset.vehicleSchedule;
             // if seatselect is still 
             if(seatsSelection[vehicleScheduleId] == undefined){
-                alert('Please select at least one seat.');
-                return;
+                
+                return showToast(message = 'Please select at least one seat.', success = false);
             }  
             if (seatsSelection[vehicleScheduleId].length === 0) {
-                alert('Your seats are empty...Please select at least one seat.');
-                return;
+                return showToast('Your seats are empty...Please select at least one seat.', false);
+                
             } else if(seatsSelection[vehicleScheduleId].length > maxSeats){
-                alert('You selected more seat than required!');
-                return;
+                return showToast('You selected more seat than required!', false);
+                
             }else {
                 // data to be sent alongside our post n converting selectedSeats to JSON
                 const data = {
@@ -433,21 +435,7 @@
         });
     });
 
-    function showToast(message,success) {
-        // const toast = document.createElement('div');
-        const toastEl = $('#ToastElement');
-        const toast = new bootstrap.Toast(toastEl); 
-       
-        if(success){
-            toastEl.find('#bodytoast').text(message);
-            toastEl.find('.toaser').removeClass('bg-danger').addClass('bg-success text-white');
-        }else{
-            toastEl.find('#bodytoast').text(message);
-            toastEl.find('.toaser').addClass('bg-danger text-white');
-        }
-        toast.show();
-        
-    }
+   
 });
 
 </script>

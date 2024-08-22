@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from booking.models import Vehicle, TransportationCompany, Booking, Terminals, Traveller, State
+from booking.models import Vehicle, TransportationCompany, Booking, Terminals, Traveller, State, VehicleSchedule
 from django.contrib.auth import login, authenticate
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_POST
@@ -9,8 +9,9 @@ from django.http import JsonResponse,HttpRequest, HttpResponse
 
 from django.utils import timezone
 from django.db.models import Count,Q
+import datetime
 
-from .forms import addNewVehicle, addNewCompanyForm, addTerminal, addState
+from .forms import addNewVehicle, addNewCompanyForm, addTerminal, addState, CreateSchedule
 
 
 # Create your views here.
@@ -129,9 +130,9 @@ def deleteCompany(request, company_id):
 
 
 @staff_member_required
-def companyDetail(request, company_id, slug ):
+def companyDetail(request, company_id ):
     terminalsall = Terminals.objects.all()
-    company = get_object_or_404(TransportationCompany, id = company_id, slug = slug)
+    company = get_object_or_404(TransportationCompany, id = company_id)
     return render(request, 'manager/companydetail.html', {'company': company, 'terminals':terminalsall})
 
 def company_analytics(request):
@@ -164,9 +165,9 @@ def company_analytics(request):
 
 # ADD NEW VEHICLE
 @require_POST
-def AddVehicle(request, id , slug):
+def AddVehicle(request, id ):
     if request.user.is_staff:
-        company = get_object_or_404(TransportationCompany, pk = id, slug = slug)   
+        company = get_object_or_404(TransportationCompany, pk = id)   
         form = addNewVehicle(request.POST)
         if form.is_valid:
             vehicle_form = form.save(commit=False)
@@ -192,6 +193,29 @@ def DeleteVehicle(request, id):
             return JsonResponse({'success' : True, 'message': 'Vehicle deleted successfully'}, status = 200)
         return JsonResponse({'success' : False, 'message' : 'Error Deleting Vehicle'}, status = 404)
     return JsonResponse({'success': False, 'message':'An Error Occured'}, status = 400)
+
+
+# VEHICLE DETAILS plus current Schedules
+
+def VehicleDetails(request, id):
+    try:
+        vehicle  = get_object_or_404(Vehicle, id = id)
+    except Vehicle.DoesNotExist():
+        # return errorn message page
+        pass
+    # get all current schedules for vehicle
+    vschedule = VehicleSchedule.objects.filter(
+        vehicle = vehicle,
+        travel_datetime__gte = timezone.now()
+    ).select_related('vehicle')
+
+    # prepare context to be sent to the view
+    context = {
+        'vehicle' : vehicle,
+        'schedules' : vschedule
+    }
+
+    return render(request,'manager/vehicle-details.html',context)
 
 
 # ADD TERMINAL ACTION VIEW
@@ -232,6 +256,7 @@ def addTerminaLView(request):
 
 
 # STATES VIEW
+@staff_member_required(login_url='manager:managerlogin')
 def StateView(request):
     if request.method == 'POST':
         form = addState(request.POST)
@@ -272,6 +297,61 @@ class BookingListView(ListView):
     template_name = "manager/bookings.html"
     context_object_name = 'bookings'
     ordering = '-booking_date'
+
+
+# SCHEDULES 
+@require_POST
+def create_schedule(request):
+    vehicle_plate = request.POST.get('vehicle')
+    travel_type = request.POST.get('travelType')
+    travel_date_str = request.POST.get('travelDate')
+    travel_time_str = request.POST.get('travelTime')
+
+    # Combine date and time into a datetime object
+    try:
+        travel_datetime = datetime.strptime(f'{travel_date_str} {travel_time_str}', '%Y-%m-%d %H:%M')
+    except ValueError:
+        return JsonResponse({'error': 'Invalid date or time format.'}, status=400)
+
+    # Validate travel_datetime
+    if travel_datetime <= timezone.now():
+        return JsonResponse({'error': 'Travel datetime must be in the future.'}, status=400)
+
+    # Fetch the vehicle by plate number
+    try:
+        vehicle = Vehicle.objects.get(plate_number=vehicle_plate)
+    except Vehicle.DoesNotExist:
+        return JsonResponse({'error': f'No vehicle found with plate number {vehicle_plate}.'}, status=404)
+
+    # Determine pickup and destination states based on travel type
+    if travel_type.lower() == 'going':
+        pickup_state = vehicle.terminal1.state
+        destination_state = vehicle.terminal2.state
+    elif travel_type.lower() == 'return':
+        pickup_state = vehicle.terminal2.state
+        destination_state = vehicle.terminal1.state
+    else:
+        return JsonResponse({'error': 'Invalid travel type.'}, status=400)
+
+    # Create the schedule
+    schedule = VehicleSchedule.objects.create(
+        vehicle=vehicle,
+        pickup_state=pickup_state,
+        destination_state=destination_state,
+        travel_datetime=travel_datetime,
+    )
+
+    # Return a successful JSON response
+    return JsonResponse({
+        'message': 'Schedule created successfully!',
+        'schedule': {
+            'vehicle': vehicle.plate_number,
+            'pickup_state': pickup_state.name,
+            'destination_state': destination_state.name,
+            'travel_datetime': schedule.travel_datetime.strftime('%Y-%m-%d %H:%M'),
+        }
+    }, status=201)
+
 
 # BOOKING DETAILS
 def bookingDetailView(request, bookcode):

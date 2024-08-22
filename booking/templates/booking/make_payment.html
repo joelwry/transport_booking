@@ -13,31 +13,35 @@
 
     <script>
 
-
-        var handler = PaystackPop.setup({
-            key: "{{ PAYSTACK_PUBLIC_KEY }}",
-            email: "{{ email }}",
-            amount: "{{ amount }}",
-            currency: 'NGN',
-            ref: "{{ reference }}",
-            callback: function(response) {
-                // Verify the payment
-                fetch(`/api/verify-payment/${response.reference}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status) {
-                            alert('Payment successful');
-                        } else {
-                            alert('Payment verification failed');
-                        }
-                    });
-            },
-            onClose: function() {
-                alert('Payment window closed');
-            }
-        });
-        handler.openIframe();
-
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var handler = PaystackPop.setup({
+                key: "{{ PAYSTACK_PUBLIC_KEY }}",
+                email: "{{ email }}",
+                amount: "{{ amount }}",
+                currency: 'NGN',
+                ref: "{{ reference }}",
+                callback: function(response) {
+                    // Verify the payment
+                    fetch(`/api/verify-payment/${response.reference}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                            if (data.status) {
+                                alert('Payment successful');
+                            } else {
+                                alert('Payment verification failed');
+                            }
+                        });
+                },
+                onClose: function() {
+                    alert('Payment window closed');
+                }
+            });
+            handler.openIframe();
+            document.querySelector("#payButton").addEventListener("click",evt =>{
+                handler.openIframe()
+            })
+        })
     </script>
 </body>
 
