@@ -52,11 +52,17 @@
                         <td><span>Departure</span></td>
                         <td> <span class="text-end">NGN {{ unit_price }}</span></td>
                       </tr>
-
+                      {% if travel_type == 'round-trip' %}
                       <tr>
                         <td><span>Returning</span></td>
                         <td> <span class="text-end">NGN {{ unit_price }}</span></td>
                       </tr>
+                      {% else %}
+                      <tr>
+                        <td><span>Returning</span></td>
+                        <td> <span class="text-end">NGN 0</span></td>
+                      </tr>
+                      {% endif %}
 
                       <tr>
                         <td><span>Adults</span></td>
