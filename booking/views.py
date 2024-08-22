@@ -13,6 +13,11 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import HttpRequest, HttpResponseRedirect
 from django.db.models import Q
+from dotenv import load_dotenv
+load_dotenv()
+import os 
+
+PAYSTACK_PUBLIC_KEY = os.getenv('PAYSTACK_PUBLIC_KEY')
 
 # will be used to track user login attempt
 MAX_ATTEMPTS = 5
@@ -281,8 +286,9 @@ def book(request,vehicleId):
     return render(request, 'new-book.html', {'form': form})
 
 @login_required
-def makePayment(request, booking_id):
-    booking = Booking.objects.get(id=booking_id)
+def makePayment(request, booking_code, access_code, amount_to_pay):
+    booking = Booking.objects.get(id=booking_code)
+
     if request.method == 'POST':
         amount = request.POST['amount']
         status = request.POST['status']
@@ -293,7 +299,8 @@ def makePayment(request, booking_id):
             booking.save()
             send_booking_email(booking)
             return redirect('booking_success', booking_id=booking.id)
-    return render(request, 'booking/make_payment.html', {'booking': booking})
+    return render(request, 'booking/make_payment.html', {'email':request.user.email,'amount':float(amount_to_pay),"reference":booking_code,'PAYSTACK_PUBLIC_KEY':PAYSTACK_PUBLIC_KEY, "access_code":access_code})
+
 
 @login_required
 def booking_success(request, booking_id):
