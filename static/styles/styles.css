@@ -20,7 +20,7 @@
 
 .hero {
   width: 100%;
-  max-height: 80vh;
+  max-height: 100vh;
   position: relative;
   padding: 120px 0 120px 0;
   display: flex;
@@ -70,6 +70,7 @@
   font-weight: 400;
 }
 
+
 .main-color{
     background-color: hsl(0, 0%, 100%);
 }
@@ -77,6 +78,10 @@
 .fbg-color{
     background-color: #fe803217;
 
+}
+
+.filter-form-bg{
+    background-color: #000000c4;
 }
 
 .sub-heading-home{
@@ -263,6 +268,13 @@ input[type='text']:disabled,input[type='email'], select:disabled{
     .lg-menu-side{
         display: none;
     }
+}
+
+@media ( width < 400px) {
+    .small-d-none{
+        display: none;
+    }
+    
 }
 
 .sep-bg{
