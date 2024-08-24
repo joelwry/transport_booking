@@ -1,0 +1,22 @@
+{% extends "base_templates/header_generic.html" %}
+{% load static %}
+{% block page-contents %}
+
+<section>
+  <h2 align="center">Error</h2>
+</section>
+
+<div class="main pt-5 main-color p-4">
+  <!-- About Us -->
+  <div class="row  align-items-center">
+    <div class="col-xl-12 p-5">
+      <h3 class="fbg-color primary-color sub-heading-home">Error</h3>
+      <h2 class="fw-bold" style="color: red;">{{ error_title}}</p>
+      <p style="color: red;"> {{ error_message }}</p>
+    </div>
+
+    
+  </div>
+</div>
+
+{% endblock page-contents %}

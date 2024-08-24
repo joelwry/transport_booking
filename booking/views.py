@@ -3,7 +3,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .utils.vehicle_search import indexPageSearchVehiclesSchedule
-from .models import Terminals, Traveller, Booking, Vehicle, State, TransportationCompany, VehicleSchedule
+from .models import GuestBooking, Terminals, Traveller, Booking, Vehicle, State, TransportationCompany, VehicleSchedule
 from .forms import LoginForm, UserRegisterForm, TravellerForm, BookingForm,SignUpForm, AdvancedSearchForm
 #from .utils.booking_utils import get_vehicles_by_route
 from .utils.payment_utils import process_payment, send_booking_email
@@ -13,6 +13,7 @@ from django.http import HttpRequest, HttpResponseRedirect
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
+from uuid import uuid4
 from dotenv import load_dotenv
 load_dotenv()
 import os 
@@ -144,22 +145,26 @@ def proceedToGuestBooking(request):
     }
     print(context)
     return render(request, 'new-book.html', context)
+
 @login_required
 def makePayment(request, booking_code, access_code, amount_to_pay):
-    booking = Booking.objects.get(id=booking_code)
+    try :
+        booking = Booking.objects.get(booking_code=booking_code)
 
-    if request.method == 'POST':
-        amount = request.POST['amount']
-        status = request.POST['status']
-        payment = process_payment(booking, amount, status)
-        if payment.status == 'COMPLETED':
-            booking.confirmed = True
-            booking.payment_id = payment.id
-            booking.save()
-            send_booking_email(booking)
-            return redirect('booking_success', booking_id=booking.id)
-    return render(request, 'booking/make_payment.html', {'email':request.user.email,'amount':float(amount_to_pay),"reference":booking_code,'PAYSTACK_PUBLIC_KEY':PAYSTACK_PUBLIC_KEY, "access_code":access_code})
-
+        if request.method == 'POST':
+            amount = request.POST['amount']
+            status = request.POST['status']
+            payment = process_payment(booking, amount, status)
+            if payment.status == 'COMPLETED':
+                booking.confirmed = True
+                booking.payment_id = payment.id
+                booking.save()
+                send_booking_email(booking)
+                return redirect('booking_success', booking_id=booking.id)
+        return render(request, 'booking/make_payment.html', {'email':request.user.email,'amount':float(amount_to_pay),"reference":booking_code,'PAYSTACK_PUBLIC_KEY':PAYSTACK_PUBLIC_KEY, "access_code":access_code})
+    except Booking.DoesNotExist :
+        return render(request, 'error.html', {"error_title":"Payment Booking Code",'error_message':f"Booking code {booking_code} does not exist in order to proceed with payment"} )
+    
 # user dashboard.. user must be authenticated to view this page
 @login_required(login_url='/login/')
 def dashboard_view(request):
@@ -410,3 +415,30 @@ def calculate_total_cost(booking):
 
 def recieptPage(request):
     return render(request,'reciept.html', {})
+
+def guestPayment(request, booking_code, access_code, amount_to_pay):
+    try:
+        booking = GuestBooking.objects.get(booking_code=booking_code)
+
+        if request.method == 'POST':
+            amount = request.POST['amount']
+            status = request.POST['status']
+            payment = process_payment(booking, amount, status)
+            if payment.status == 'COMPLETED':
+                booking.confirmed = True
+                booking.payment_id = payment.id
+                booking.save()
+                send_booking_email(booking)
+                return redirect('booking_success', booking_id=booking.id)
+        
+        payment_unique_reference =  f'{booking_code}--{uuid4()}'
+        booking.temporary_unique_reference = payment_unique_reference
+        booking.save()
+
+        return render(request, 'guest_payment.html', {'email':booking.email,'amount':float(amount_to_pay)*100,"reference":payment_unique_reference,'PAYSTACK_PUBLIC_KEY':PAYSTACK_PUBLIC_KEY, "access_code":access_code,"phone_number":booking.phone_number})
+    
+    except GuestBooking.DoesNotExist:
+        return render(request, 'error.html', {"error_title":"Payment Booking Code",'error_message':f"Booking code {booking_code} does not exist in order to proceed with payment"} )
+    except Exception as e :
+        return render(request, 'error.html', {"error_title":"Error Proceeding to Payment",'error_message':f"{str(e)}"} )
+

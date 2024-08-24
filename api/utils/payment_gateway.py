@@ -36,13 +36,16 @@ def initiate_payment(booking_code : str, amount_to_pay : float,user_email):
         return {'success' : False, 'error': f'{response["message"]}. {response["meta"]["nextStep"]}'}
 
 def verify_payment(reference):
-    response = paystack_object.transaction.verify(reference)
-    print(response)
-    if response['status'] and response['data']['status'] == 'success':
-        # Update the booking status to confirmed
-        return {'message': 'Payment made successful.', "booking_code" : reference, "status":True}
-    else:
-        return {'error': 'Payment verification failed.',"status":False}
+    try :
+        response = paystack_object.transaction.verify(reference)
+        print(response)
+        if response['status'] and response['data']['status'] == 'success':
+            # Update the booking status to confirmed
+            return {'message': 'Payment made successful.', "booking_code" : reference, "status":True,"reference":response['data']['reference'],'amount':response['data']['amount'],'id':response['data']['id']}
+        else:
+            return {'error': 'Payment verification failed.',"status":False, 'message':response['message']}
+    except Exception as e :
+        return {'error': str(e),"status":False, 'message':"Error occured verifying payment"}
 
 
 #print(verify_payment("T209985684062084"))
