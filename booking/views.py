@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 load_dotenv()
 import os 
 
-
 PAYSTACK_PUBLIC_KEY = os.getenv('PAYSTACK_PUBLIC_KEY')
 
 # will be used to track user login attempt
@@ -417,7 +416,6 @@ def calculate_total_cost(booking):
 def recieptPage(request):
     return render(request,'reciept.html', {})
 
-
 def guestPayment(request, booking_code, access_code, amount_to_pay):
     try:
         booking = GuestBooking.objects.get(booking_code=booking_code)
@@ -443,3 +441,4 @@ def guestPayment(request, booking_code, access_code, amount_to_pay):
         return render(request, 'error.html', {"error_title":"Payment Booking Code",'error_message':f"Booking code {booking_code} does not exist in order to proceed with payment"} )
     except Exception as e :
         return render(request, 'error.html', {"error_title":"Error Proceeding to Payment",'error_message':f"{str(e)}"} )
+
