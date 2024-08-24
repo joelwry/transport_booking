@@ -87,10 +87,12 @@ $('#CompanyForm').on('submit', function(e){
     var toastEl = $('#ToastElement');
     var toast = new bootstrap.Toast(toastEl);
 
+    var formData = FormData(this)
     $.ajax({
         url: '{% url "manager:newcompany" %}',
         type: 'POST',
-        data : $(this).serialize(),
+        data : formData,
+        content-type: false,
         success:function(response, textStatus, jqXHR){
             if(jqXHR.status === 200){
                 toastEl.find('#bodytoast').text(jqXHR.responseJSON.message);

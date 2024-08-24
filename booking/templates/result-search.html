@@ -182,13 +182,13 @@
                                 <div class="col-12">
                                     <img src="{{vehicle.vehicle.company.image.url}}" class="rounded-pill" width="32px"
                                         alt="">
-                                    <span class="px-1 fw-bold">{{vehicle.vehicle.company.name}}</span>
+                                    <span class="px-1 fw-bold">{{vehicle.vehicle.company.name | upper}}</span>
                                 </div>
                                 <div class="col-12 pt-2">
                                     <div class="row align-items-center">
                                         <div class="col-8">
-                                            <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date|date:"M d"}}</p>
-                                            <p class="traveller-price">Time : {{vehicle.travel_datetime.time|time:"H:i"}}</p>
+                                            <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date}}</p>
+                                            <p class="traveller-price">Time : {{vehicle.travel_datetime.time}}</p>
                                             <p class="available_seat_count">Available Seat : {{ vehicle.number_of_available_seats }}</p>
 
                                         </div>
@@ -204,7 +204,7 @@
 
                                         <div class="collapse " id="seats{{vehicle.id}}">
                                             <hr>
-                                            <div class="col-sm-9 mb-3">
+                                            <div class="col-sm-10 m-auto mb-3">
                                                 <div class="row align-items-center">
                                                     <div class="col">
                                                         <span
@@ -227,7 +227,7 @@
 
 
                                             <div class="row">
-                                                <div class="col-sm-10 me-auto ">
+                                                <div class="col-sm-11 m-auto ">
                                                     <div class="col-12 py-2"><Span>Unavailable Seat</Span></div>
                                                     <div class="card py-0 px-2 ">
                                                         <div class="card-body px-1 py-1">
@@ -243,7 +243,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-sm-10 me-auto ">
+                                                <div class="col-sm-11 m-auto ">
                                                     <div class="col-12 py-2"><Span>Select Seat Here</Span></div>
                                                     <div class="card py-0 px-2 ">
                                                         <div class="card-body px-1 py-1">
@@ -261,7 +261,7 @@
 
                                                 </div>
                                                 <div class="col-sm-10 m-auto mt-3 text-end px-4">
-                                                    <a href="#" class="btn btn-sm btn-success" data-vehicle-schedule="{{ vehicle.id }}">Continue</a>
+                                                    <a href="#" class="btn btn-sm btn-success" data-vehicle-schedule="{{ vehicle.id }}">Continue <span class='ms-1'><i class='bi bi-arrow-right'></i></span></a>
                                                 </div>
 
 

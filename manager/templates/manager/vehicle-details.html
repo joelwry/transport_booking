@@ -7,32 +7,22 @@
 
 <div class="col-md-11 m-auto">
 
-    <div class="card border-1 shadow border-custom-color">
+    <div class="card border-2 bgcolor shadow border-white">
         <div class="card-body">
 
 
 
             <div class="row justify-content-center align-items-end mb-2">
+               
                 <div class="col-12">
-                    <img src="{{Vehicle.company.image.url}}" class="rounded-pill" width="32px"
-                        alt="avatar">
-                </div>
 
-
-                <div class="col-8">
-
-                    <span class="h5">
-                        {{vehicle.company.name}} </span>
+                    <span class="h5 text-white">
+                        {{vehicle.company.name | upper}} </span>
                     <br>
-                    <small class="fw-4">{{vehicle.company.email}}</small><br>
-                    <span class="fw-bold">{{company.phone_number}}</span><br>
+                    <span class="fs-5">{{vehicle.terminal2.state}} <span> <i class='bi bi-arrow-right-left'></i></span> {{ vehicle.terminal2.state}} </span><br>
                     <span class="fw-bold">Total Schedules: {{schedules.count}}</span>
                 </div>
-                <div class="col-4 text-end ">
-                    <a href="#" target="_blank" rel="noopener noreferrer" class=" btn btn-dark btn-sm rounded-pill mb-1 mx-1" data-bs-toggle="tooltip" data-bs-title="edit"><span
-                           ><i class="bi bi-pen"></i></span> </a>
-                    
-                </div>
+        
 
             </div>
 
@@ -43,9 +33,8 @@
     <div class="col-md-12 m-auto  mt-3">
         <div class="card border-0  px-3 shadow">
             <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-10"><h4 class="page-title py-4">Schedules for {{vehicle.plate_number}} </h4></div>
-                    <div class="col-2 text-end"><buttun class="btn btn-sm colorbtn text-white rounded-pill shadow-sm " data-bs-toggle="modal" data-bs-target="#AddnewVehicle"><span class="h4" data-bs-toggle="tooltip" data-bs-title="Add new vehicle to {{company.name}}"><i class="bi bi-plus"></i></span></button></div>
+                <div class="row mb-4 mt-3 align-items-center">
+                    <div class="col-12 text-end"><buttun class="btn btn-sm colorbtn text-white rounded-pill shadow-sm " data-bs-toggle="modal" data-bs-target="#AddnewVehicle"><span  data-bs-toggle="tooltip" data-bs-title="create schedule"><i class="bi bi-plus"></i></span> Create Schedule</button></div>
                       
                 </div>
                 <div class="row row-gap-2 history-row">
@@ -56,8 +45,10 @@
                                
                                 <th>Pickup State</th>
                                 <th>Destination State</th>
+                                <th>Trip Type </th>
                                 <th>Travel date </th>
-                                <th>Action</th>
+                                <th>Travel Time </th>
+                                {% comment %} <th>Action</th> {% endcomment %}
                             </tr>
                         </thead>
                         <tbody>
@@ -70,12 +61,18 @@
                             <td>{{forloop.counter}}</td>
                             <td>{{schedule.pickup_state}}</td>
                             <td>{{schedule.destination_state}}</td>
-                            <td>{{ schedule.travel_datetime }}</td>                
-                            <td>
+                            {% if schedule.destination_state == vehicle.terminal2.state %}
+                            <td>Return</td>  
+                            {% else %}
+                            <td>Going</td>                              
+                            {% endif %}
+                            <td>{{ schedule.travel_datetime.date }}</td>                
+                            <td>{{ schedule.travel_datetime.time }}</td>                
+                            {% comment %} <td>
                                 <button class="btn btn-sm rounded-pill btn-outline-primary"><i class="bi bi-pen"></i></button>
                                 <button class="btn btn-sm rounded-pill btn-outline-danger" id="deletevehicle-action" data-id='{{vehicle.id}}' data-name ='{{vehicle.plate_number}}'  data-bs-toggle="modal"  
                                 data-bs-target="#AlertModel"><i class="bi bi-trash"></i></button>
-                            </td>
+                            </td> {% endcomment %}
                         </tr> 
 
                            {% empty %}{% endfor %}
@@ -92,12 +89,12 @@
 </div>
 
 
-  <!-- Add new vehicle Modal -->
+  <!-- Create Schedule -->
   <div class="modal fade " id="AddnewVehicle" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="AddnewVehicleLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg shadow" >
       <div class="modal-content">
         <div class="modal-header bgcolor">
-          <h1 class="modal-title fs-5" id="AddnewVehicleLabel">Add New Vehicle to {{company.name}}</h1>
+          <h6 class="modal-title fs-5 text-white" id="AddnewVehicleLabel">Create Schedule for {{vehicle.terminal1.state}} to {{vehicle.terminal2.state}}</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -108,76 +105,30 @@
            <form id='addNewVehicleForm' method="post" class="user-form">
             {% csrf_token %}
              <div class="row row-gap-2">
-                 <div class="col-sm-6 mb-3">
-                     <label for="plate_number">Plate Number <span
-                             class="text-danger">*</span></label>
-                     <input type="text" name="plate_number" id="plate-number"
-                         class="form-control py-2"
-                         placeholder="AWX-423-213" required>
+                 
+                     <input type="hidden" name="vehicle" id="vehicle"
+                         class="form-control py-2" value = {{vehicle.id}}>
+                 
+                 <div class="col-sm-4 mb-3">
+                     <label for="travelDate">Travel Date<spanclass="text-danger">*</span></label>
+                     <input type="date" name="travelDate" id="travelDate"
+                         class="form-control py-2" required>
                  </div>
-                 <div class="col-sm-6 mb-3">
-                     <label for="terminal-1">Terminal 1 <span
+                 <div class="col-sm-4 mb-3">
+                     <label for="travelTime">Travel Time<spanclass="text-danger">*</span></label>
+                     <input type="time" name="travelTime" id="travelTime"
+                         class="form-control py-2" required>
+                 </div>
+                 <div class="col-sm-4 mb-3">
+                     <label for="travelType">Trip Type <span
                              class="text-danger">*</span></label>
                     
-                         <select name="terminal1" id="terminal-1"  class="form-select py-2" required>
-                             {% for terminal in terminals %}
-                             <option value="{{terminal.id}}">{{terminal}}</option>
-                             {% endfor %}
+                         <select name="travelType" id="travelType"  class="form-select py-2" required>
+                            <option value="going">Going</option>
+                             <option value="return">Return</option>
                          </select>
                  </div>
-                 <div class="col-sm-6 mb-3">
-                     <label for="termina-2">Terminal 2<span
-                             class="text-danger">*</span></label>
-                    
-                             <select name="terminal2" id="terminal-2" class="form-select py-2" required>
-                                 {% for terminal in terminals %}
-                                 <option value="{{terminal.id }}">{{terminal}}</option>
-                                 {% endfor %}
-                             </select>
-                             
-                 </div> 
-                 <div class="col-sm-6 ">
-                    <label for="fname">Company <span
-                        class="text-danger">*</span></label>
-                        <select name="company" id="company" class="form-select py-2" readonly>
-                                                   
-                            <option selected value={{company.pk}}>{{company.name}}</option>
-                           
-                               
-                            </select>                             
-                 </div>
-
-               <div class="col-sm-6 mb-3">
-                     <label for="fname">Bus Capacity <span
-                             class="text-danger">*</span></label>
-                     <input type="number" name="capacity" id="bus-capacity"
-                         class="form-control py-2" min="7"
-                         placeholder="" required>
-                 </div> 
-
-                 <div class="col-sm-6 mb-3">
-                     <label for="fname">Price <span
-                             class="text-danger">*</span></label>
-                     <input type="number" name="price" id="price" min='500'
-                         class="form-control py-2" 
-                         placeholder="20000" required>
-                 </div>
-                 
-                 {% comment %} <div class="col-sm-4 mb-3">
-                    
-                     <input type="checkbox" name="avaliability" id="bus-avaliability"
-                         class="form-check-input p-2" min="7"
-                         placeholder="">
-
-                         <label for="fname">Is Bus Avalable <span
-                             class="text-danger">*</span></label>
-                 </div> {% endcomment %}
-                 
-                
-
-
-             </div>
-             
+               
              <div class="col-sm-6 mb-1 mt-3">
                  <input type="submit" value="Add Vehicle"
                      class="btn colorbtn text-white btn-sm col-16 p-3">
@@ -198,12 +149,7 @@
 
 {% endblock page-contents %}
 
-{% comment %} {% block heavyScript %}
-
-
-
-
-
+{% block heavyScript %}
 
 $('#addNewVehicleForm').on('submit', function(e){
     e.preventDefault();
@@ -212,7 +158,7 @@ $('#addNewVehicleForm').on('submit', function(e){
     var toast = new bootstrap.Toast(toastEl);
 
     $.ajax({
-        url : '{% url "manager:newvehicle" company.id %}',
+        url : '{% url "manager:createSchedule" %}',
         type : 'POST',
         data: $(this).serialize() ,
         success: function(response, textStatus, jqXHR){
@@ -231,7 +177,7 @@ $('#addNewVehicleForm').on('submit', function(e){
                 toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
                 toastEl.find('.toaser').addClass('bg-danger text-white');
                 toast.show();
-            } else if (jqXHR.status === 404) {
+            } else if (jqXHR.status === 404 & jqXHR.responseJSON.success == 'false') {
                 // Handle 'Traveller profile not found'
                 toastEl.find('.toast-body').text(jqXHR.responseJSON.message);
                 toastEl.find('.toaser').addClass('bg-danger text-white');
@@ -246,7 +192,7 @@ $('#addNewVehicleForm').on('submit', function(e){
         }
 
     })  
-}) {% endcomment %}
+}) 
 
 
 {% comment %} to delete vehicle {% endcomment %}
@@ -301,9 +247,7 @@ $('#confirm-delete').on('click', ()=>{
     })
     $('#AlertModel').modal('hide')
 })
+    
+{% endcomment %}
 
-{% endblock heavyScript %} {% endcomment %}
-
-
-
-
+{% endblock heavyScript %} 

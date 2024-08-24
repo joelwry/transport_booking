@@ -59,6 +59,8 @@ urlpatterns = [
     path('create-terminal/', views.CreateTerminal, name = 'create-terminal'),
 
 
+    # SCHEDULE
+    path("createShedule/", views.create_schedule, name="createSchedule"),
 
     path("bookings/", views.BookingListView.as_view(), name="bookings"),
     path("bookings-detail/<str:bookcode>/", views.bookingDetailView, name="booking-detail"),
