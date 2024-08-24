@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express Ride Payment</title>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+
+<body>
+    <button id="payButton">Pay Now</button>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const email = "{{ email }}";
+            const phone_number = "{{ phone_number }}"
+            var handler = PaystackPop.setup({
+                key: "{{ PAYSTACK_PUBLIC_KEY }}",
+                email: "{{ email }}",
+                amount: "{{ amount }}",
+                currency: 'NGN',
+                ref: "{{ reference }}",
+                callback: function(response) {
+                    // Verify the payment
+                    fetch(`/api/verify-payment/${response.reference}/guest?phone_number=${phone_number}&email=${email}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                            if (data.status) {
+                                alert('Payment successful');
+                                alert(data['message'])
+                            } else {
+                                alert(data['message'])
+                                alert('Payment verification failed');
+                            }
+                        });
+                },
+                onClose: function() {
+                    alert('Payment window closed');
+                }
+            });
+            handler.openIframe();
+            document.querySelector("#payButton").addEventListener("click",evt =>{
+                handler.openIframe()
+            })
+        })
+    </script>
+</body>
+
+</html>

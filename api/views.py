@@ -361,16 +361,20 @@ class GuestBookingViewSet(viewsets.ModelViewSet):
 
             # Redirect to payment gateway
             payment_detail = initiate_payment(guest_booking.booking_code, guest_booking.total_cost, guest_booking.email)
+            print(payment_detail)
             if payment_detail['success']:
                 guest_booking.save()
                 payment_url = payment_detail['payment_url']
                 access_code = payment_detail['access_code']
+                print('gootteen details')
+                print(guest_booking)
                 return Response({
                     "error":False,
                     'payment_url': payment_url,
                     'booking_code': guest_booking.booking_code,
                     'access_code': access_code,
-                    'total_amount': guest_booking.total_cost
+                    'total_amount': guest_booking.total_cost,
+                    'internal_payment_url':f'/guest_payment/{guest_booking.booking_code}/{access_code}/{guest_booking.total_cost}/'
                 }, status=status.HTTP_201_CREATED)
             else:
                 return Response({
@@ -379,6 +383,8 @@ class GuestBookingViewSet(viewsets.ModelViewSet):
                 }, status=status.HTTP_402_PAYMENT_REQUIRED)
             
         except Exception as e :
+            print('Error that occured as exception ')
+            print(e)
             return Response({
                 'message': 'Seems like you do not have not established a connection to our payment host.. Do ensure you have a stable internet connection! ',
                 'error': True
@@ -396,11 +402,14 @@ def verifyPaymentView(request, reference):
     if not payment_verification['status']:
         return Response({'status': False, 'message': payment_verification['error']}, status=400)
 
-    booking_code = payment_verification['reference']
+    booking_code = payment_verification['reference'].split("--")[0]
     try:
         booking = Booking.objects.get(booking_code=booking_code, customer__user=user)
         
-        if booking.status != 'PENDING':
+        if booking.status == 'CONFIRMED':
+            return Response({'status': True, 'message': 'A payment has already been confirmed previously for this booking'}, status=status.HTTP_208_ALREADY_REPORTED)
+        
+        if booking.status != 'PENDING' and booking.status != 'CONFIRMED':
             return Response({'status': False, 'message': 'Booking is not pending.'}, status=400)
         
         # Additional validations (e.g., amount check)
@@ -426,14 +435,29 @@ def verifyPaymentView(request, reference):
         # Update VehicleSchedule for reserved seats
         schedule = booking.schedule
         seats = booking.booked_seats
+
+        available_seats = schedule.available_seats()
+        conflicting_seats = [seat for seat in seats if seat not in available_seats]
+
+        if conflicting_seats:
+            # Replace conflicting seats with available ones
+            new_seats = []
+            for seat in seats:
+                if seat not in available_seats:
+                    new_seat = available_seats.pop(0)  # Get the first available seat
+                    new_seats.append(new_seat)
+                else:
+                    new_seats.append(seat)
+
+            # Update the GuestBooking with the new seats
+            booking.booked_seats = new_seats
+            booking.save()
+            seats = new_seats
+
         schedule.booked_seats.extend(seats)
-        # still need validation for seat if already booked by someone else etc
-        # for seat in booking.booked_seats:
-        #     schedule.reserve_seat(seat)
         schedule.save()
 
-
-        return Response({'status': True, 'message': 'Payment verified and booking confirmed', 'vehicle_schedule':schedule.id, 'booking':"booking.id"})
+        return Response({'status': True, 'message': 'Payment verified and booking confirmed', 'vehicle_schedule':schedule.id, 'booking':booking.id})
     
     except Booking.DoesNotExist:
         return Response({'status': False, 'message': 'Booking does not exist or does not belong to the user.'}, status=404)
@@ -451,14 +475,18 @@ def verifyGuestPaymentView(request, reference):
     if not payment_verification['status']:
         return Response({'status': False, 'message': payment_verification['error']}, status=400)
 
-    booking_code = payment_verification['reference']
+    booking_code = payment_verification['reference'].split("--")[0]
     try:
         booking = GuestBooking.objects.get(booking_code=booking_code, email = email, phone_number = phone_number)
         
-        if booking.status != 'PENDING':
+        if booking.status == 'CONFIRMED':
+            schedule = booking.schedule
+            return Response({'status': True, 'message': 'A payment has already been confirmed previously for this booking',"transaction_id":booking.temporary_unique_reference,'vehicle_schedule':schedule.id, 'booking':booking.id}, status=status.HTTP_208_ALREADY_REPORTED)
+        
+        if booking.status != 'PENDING' and booking.status != 'CONFIRMED':
             return Response({'status': False, 'message': 'Booking is not pending.'}, status=400)
         
-        # Additional validations (e.g., amount check)
+        # Additional validations (e.g., amount check) // might introduce partial payment
         required_payment = booking.total_cost * 100
         payment_made = payment_verification['amount']
         if required_payment < payment_made :
@@ -470,7 +498,7 @@ def verifyGuestPaymentView(request, reference):
         booking.confirmed = True
         booking.save()
 
-        payment = Payment.objects.filter(booking = booking).first()
+        payment = GuestPayment.objects.filter(booking = booking).first()
         if payment == None :
             GuestPayment.objects.create(booking=booking, amount= booking.total_cost,status='COMPLETED')
         elif payment.status != 'COMPLETED':
@@ -481,14 +509,28 @@ def verifyGuestPaymentView(request, reference):
         # Update VehicleSchedule for reserved seats
         schedule = booking.schedule
         seats = booking.booked_seats
+
+        available_seats = schedule.available_seats()
+        conflicting_seats = [seat for seat in seats if seat not in available_seats]
+
+        if conflicting_seats:
+            # Replace conflicting seats with available ones
+            new_seats = []
+            for seat in seats:
+                if seat not in available_seats:
+                    new_seat = available_seats.pop(0)  # Get the first available seat
+                    new_seats.append(new_seat)
+                else:
+                    new_seats.append(seat)
+
+            # Update the GuestBooking with the new seats
+            booking.booked_seats = new_seats
+            booking.save()
+            seats = new_seats
+
         schedule.booked_seats.extend(seats)
-        # still need validation for seat if already booked by someone else etc
-        # for seat in booking.booked_seats:
-        #     schedule.reserve_seat(seat)
         schedule.save()
-
-
-        return Response({'status': True, 'message': 'Payment verified and booking confirmed', 'vehicle_schedule':schedule.id, 'booking':"booking.id"})
+        return Response({'status': True, 'message': 'Payment verified and booking confirmed', 'vehicle_schedule':schedule.id, 'booking':booking.id,"transaction_id":booking.temporary_unique_reference})
     
     except GuestBooking.DoesNotExist:
         return Response({'status': False, 'message': 'Booking does not exist or does not belong to the user.'}, status=404)

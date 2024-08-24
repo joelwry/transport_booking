@@ -4,6 +4,16 @@
 {% load seat_filter %}
 
 {% block home-banner %}{% endblock home-banner %}
+{% block styles %} 
+<style>
+    .modal-toast {
+        position: fixed;
+        top: 20%;
+        left: 12%;
+        z-index: 9999
+    }
+</style>
+{% endblock %}
 
 {% block page-contents %}
 
@@ -190,6 +200,8 @@
                                             <p class="traveller-price">Traveling Date : {{vehicle.travel_datetime.date|date:"M d"}}</p>
                                             <p class="traveller-price">Time : {{vehicle.travel_datetime.time|time:"H:i"}}</p>
                                             <p class="available_seat_count">Available Seat : {{ vehicle.number_of_available_seats }}</p>
+                                            <p>Number of Seat to book : <span id="number_of_seat_to_book">1</span></p>
+
 
                                         </div>
                                         <div class="col-4">
@@ -330,9 +342,7 @@
         </div>
         {% endif %}
 
-    
-
-    <div id="ToastElement" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="ToastElement" class="toast modal-toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex toaser">
             <div class="toast-body" id="bodytoast">
              
@@ -347,11 +357,13 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-    const maxSeats = Number('{{ adult }}') + Number('{{ children }}'); 
+    let adult_count = Number('{{ adult }}')
+    let child_count = Number('{{ children }}')
+    const maxSeats = calculateTotalPassengers(adult_count,child_count); 
+    // update showing the total number of seat for user to book
+    document.querySelectorAll("#number_of_seat_to_book").forEach(span=> span.textContent = maxSeats);
     // Total number of seats the user can select
     let seatsSelection = {}
-    
-
     // Function to update seat selection
     const updateSeatSelection = (seat, vehicleScheduleId) => {
         if (seat.classList.contains('bg-dark')) {
@@ -401,7 +413,11 @@
             } else if(seatsSelection[vehicleScheduleId].length > maxSeats){
                 return showToast('You selected more seat than required!', false);
                 
-            }else {
+            }else if(seatsSelection[vehicleScheduleId].length < maxSeats){
+                return showToast('complete selection of your seat to match the total number of passengers boarding this vehicle!\nDo not 1 child below 10 can be lapped while 2 child below 10 count as 1 otherwise per head count applies above 2 children', false);
+                
+            }
+            else {
                 // data to be sent alongside our post n converting selectedSeats to JSON
                 const data = {
                     seats: JSON.stringify(seatsSelection[vehicleScheduleId]),
@@ -435,6 +451,14 @@
         });
     });
 
+    function calculateTotalPassengers(number_of_adults, number_of_children) {
+        if (number_of_children <= 1) {
+            number_of_children = 0;
+        } else if (number_of_children == 2) {
+            number_of_children = 1;
+        }
+        return number_of_adults + number_of_children;
+    }
    
 });
 

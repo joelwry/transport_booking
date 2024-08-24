@@ -88,7 +88,7 @@ class VehicleSchedule(models.Model):
     destination_state = models.ForeignKey(State, on_delete=models.CASCADE, related_name='schedule_destination_state')
     travel_datetime = models.DateTimeField()
     number_of_bookings = models.PositiveIntegerField(default=0, editable=False)
-    booked_seats = models.JSONField(default=list)  # List of booked seat numbers
+    booked_seats = models.JSONField(default=list,blank=True)  # List of booked seat numbers
 
     def __str__(self):
         return f"Schedule for {self.vehicle} from {self.pickup_state} to {self.destination_state} on {self.travel_datetime}"
@@ -160,6 +160,7 @@ class Booking(models.Model):
     ticket_sent = models.BooleanField(default=False)
     schedule = models.ForeignKey(VehicleSchedule, on_delete=models.CASCADE, null=True, blank=True)
     booked_seats = models.JSONField(default=list)  # keeps track of seat booked by that user
+    temporary_unique_reference = models.CharField(max_length=255, blank=True, default=None)
 
     def clean(self):
         children_count = self.number_of_children_below_10 if self.number_of_children_below_10 > 2 else 1 if self.number_of_children_below_10 == 2 else 0
@@ -225,6 +226,8 @@ class GuestBooking(models.Model):
     ticket_sent = models.BooleanField(default=False)
     schedule = models.ForeignKey(VehicleSchedule, on_delete=models.CASCADE, null=True, blank=True)
     booked_seats = models.JSONField(default=list)  # keeps track of seat booked by the guest user
+    temporary_unique_reference = models.CharField(max_length=255, blank=True, default=None)
+
 
     def clean(self):
         children_count = self.number_of_children_below_10 if self.number_of_children_below_10 > 2 else 1 if self.number_of_children_below_10 == 2 else 0
